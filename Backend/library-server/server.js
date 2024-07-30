@@ -1,6 +1,9 @@
 const express = require("express");
 const http = require("http");
+const ConnectDB = require("./database/ConnectDB");
+const dotenv = require('dotenv');
 
+dotenv.config();
 const app = express();
 const port = 3000;
 
@@ -14,5 +17,6 @@ app.get("/", (req, res) => {
 });
 
 server.listen(port, () => {
+  ConnectDB();
   console.log(`Server is running at http://localhost:${port}`);
 });
