@@ -1,0 +1,52 @@
+import axios from 'axios';
+import { getToken } from '../utils/storage';
+
+export const api = axios.create({
+    baseURL: 'https://api.example.com',
+    timeout: 6000,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
+api.interceptors.request.use(
+    function (config) {
+        getToken().then(async token => {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        });
+        config.params = {
+            ...config.params,
+            // locale: getDeviceLanguage(),
+        };
+        return config;
+    },
+    function (error) {
+        // Do something with request error
+        return Promise.reject(error);
+    },
+);
+
+api.interceptors.response.use(
+    function (response) {
+        // Do something with response data
+        return response.data;
+    },
+    function (error) {
+        if (error.response) {
+            if (error.response.status === 403) {
+                //logout
+            }
+            if (error.response.status === 401) {
+                // _retrieveData('login_data').then(data => {
+                //     if (data) {
+                //         error.config.headers.Authorization =
+                //             'Bearer ' + data.token;
+                //         return api(error.config);
+                //     }
+                // });
+            }
+        }
+
+        return Promise.reject(error);
+    },
+);

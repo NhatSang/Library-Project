@@ -1,7 +1,11 @@
 export const SPLASH = {
-    LOGO: require('./Splash/logo.png'),
+    
 }
 
 export const LOGIN = {
     BACKGROUND: require('./Login/background.png'),
+}
+
+export const MAIN = {
+    LOGO: require('./logo.png'),
 }
