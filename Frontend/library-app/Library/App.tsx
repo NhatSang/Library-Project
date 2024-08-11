@@ -1,12 +1,16 @@
-import React from 'react'
-import { View, Text } from 'react-native'
+
+import Router from '@navigators/Router';
+import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
+
+
 
 const App = () => {
   return (
-    <View>
-      <Text>App</Text>
-    </View>
-  )
-}
+    <NavigationContainer>
+      <Router />
+    </NavigationContainer>
+  );
+};
 
-export default App
+export default App;
