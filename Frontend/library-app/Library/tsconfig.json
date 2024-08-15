@@ -1,5 +1,6 @@
 {
   "extends": "@react-native/typescript-config/tsconfig.json",
+  "allowSyntheticDefaultImports": true,
   "compilerOptions": {
     "jsx": "react-native",
     "baseUrl": ".",
@@ -9,6 +10,7 @@
       "@utils/*": ["src/utils/*"],
       "@constants/*": ["src/constants/*"],
       "@navigators/*": ["src/navigators/*"],
+      "@assets/*": ["src/assets/*"],
     }
   },
 }

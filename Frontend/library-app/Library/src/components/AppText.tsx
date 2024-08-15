@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
 type Props = {
-    text: string,
+    text: string | number | undefined,
     size?: number,
     font?: string,
     numberOfLines?: number,

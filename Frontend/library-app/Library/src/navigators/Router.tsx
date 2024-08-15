@@ -1,5 +1,4 @@
-import { LoginScreen } from '@screens/index';
-import SplashScreen from '@screens/SplashScreen';
+import { LoginScreen, SplashScreen } from '@screens/index';
 import React, { useEffect, useState } from 'react';
 import MainRouter from './MainRouter';
 

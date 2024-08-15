@@ -1,12 +1,17 @@
-import React, { useCallback } from 'react'
-import { Image, ImageBackground, Platform, TouchableHighlight, View } from 'react-native'
+
+import { LOGIN, MAIN } from '@assets/images'
+import AppButton from '@components/AppButton'
+import AppText from '@components/AppText'
+import { envConfig } from '@constants/envConfig'
+import { fontFamilies } from '@constants/fontFamilies'
+import { globalColor } from '@constants/globalColor'
+import { ScreenName } from '@constants/ScreenName'
+import React, { useCallback, useState } from 'react'
+import { Image, ImageBackground, Platform, View } from 'react-native'
+import { authorize } from 'react-native-app-auth'
 import AzureAuth from 'react-native-azure-auth'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { LOGIN, MAIN } from '../../assets/images'
-import { AppText } from '../../components'
-import { envConfig } from '../../constants/envConfig'
-import { fontFamilies } from '../../constants/fontFamilies'
-import { iUser } from '../../models/iUser'
+import { iUser } from 'src/types/iUser'
 
 
 const azureauth = new AzureAuth({
@@ -28,13 +33,15 @@ const configs: any = {
 };
 
 const LoginScreen = ({ navigation }: any) => {
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = useCallback(async (provider: any) => {
+    setIsLoading(true);
     // const config = configs[provider];
     // authorize({
     //   ...config,
     //   connectionTimeoutSeconds: 5,
-    //   iosPrefersEphemeralSession: true,
+    //   iosPrefersEphemeralSession: false,
     // })
     //   .then(async (response: any) => {
     //     if (response) {
@@ -48,7 +55,13 @@ const LoginScreen = ({ navigation }: any) => {
     //   .catch((error: any) => {
     //     console.log('error', error);
     //   });
-    login('nmhan');
+    try {
+      const { accessToken } = await authorize(configs[provider]);
+      console.log('accessToken', accessToken);
+    } catch (error) {
+      console.log('error', error);
+
+    }
   }, []);
 
   const isValidStudentEmail = (email: string) => {
@@ -57,10 +70,11 @@ const LoginScreen = ({ navigation }: any) => {
   };
 
   const login = (userInfo: iUser) => {
+    setIsLoading(false);
     if (isValidStudentEmail(userInfo.mail)) {
-      navigation.navigate('TabRouter');
+      navigation.navigate(ScreenName.UserFormScreen);
     } else {
-      navigation.navigate('TabRouter');
+      navigation.navigate(ScreenName.UserFormScreen);
     }
   };
 
@@ -73,9 +87,15 @@ const LoginScreen = ({ navigation }: any) => {
           <AppText text='Please login to continue' color='white' size={16} />
         </View>
         <View className='w-full items-center'>
-          <TouchableHighlight onPress={() => handleLogin('iddentityserver')} className='bg-primary-dark w-11/12 h-14 justify-center items-center rounded-3xl'>
-            <AppText text='Login with mail Student IUH' color='white' size={20} font={fontFamilies.robotoBold} />
-          </TouchableHighlight>
+          <AppButton
+            loading={isLoading}
+            onPress={() => { handleLogin('iddentityserver') }}
+            title='Tiếp tục'
+            type='primary'
+            color={globalColor.primary}
+            styles={{ width: '80%' }}
+            textStyleProps={{ color: globalColor.white, fontSize: 20, fontFamily: fontFamilies.robotoBold }}
+          />
         </View>
       </SafeAreaView>
     </ImageBackground>
