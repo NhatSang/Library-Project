@@ -9,12 +9,12 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const data = Array.from({ length: 10 }, (_, index) => ({
-    id: String(index + 1),
+    id: String(index + 170),
     name: `Item ${index + 1}`,
-    page: `Page ${index + 1}`
+    page: `Page ${index + 170}`
 }));
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation, route }: any) => {
     const colorScheme = useColorScheme();
     const [modalVisible, setModalVisible] = useState(false);
     const [buttonFocused, setButtonFocused] = useState('mucluc');
@@ -51,7 +51,7 @@ const HomeScreen = () => {
                 </View>
                 <View className='h-5/6 bg-slate-200'>
                     <PdfViewer
-                        pdfUrl='https://file.nhasachmienphi.com/pdf/nhasachmienphi-thuat-giai-mong-cua-nguoi-xua.pdf'
+                        pdfUrl='/data/user/0/com.library/files/thuat-giai-mong-cua-nguoi-xua.pdf'
                         initialPage={selectedPage || 1}
                     />
                 </View>

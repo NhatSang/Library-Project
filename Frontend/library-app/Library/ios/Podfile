@@ -23,8 +23,8 @@ target 'Library' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  # pod 'rn-fetch-blob',
-  #   :path => '../node_modules/rn-fetch-blob'
+pod 'react-native-blob-util',
+    :path => '../node_modules/react-native-blob-util'
 
 
   target 'LibraryTests' do

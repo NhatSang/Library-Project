@@ -10,10 +10,11 @@ type Props = {
 
 const PdfViewer = (props: Props) => {
     const { pdfUrl, initialPage } = props;
-    const [pageCount, setPageCount] = useState(0);
+    const [pageCount, setPageCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(initialPage || 1);
+    const [progress, setProgress] = useState(0);
 
-    const progress = pageCount > 0 ? (currentPage / pageCount) * 100 : 0;
+
     const colorScheme = useColorScheme();
 
 
@@ -43,6 +44,8 @@ const PdfViewer = (props: Props) => {
                 }}
                 onPageChanged={(page) => {
                     console.log(`Current page: ${page}`);
+                    const progress = (page / pageCount);
+                    setProgress(progress);
                 }}
                 onError={(error) => {
                     console.log(error);
@@ -55,7 +58,7 @@ const PdfViewer = (props: Props) => {
                     <ProgressBar
                         className='bg-gray-500 rounded-full w-full h-1'
                         color='#05CDFA'
-                        progress={progress / 100}
+                        progress={progress}
                     />
                 </View>
             </View>
