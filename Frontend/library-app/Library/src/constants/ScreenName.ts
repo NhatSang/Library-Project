@@ -4,4 +4,5 @@ export const ScreenName = {
     TabRouter: 'TabRouter',
     AccountScreen: 'AccountScreen',
     HomeScreen: 'HomeScreen',
+    DemoDownLoad: 'DemoDownLoad',
 };

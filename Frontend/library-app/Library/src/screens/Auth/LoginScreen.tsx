@@ -56,11 +56,16 @@ const LoginScreen = ({ navigation }: any) => {
     //     console.log('error', error);
     //   });
     try {
-      const { accessToken } = await authorize(configs[provider]);
-      console.log('accessToken', accessToken);
+      const response = await authorize(configs[provider]);
+      if (response) {
+        const info = await azureauth.auth.msGraphRequest({
+          token: response.accessToken,
+          path: '/me',
+        });
+        login(info);
+      }
     } catch (error) {
       console.log('error', error);
-
     }
   }, []);
 

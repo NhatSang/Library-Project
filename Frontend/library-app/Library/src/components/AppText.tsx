@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleProp, Text, TextStyle } from 'react-native';
+import { Pressable, StyleProp, Text, TextStyle } from 'react-native';
 
 type Props = {
     text: string | number | undefined,
@@ -7,13 +7,14 @@ type Props = {
     font?: string,
     numberOfLines?: number,
     color?: string,
-    className?: string,
-    styles?: StyleProp<TextStyle>
+    styles?: StyleProp<TextStyle>,
+    onPress?: () => void
 }
 
 const AppText = (props: Props) => {
-    const { text, size, font, numberOfLines, color, className, styles } = props
-    return (
+    const { text, size, font, numberOfLines, color, styles, onPress } = props;
+
+    const textComponent = (
         <Text
             numberOfLines={numberOfLines}
             style={[
@@ -27,7 +28,15 @@ const AppText = (props: Props) => {
         >
             {text}
         </Text>
-    )
+    );
+
+    return onPress ? (
+        <Pressable onPress={onPress}>
+            {textComponent}
+        </Pressable>
+    ) : (
+        textComponent
+    );
 }
 
-export default AppText
+export default AppText;

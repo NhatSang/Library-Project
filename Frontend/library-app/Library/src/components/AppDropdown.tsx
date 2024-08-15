@@ -52,7 +52,7 @@ const AppDropdown = (props: Props) => {
         </Row>
     );
     return (
-        <View style={{ flex: 0.7, position: 'relative', zIndex: 2 }}>
+        <View style={{ flex: 0.7, position: 'relative', zIndex: 9999 }}>
             <TouchableOpacity
                 onLayout={(event) => {
                     setWidthButton(event.nativeEvent.layout.width);
@@ -68,7 +68,8 @@ const AppDropdown = (props: Props) => {
             {isVisible && (
                 <View
                     style={{
-                        position: 'absolute',
+                        zIndex: 9999,
+                        // position: 'absolute',
                         top: 20,
                         right: 0,
                         width: widthButton,
