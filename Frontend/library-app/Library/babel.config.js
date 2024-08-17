@@ -12,6 +12,7 @@ module.exports = {
                     '@utils': './src/utils',
                     '@constants': './src/constants',
                     '@navigators': './src/navigators',
+                    '@assets': './src/assets',
                 },
             },
         ],

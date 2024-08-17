@@ -1,130 +1,64 @@
+import { HOME } from '@assets/images';
 import AppText from '@components/AppText';
-import PdfViewer from '@components/PdfViewer';
 import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
-import React, { useState } from 'react';
-import { FlatList, Modal, Pressable, StyleSheet, useColorScheme, View } from 'react-native';
+import { ScreenName } from '@constants/ScreenName';
+import React from 'react';
+import { FlatList, Image, Pressable, ScrollView, useColorScheme, View } from 'react-native';
+import { Badge } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import SwiperImage from './book/components/SwiperImage';
 
-const data = Array.from({ length: 10 }, (_, index) => ({
-    id: String(index + 1),
-    name: `Item ${index + 1}`,
-    page: `Page ${index + 1}`
-}));
-
-const HomeScreen = () => {
+const HomeScreen = ({ navigation, route }: any) => {
     const colorScheme = useColorScheme();
-    const [modalVisible, setModalVisible] = useState(false);
-    const [buttonFocused, setButtonFocused] = useState('mucluc');
-    const [selectedPage, setSelectedPage] = useState<number | null>(null);
-
-    const handleButtonFocused = (button: string) => {
-        setButtonFocused(button);
-    }
-
-    const Item = ({ item }: { item: any }) => (
-        <Pressable onPress={() => {
-            setSelectedPage(Number(item.id))
-            setModalVisible(false);
-        }} style={styles.item}>
-            <AppText styles={styles.name} text={item.name} />
-            <AppText styles={styles.page} text={item.page} />
-        </Pressable>
-    );
 
     return (
-        <>
-            <SafeAreaView className='flex-1'>
-                <View className='bg-primary-dark w-full h-16 flex-row justify-between px-3'>
-                    <View className='flex-row justify-center items-center'>
-                        <MaterialIcons name='clear' size={28} color={globalColor.white} />
-                    </View>
-                    <View className='flex-row justify-center items-center'>
-                        <Pressable onPress={() => {
-                            setModalVisible(true);
-                        }}>
-                            <FontAwesome5 name='list-ul' size={24} color={globalColor.white} />
-                        </Pressable>
-                    </View>
+        <SafeAreaView className='flex-1 px-3'>
+            <View className='flex-row justify-between py-4 pb-8'>
+                <Pressable>
+                    <Image source={HOME.AVATAR} className='w-12 h-12' />
+                </Pressable>
+                <Pressable>
+                    <Ionicons name='notifications-sharp' size={48} color={globalColor.primary} />
+                    <Badge className='absolute'>3</Badge>
+                </Pressable>
+                <Pressable className='w-4/6 bg-gray-400 items-center flex-row rounded-xl px-4'>
+                    <Ionicons name='search' size={32} />
+                    <AppText size={16} color={globalColor.text_light} text='Tên sách, tên ngành ....' />
+                </Pressable>
+            </View>
+            <ScrollView>
+                <View className='h-40'>
+                    <SwiperImage />
                 </View>
-                <View className='h-5/6 bg-slate-200'>
-                    <PdfViewer
-                        pdfUrl='https://file.nhasachmienphi.com/pdf/nhasachmienphi-thuat-giai-mong-cua-nguoi-xua.pdf'
-                        initialPage={selectedPage || 1}
+                <View className='py-4'>
+                    <View className='py-2'>
+                        <AppText size={20} font={fontFamilies.robotoBold} text='Sách mới' />
+                    </View>
+                    <FlatList
+                        showsHorizontalScrollIndicator={false}
+                        data={{ length: 5 }}
+                        renderItem={({ item }) => {
+                            return (
+                                <Pressable
+                                    onPress={() => navigation.navigate(ScreenName.BookDetail, { id: '12345678' })}
+                                    className='px-6'>
+                                    <Image source={HOME.BOOK1} className='w-40 h-52' />
+                                    <View className='w-40 justify-center items-center pt-3'>
+                                        <AppText numberOfLines={2} size={16} font={fontFamilies.robotoBold} text='Tư tưởng Hồ Chí Minh' />
+                                        <AppText numberOfLines={1} size={12} text='Bộ giáo duc và dào tạo' />
+                                    </View>
+                                </Pressable>
+                            )
+                        }}
+                        keyExtractor={(item, index) => index.toString()}
+                        horizontal
                     />
                 </View>
-            </SafeAreaView>
-            <Modal animationType="slide" transparent={true} visible={modalVisible}>
-                <View className={`flex-1 bg-gray-300 w-full h-5/6 absolute bottom-0 rounded-tl-3xl rounded-tr-3xl`}>
-                    <View className={`h-16 w-full justify-center items-center border-b`}>
-                        <Pressable className='absolute left-3' onPress={() => {
-                            setModalVisible(!modalVisible);
-                        }}>
-                            <MaterialIcons name='clear' size={28} color={globalColor.primary} />
-                        </Pressable>
-                        <View className='flex-row justify-between items-center w-4/6'>
-                            <Pressable
-                                style={{ backgroundColor: buttonFocused == 'mucluc' ? `${globalColor.primary}` : 'gray' }}
-                                className='h-10 w-32 justify-center items-center rounded-md'
-                                onPress={() => {
-                                    handleButtonFocused('mucluc');
-                                }}>
-                                <AppText color='white' size={20} font={fontFamilies.robotoBold} text='Mục lục' />
-                            </Pressable>
-                            <Pressable
-                                style={{ backgroundColor: buttonFocused == 'danhdau' ? `${globalColor.primary}` : 'gray' }}
-                                className='h-10 w-32 justify-center items-center rounded-md' onPress={() => {
-                                    handleButtonFocused('danhdau');
-                                }}>
-                                <AppText color={globalColor.white} size={20} font={fontFamilies.robotoBold} text='Đánh dấu' />
-                            </Pressable>
-                        </View>
-                    </View>
-                    <View className=' flex-1 bg-white'>
-                        {
-                            buttonFocused == 'mucluc' ? (
-                                <FlatList
-                                    data={data}
-                                    keyExtractor={(item) => item.id}
-                                    renderItem={({ item }) => (
-                                        <Item item={item} />
-                                    )}
-                                    contentContainerStyle={styles.container}
-                                />
-                            ) : (
-                                <AppText text='Đánh dấu' />
-                            )
-                        }
-                    </View>
-                </View>
-            </Modal>
-        </>
+            </ScrollView>
+        </SafeAreaView >
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 16,
-    },
-    item: {
-        padding: 16,
-        marginBottom: 8,
-        backgroundColor: '#f8f8f8',
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#ddd',
-    },
-    name: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    page: {
-        fontSize: 14,
-        color: '#555',
-    },
-});
-
 
 export default HomeScreen;

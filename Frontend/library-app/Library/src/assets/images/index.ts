@@ -1,11 +1,17 @@
-export const SPLASH = {
-    
-}
+export const SPLASH = {};
 
 export const LOGIN = {
     BACKGROUND: require('./Login/background.png'),
-}
+};
 
 export const MAIN = {
-    LOGO: require('./logo.png'),
-}
+    LOGO: require('./Main/logo.png'),
+};
+
+export const HOME = {
+    AVATAR: require('./Home/avt.png'),
+    SLIDE1: require('./Home/slide1.png'),
+    SLIDE2: require('./Home/slide2.png'),
+    SLIDE3: require('./Home/slide3.png'),
+    BOOK1: require('./Home/book1.jpeg'),
+};

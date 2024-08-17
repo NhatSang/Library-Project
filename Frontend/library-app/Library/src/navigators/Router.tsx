@@ -1,5 +1,4 @@
-import { LoginScreen } from '@screens/index';
-import SplashScreen from '@screens/SplashScreen';
+import { LoginScreen, SplashScreen } from '@screens/index';
 import React, { useEffect, useState } from 'react';
 import MainRouter from './MainRouter';
 
@@ -11,9 +10,9 @@ const Router = () => {
       setIsWelcome(false);
     }, 3000);
   }, []);
-  const user: any = 'nmhan';
+  const user: any = 'nhan';
 
-  return isWelcome ? <SplashScreen /> : user ? <MainRouter /> : <LoginScreen />;
+  return isWelcome ? <SplashScreen /> : user === 'nhan' ? <MainRouter /> : <LoginScreen />;
 };
 
 export default Router;
