@@ -31,7 +31,6 @@ const BookDetail = ({ navigation, route }: any) => {
             cache: true,
             key: image,
         });
-        console.log('result', result);
         setBackground(isAndroid ? result.average : result.secondary);
     };
 

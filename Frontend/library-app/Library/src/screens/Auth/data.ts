@@ -2,67 +2,67 @@ import { iMajor } from 'src/types/iUser';
 
 export const dataMajor: iMajor[] = [
     {
-        key: '1',
-        label: 'Công nghệ chế tạo máy',
+        id: '1',
+        name: 'Công nghệ chế tạo máy',
     },
     {
-        key: '2',
-        label: 'Công nghệ kỹ thuật cơ - điện tử',
+        id: '2',
+        name: 'Công nghệ kỹ thuật cơ - điện tử',
     },
     {
-        key: '3',
-        label: 'Công nghệ kỹ thuật cơ khí',
+        id: '3',
+        name: 'Công nghệ kỹ thuật cơ khí',
     },
     {
-        key: '4',
-        label: 'Công nghệ kỹ thuật điện, điện tử',
+        id: '4',
+        name: 'Công nghệ kỹ thuật điện, điện tử',
     },
     {
-        key: '5',
-        label: 'Công nghệ kỹ thuật điều khiển và tự động hoá',
+        id: '5',
+        name: 'Công nghệ kỹ thuật điều khiển và tự động hoá',
     },
     {
-        key: '6',
-        label: 'Công nghệ kỹ thuật điện tử - viễn thông',
+        id: '6',
+        name: 'Công nghệ kỹ thuật điện tử - viễn thông',
     },
     {
-        key: '7',
-        label: 'Công nghệ kỹ thuật máy tính',
+        id: '7',
+        name: 'Công nghệ kỹ thuật máy tính',
     },
     {
-        key: '8',
-        label: 'Công nghệ kỹ thuật ô tô',
+        id: '8',
+        name: 'Công nghệ kỹ thuật ô tô',
     },
     {
-        key: '9',
-        label: 'Công nghệ kỹ thuật hóa học',
+        id: '9',
+        name: 'Công nghệ kỹ thuật hóa học',
     },
     {
-        key: '10',
-        label: 'Dược học',
+        id: '10',
+        name: 'Dược học',
     },
     {
-        key: '11',
-        label: 'Công nghệ dệt, may',
+        id: '11',
+        name: 'Công nghệ dệt, may',
     },
     {
-        key: '12',
-        label: 'Thiết kế thời trang',
+        id: '12',
+        name: 'Thiết kế thời trang',
     },
     {
-        key: '13',
-        label: 'Công nghệ kỹ thuật nhiệt',
+        id: '13',
+        name: 'Công nghệ kỹ thuật nhiệt',
     },
     {
-        key: '14',
-        label: 'Công nghệ thông tin',
+        id: '14',
+        name: 'Công nghệ thông tin',
     },
     {
-        key: '15',
-        label: 'Hệ thống thông tin',
+        id: '15',
+        name: 'Hệ thống thông tin',
     },
     {
-        key: '16',
-        label: 'Khoa học máy tính',
+        id: '16',
+        name: 'Khoa học máy tính',
     },
 ];

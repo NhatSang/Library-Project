@@ -1,12 +1,15 @@
 const express = require("express");
 const { sendCode, verifyCode } = require("../services/MailService");
-const { signup, login } = require("../controllers/AuthController");
+const { signup, login,loginWithMicrosoft, addMajors } = require("../controllers/AuthController");
+const { authenticateJWT, authorizeRoles } = require("../middlewares/Auth");
 const authRouter = express.Router();
 
 // authRouter.post("/send-code", sendCode);
 // authRouter.post("/verify-code", verifyCode);
 authRouter.post("/signup", signup);
 authRouter.post("/login", login);
+authRouter.post("/loginms", loginWithMicrosoft);
+authRouter.post("/addmajors", addMajors);
 
 // Protected route for both admin and user
 authRouter.get("/profile", authenticateJWT, (req, res) => {

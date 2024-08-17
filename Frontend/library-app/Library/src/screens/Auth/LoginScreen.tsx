@@ -6,12 +6,16 @@ import { envConfig } from '@constants/envConfig'
 import { fontFamilies } from '@constants/fontFamilies'
 import { globalColor } from '@constants/globalColor'
 import { ScreenName } from '@constants/ScreenName'
+import { useNavigation } from '@react-navigation/native'
+import { saveToken } from '@utils/storage'
 import React, { useCallback, useState } from 'react'
-import { Image, ImageBackground, Platform, View } from 'react-native'
+import { Alert, Image, ImageBackground, Platform, View } from 'react-native'
 import { authorize } from 'react-native-app-auth'
 import AzureAuth from 'react-native-azure-auth'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { iUser } from 'src/types/iUser'
+import { useDispatch } from 'react-redux'
+import { setAuth, setUser } from '../../redux/authReducer'
+import { _login } from './apis'
 
 
 const azureauth = new AzureAuth({
@@ -32,29 +36,13 @@ const configs: any = {
   },
 };
 
-const LoginScreen = ({ navigation }: any) => {
+const LoginScreen = () => {
+  const navigation: any = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleLogin = useCallback(async (provider: any) => {
     setIsLoading(true);
-    // const config = configs[provider];
-    // authorize({
-    //   ...config,
-    //   connectionTimeoutSeconds: 5,
-    //   iosPrefersEphemeralSession: false,
-    // })
-    //   .then(async (response: any) => {
-    //     if (response) {
-    //       const info = await azureauth.auth.msGraphRequest({
-    //         token: response.accessToken,
-    //         path: '/me',
-    //       });
-    //       login(info);
-    //     }
-    //   })
-    //   .catch((error: any) => {
-    //     console.log('error', error);
-    //   });
     try {
       const response = await authorize(configs[provider]);
       if (response) {
@@ -74,13 +62,29 @@ const LoginScreen = ({ navigation }: any) => {
     return studentEmailPattern.test(email);
   };
 
-  const login = (userInfo: iUser) => {
-    setIsLoading(false);
-    if (isValidStudentEmail(userInfo.mail)) {
-      navigation.navigate(ScreenName.UserFormScreen);
-    } else {
-      navigation.navigate(ScreenName.UserFormScreen);
+  const login = async (userInfo: any) => {
+    const user: any = {
+      email: userInfo.mail,
+      password: userInfo.id,
     }
+    if (isValidStudentEmail(userInfo.mail)) {
+      const res = await _login(user);
+      if (res.status === 404) {
+        navigation.navigate(ScreenName.UserFormScreen, {
+          email: userInfo.mail,
+          password: userInfo.id,
+        });
+      }
+      if (res.status === 200) {
+        dispatch(setUser(res.data.user));
+        dispatch(setAuth(res.data.accessToken));
+        await saveToken(res.data.accessToken);
+      }
+
+    } else {
+      Alert.alert('Thông báo', 'Vui lòng sử dụng email sinh viên để đăng nhập');
+    }
+    setIsLoading(false);
   };
 
   return (

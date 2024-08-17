@@ -1,12 +1,24 @@
 export interface iUser {
-    id: string;
-    mssv: string;
-    dispalayName: string;
-    mail: string;
+    id?: string;
+    name: string;
+    gender:eGender;
+    majors: iMajor;
+    email: string;
     password: string;
+    role: string;
+    active: boolean;
+    studentCode: string;
+    studnetYear: number;
+    accessToken?: string;
+    dob:Date
 }
 
 export interface iMajor {
-    key: string;
-    label: string;
+    id: string;
+    name: string | undefined;
+}
+
+export enum eGender {
+    nam = 'Male',
+    nu = 'Female',
 }

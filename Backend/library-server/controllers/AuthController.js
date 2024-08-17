@@ -1,4 +1,5 @@
 const { generateToken } = require("../jwt/JwtService");
+const Majors = require("../models/Majors");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
@@ -46,14 +47,82 @@ const login = async (req, res) => {
       const result = await bcrypt.compare(password, user.password);
       if (result) {
         const token = generateToken(user.username,user.role);
-        return res.status(200).json({ token: token });
+        return res.status(200).json({
+          status:200,
+          data:{
+            user:user,
+            accessToken:token,
+          },
+          message:"Login successfully",
+        });
       }
       return res.send("Incorrect password");
     }
-    return res.send("Incorrect username");
+    return res.json({
+      status:404
+    });
   } catch (err) {
     console.log("Error login: ", err.message);
   }
 };
 
-module.exports = { signup, login };
+const loginWithMicrosoft = async (req,res)=>{
+  const userInfo=req.body;
+  try {
+    const user = await User.findOne({ email: userInfo.email });
+    if(user){
+      const result = await bcrypt.compare(userInfo.password,user.password);
+      if(result){
+        const token = generateToken(user.email,user.role);
+        return res.status(200).json({
+          status:200,
+          data:{
+            user:user,
+            accessToken:token,
+          },
+          message:"Login successfully",
+        });
+      }
+      return res.status(401).josn({message:"Incorrect password"});
+    }else {
+      const major = await Majors.findOne({ name: userInfo.majors.name });
+      const salt = await bcrypt.genSalt(10);
+    const hashpassword = await bcrypt.hash(userInfo.password, salt);
+    const newUser = new User({
+      name: userInfo.name,
+      gender: userInfo.gender,
+      dob: userInfo.dob,
+      email: userInfo.email,
+      password: hashpassword,
+      majors: major._id,
+      role: userInfo.role,
+      studentCode: userInfo.studentCode,
+      studentYear: userInfo.studentYear,
+    });
+    await newUser.save();
+    const token = generateToken(newUser.username,newUser.role);
+    return res.status(201).json({
+      data:newUser,
+      accessToken:token,
+      message:"Create new user successfully",
+    });
+    }
+  } catch (error) {
+    console.log("Error loginWithMicrosoft: ",error);
+  }
+}
+
+
+
+const addMajors = async (req, res) => {
+  const { name } = req.body;
+  try {
+    const newMajors = new Majors({ name: name });
+    await newMajors.save();
+    return res.status(201).json({ data: newMajors });
+  } catch (err) {
+    return res.status(500).json({ message: "lỗi" });
+  }
+};
+
+module.exports = { signup, login,loginWithMicrosoft,addMajors };

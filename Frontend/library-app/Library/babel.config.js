@@ -13,6 +13,7 @@ module.exports = {
                     '@constants': './src/constants',
                     '@navigators': './src/navigators',
                     '@assets': './src/assets',
+                    '@redux': './src/redux',
                 },
             },
         ],

@@ -1,7 +1,7 @@
 import { AppButton, AppInput, AppText } from '@components/index'
 import { fontFamilies } from '@constants/fontFamilies'
 import { globalColor } from '@constants/globalColor'
-import { ScreenName } from '@constants/ScreenName'
+import { saveToken } from '@utils/storage'
 import React, { useEffect, useState } from 'react'
 import { Alert, FlatList, Modal, Pressable, ScrollView, TouchableHighlight, View } from 'react-native'
 import DatePicker from 'react-native-date-picker'
@@ -9,10 +9,16 @@ import { RadioButton } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Fontisto from 'react-native-vector-icons/Fontisto'
-import { iMajor } from 'src/types/iUser'
+import { useDispatch } from 'react-redux'
+import { iMajor, iUser } from 'src/types/iUser'
+import { setAuth, setUser } from '../../redux/authReducer'
+import { eGender } from '../../types/iUser'
+import { _loginMS } from './apis'
 import { dataMajor } from './data'
 
-const UserFormScreen = ({ navigation }: any) => {
+const UserFormScreen = ({ navigation, route }: any) => {
+    const { email, password } = route?.params;
+    const dispatch = useDispatch();
     const [name, setName] = useState('');
     const [studentCode, setStudentCode] = useState('');
     const [studentYear, setStudentYear] = useState('');
@@ -72,11 +78,39 @@ const UserFormScreen = ({ navigation }: any) => {
         return valid;
     };
 
+    const handleSignUp = async () => {
+        const nameMajor = majorList.find(item => item.id === major)?.name;
+        const data: iUser = {
+            name: name,
+            gender: checked === 'nam' ? eGender.nam : eGender.nu,
+            majors: { id: '', name: nameMajor },
+            email: email,
+            password: password,
+            role: 'user',
+            active: true,
+            studentCode: studentCode,
+            studnetYear: parseInt(studentYear),
+            dob: date,
+        }
+        try {
+            const res = await _loginMS(data);
+            if (res.status) {
+                dispatch(setUser(res.data.user));
+                dispatch(setAuth(res.data.accessToken));
+                await saveToken(res.data.accessToken);
+
+            }
+        } catch (error) {
+            console.log('error', error);
+        }
+    };
+
     const handleSubmit = () => {
         setIsLoading(true);
-        if (!validateForm()) {
+        if (validateForm()) {
+            handleSignUp();
             setIsLoading(false);
-            navigation.navigate(ScreenName.DemoDownLoad);
+
         } else {
             Alert.alert('Thông báo', error);
             setIsLoading(false);
@@ -113,7 +147,7 @@ const UserFormScreen = ({ navigation }: any) => {
                                 <AppText color={globalColor.text_light} font={fontFamilies.robotoBold} text='Chuyên ngành' />
                             </TouchableHighlight>
                             <View className='flex-1 items-center justify-center'>
-                                <AppText font={fontFamilies.robotoBold} size={16} text={majorList.find(item => item.key === major)?.label} />
+                                <AppText font={fontFamilies.robotoBold} size={16} text={majorList.find(item => item.id === major)?.name} />
                             </View>
 
                         </View>
@@ -235,7 +269,7 @@ const UserFormScreen = ({ navigation }: any) => {
                     <View className='flex-1 justify-end pb-6 px-5'>
                         <AppButton
                             loading={isLoading}
-                            onPress={() => { handleSubmit() }}
+                            onPress={handleSubmit}
                             title='Tiếp tục'
                             type='primary'
                             color={globalColor.primary}
@@ -258,13 +292,13 @@ const UserFormScreen = ({ navigation }: any) => {
                         <FlatList
                             showsVerticalScrollIndicator={false}
                             data={majorList}
-                            keyExtractor={(item) => item.key}
+                            keyExtractor={(item) => item.id}
                             renderItem={({ item }) => (
                                 <Pressable onPress={() => {
-                                    setMajor(item.key)
+                                    setMajor(item.id)
                                     setVisible(false)
                                 }} className='flex-row justify-between px-4 py-4 border-b border-primary-light '>
-                                    <AppText text={item.label} font={fontFamilies.robotoRegular} size={16} />
+                                    <AppText text={item.name} font={fontFamilies.robotoRegular} size={16} />
                                 </Pressable>
                             )}
                         />
