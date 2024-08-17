@@ -4,8 +4,16 @@ const bcrypt = require("bcryptjs");
 
 const signup = async (req, res) => {
   try {
-    const { name, gender, dob, email, password, conformPassword, majors } =
-      req.body;
+    const {
+      name,
+      gender,
+      dob,
+      email,
+      password,
+      conformPassword,
+      majors,
+      role,
+    } = req.body;
     if (password !== conformPassword)
       return res.send({ message: "Conform password is invalid!" });
     const user = await User.findOne({ username: username });
@@ -21,6 +29,7 @@ const signup = async (req, res) => {
       email: email,
       password: hashpassword,
       majors: majors,
+      role: role,
     });
     await newUser.save();
     return res.status(201).json({ data: newUser });
@@ -36,12 +45,12 @@ const login = async (req, res) => {
     if (user) {
       const result = await bcrypt.compare(password, user.password);
       if (result) {
-        const token = generateToken(username);
+        const token = generateToken(user.username,user.role);
         return res.status(200).json({ token: token });
       }
-      return res.send("Password is incorrect");
+      return res.send("Incorrect password");
     }
-    return res.send("Username is incorrect");
+    return res.send("Incorrect username");
   } catch (err) {
     console.log("Error login: ", err.message);
   }
