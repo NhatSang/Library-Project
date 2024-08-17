@@ -10,9 +10,9 @@ const Router = () => {
       setIsWelcome(false);
     }, 3000);
   }, []);
-  const user: any = 'nmhan';
+  const user: any = 'nhan';
 
-  return isWelcome ? <SplashScreen /> : user ? <MainRouter /> : <LoginScreen />;
+  return isWelcome ? <SplashScreen /> : user === 'nhan' ? <MainRouter /> : <LoginScreen />;
 };
 
 export default Router;

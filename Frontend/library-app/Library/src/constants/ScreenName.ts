@@ -5,4 +5,7 @@ export const ScreenName = {
     AccountScreen: 'AccountScreen',
     HomeScreen: 'HomeScreen',
     DemoDownLoad: 'DemoDownLoad',
+    BookDetail: 'BookDetail',
+    ReadText: 'ReadText',
+    RatingScreen: 'RatingScreen',
 };

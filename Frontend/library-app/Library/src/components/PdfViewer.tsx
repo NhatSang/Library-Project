@@ -39,7 +39,6 @@ const PdfViewer = (props: Props) => {
                         }
                     } catch (error) {
                         console.log('Error loading pdf:', error);
-
                     }
                 }}
                 onPageChanged={(page) => {

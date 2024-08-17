@@ -1,16 +1,22 @@
-// #import <RCTAppDelegate.h>
-// #import <UIKit/UIKit.h>
-
-// @interface AppDelegate : RCTAppDelegate
-
-// @end
 #import <RCTAppDelegate.h>
 #import <UIKit/UIKit.h>
+#import <Expo/Expo.h>
+#import <React/RCTLinkingManager.h>
 #import "RNAppAuthAuthorizationFlowManager.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate, RNAppAuthAuthorizationFlowManager>
+@interface AppDelegate : EXAppDelegateWrapper <RNAppAuthAuthorizationFlowManager>
 
-@property (nonatomic, strong) UIWindow *window;
-@property (nonatomic, weak) id<RNAppAuthAuthorizationFlowManagerDelegate> authorizationFlowManagerDelegate;
+@property(nonatomic, weak) id<RNAppAuthAuthorizationFlowManagerDelegate> authorizationFlowManagerDelegate;
 
 @end
+// #import <RCTAppDelegate.h>
+// #import <Expo/Expo.h>
+// #import <UIKit/UIKit.h>
+// #import "RNAppAuthAuthorizationFlowManager.h"
+
+// @interface AppDelegate : EXAppDelegateWrapper <UIApplicationDelegate, RCTBridgeDelegate, RNAppAuthAuthorizationFlowManager>
+
+// @property (nonatomic, strong) UIWindow *window;
+// @property (nonatomic, weak) id<RNAppAuthAuthorizationFlowManagerDelegate> authorizationFlowManagerDelegate;
+
+// @end
