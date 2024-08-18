@@ -136,7 +136,7 @@ const BookDetail = ({ navigation, route }: any) => {
                                         <View className='flex-row'>
                                             <Image source={HOME.AVATAR} className='w-8 h-8' />
                                             <View className='pl-3'>
-                                                <AppText text='Nguyễn Văn A' font={fontFamilies.robotoBold} />
+                                                <AppText text='Phạm Đức Nhân' font={fontFamilies.robotoBold} />
                                                 <View>
                                                     <Rate rating={4} />
                                                 </View>

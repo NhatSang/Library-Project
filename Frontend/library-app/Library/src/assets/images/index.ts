@@ -6,6 +6,7 @@ export const LOGIN = {
 
 export const MAIN = {
     LOGO: require('./Main/logo.png'),
+    LOGOIUH: require('./Main/logo_iuh.png'),
 };
 
 export const HOME = {

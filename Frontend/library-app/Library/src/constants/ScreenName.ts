@@ -8,4 +8,7 @@ export const ScreenName = {
     BookDetail: 'BookDetail',
     ReadText: 'ReadText',
     RatingScreen: 'RatingScreen',
+    SearchScreen: 'SearchScreen',
+    HistoryScreen: 'HistoryScreen',
+    AudioBook: 'AudioBook',
 };
