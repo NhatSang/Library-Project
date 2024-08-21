@@ -14,7 +14,7 @@ const HistoryScreen = () => {
         const setupPlayer = async () => {
             await TrackPlayer.setupPlayer();
             await TrackPlayer.add({
-                url: 'https://file-examples.com/storage/fe519944ff66ba53b99c446/2017/11/file_example_MP3_700KB.mp3',
+                url: 'https://pdf8888.s3.ap-southeast-1.amazonaws.com/1h.mp3',
             });
         };
         setupPlayer();

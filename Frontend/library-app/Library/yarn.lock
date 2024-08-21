@@ -8183,12 +8183,24 @@ react-native-date-picker@^5.0.4:
   resolved "https://registry.npmjs.org/react-native-date-picker/-/react-native-date-picker-5.0.4.tgz"
   integrity sha512-UycNfXGd4ipgdU2a+oZGj7h1nvp8Gz49f/Ko+YdWh6nrBKB49MEp0n9eF1QngbxMKqdK0AdY4udb4IdVVWji4g==
 
+react-native-gradients@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-gradients/-/react-native-gradients-2.1.1.tgz#c4c48192b67ba16ceecd4e635bbb166816b6028a"
+  integrity sha512-rDLtxPr9l1K/dStihTsSeljnsLbkhKCDjDnKGLPO3uo5b/05AajT/s2MsUIpx80uDH/eggEck705j/tuE7LE3Q==
+  dependencies:
+    react-native-svg ">=13.2.0"
+
 react-native-image-colors@^2.4.0:
   version "2.4.0"
   resolved "https://registry.npmjs.org/react-native-image-colors/-/react-native-image-colors-2.4.0.tgz"
   integrity sha512-qlC31+UNVthByNLVuYSEQeZghOXn3uy1GLF6lHKlvT1HM1GGFH/LXNhU8iXAoQvUyzNa1bEAOTo09Hwinvp/rA==
   dependencies:
     node-vibrant "3.1.6"
+
+react-native-linear-gradient@^2.8.3:
+  version "2.8.3"
+  resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.8.3.tgz#9a116649f86d74747304ee13db325e20b21e564f"
+  integrity sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA==
 
 react-native-logs@^5.1.0:
   version "5.1.0"
@@ -8224,6 +8236,15 @@ react-native-screens@^3.33.0:
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
+
+react-native-svg@>=13.2.0:
+  version "15.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-15.6.0.tgz#13b2af53b1701597df301122b869b61918e1e9a5"
+  integrity sha512-TUtR+h+yi1ODsd8FHdom1TpjfWOmnaK5pri5rnSBXnMqpzq8o2zZfonHTjPX+nS3wb/Pu2XsoARgYaHNjVWXhQ==
+  dependencies:
+    css-select "^5.1.0"
+    css-tree "^1.1.3"
+    warn-once "0.1.1"
 
 react-native-svg@^15.5.0:
   version "15.5.0"

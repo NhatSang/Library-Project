@@ -157,13 +157,15 @@ const BookDetail = ({ navigation, route }: any) => {
                             color={globalColor.primary_2}
                             styles={{ width: '40%', height: '80%', borderRadius: 10 }}
                             onPress={() => {
-                                Toast.show({
-                                    type: 'info',
-                                    position: 'bottom',
-                                    text1: 'Mình chưa có voice nhé',
-                                    visibilityTime: 2000,
-                                    text1Style: { fontSize: 18 }
-                                });
+                                // Toast.show({
+                                //     type: 'info',
+                                //     position: 'bottom',
+                                //     text1: 'Mình chưa có voice nhé',
+                                //     visibilityTime: 2000,
+                                //     text1Style: { fontSize: 18 }
+                                // });
+                                navigation.navigate(ScreenName.AudioBook, { id })
+
                             }}
                             title='Nghe sách'
                         />
