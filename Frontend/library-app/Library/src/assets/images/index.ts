@@ -7,6 +7,7 @@ export const LOGIN = {
 export const MAIN = {
     LOGO: require('./Main/logo.png'),
     LOGOIUH: require('./Main/logo_iuh.png'),
+    DIANHAC: require('./Main/dianhac.webp'),
 };
 
 export const HOME = {

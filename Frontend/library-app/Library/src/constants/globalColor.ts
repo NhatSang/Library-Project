@@ -9,4 +9,7 @@ export const globalColor = {
     primary_2: '#0A75AD',
     gray: '#E5E5E5',
     dark: '#000',
+    success: '#4BB543',
+    warning: '#FFA500',
+    danger: '#FF0000',
 };

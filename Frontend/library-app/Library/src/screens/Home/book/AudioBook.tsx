@@ -1,4 +1,4 @@
-import { HOME } from '@assets/images';
+import { HOME, MAIN } from '@assets/images';
 import AppText from '@components/AppText';
 import Space from '@components/Space';
 import { fontFamilies } from '@constants/fontFamilies';
@@ -12,6 +12,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import TrackPlayer, { useProgress } from 'react-native-track-player';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const AudioBook = ({ navigation }: any) => {
     const [color1, setColor1] = useState('white');
@@ -135,14 +136,17 @@ const AudioBook = ({ navigation }: any) => {
                             transform: [{ rotate: spin }],
                         }}
                     >
-                        <View className='h-1 bg-white w-full' />
+                        <Image className='h-9/10 w-9/12' resizeMode='stretch' source={MAIN.DIANHAC} />
                     </Animated.View>
                     <Image
-                        className='absolute top-1/4'
+                        className='absolute top-1/4 rounded-xl'
                         source={HOME.BOOK1}
                     />
                 </View>
-                <View className='w-full h-2/10 justify-center items-center'>
+                <View className='p-4'>
+                    <AppText size={20} text='Chương I Demo...' />
+                </View>
+                <View className='w-full h-05/10 justify-center items-center'>
                     <Slider
                         style={{ width: '90%', height: 5 }}
                         minimumValue={0}
@@ -154,7 +158,7 @@ const AudioBook = ({ navigation }: any) => {
                         maximumTrackTintColor={globalColor.text_light}
                     />
                 </View>
-                <View className=' flex-1 w-full flex-row justify-center items-start'>
+                <View className='flex-1 w-full flex-row justify-center items-start'>
                     <View className='flex-row w-full justify-around items-center'>
                         <Pressable onPress={stop}>
                             <AntDesign name='stepbackward' size={30} color={globalColor.text_light} />
@@ -175,6 +179,16 @@ const AudioBook = ({ navigation }: any) => {
                             <AntDesign name='stepforward' size={30} color={globalColor.text_light} />
                         </Pressable>
                     </View>
+                </View>
+                <View className='flex-row justify-around pb-4'>
+                    <Pressable className='justify-center items-center'>
+                        <AntDesign name='bars' size={30} color={globalColor.text_light} />
+                        <AppText font={fontFamilies.robotoBold} color={globalColor.white} size={16} text='Chương' />
+                    </Pressable>
+                    <Pressable className='justify-center items-center'>
+                        <MaterialCommunityIcons name='speedometer' size={30} />
+                        <AppText font={fontFamilies.robotoBold} color={globalColor.white} size={16} text='Tốc độ' />
+                    </Pressable>
                 </View>
             </LinearGradient>
         </SafeAreaView>
