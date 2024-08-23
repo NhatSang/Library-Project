@@ -1,8 +1,14 @@
-const multer = require("multer");
-const AWS = require("aws-sdk");
-require("dotenv").config();
-const path = require("path");
+// const multer = require("multer");
+// const AWS = require("aws-sdk");
+// require("dotenv").config();
+// const path = require("path");
 
+import multer from "multer";
+import AWS from "aws-sdk";
+import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config();
 //cau hinh aws
 process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE = "1";
 
@@ -21,7 +27,7 @@ const storage = multer.memoryStorage({
   },
 });
 
-const upload = multer({
+export const upload = multer({
   storage,
   //   limits: { fieldSize: 2000000 },
   fileFilter(req, file, cb) {
@@ -39,7 +45,7 @@ function checkFileType(file, cb) {
   return cb("err upload!");
 }
 
-const saveFile = async (file) => {
+export const saveFile = async (file) => {
   try {
     const filePath = `${Date.now().toString()}_${file.originalname}`;
 
@@ -57,7 +63,7 @@ const saveFile = async (file) => {
     throw new Error("Upload file to AWS S3 failed");
   }
 };
-const saveFileWithKey = async (file, key) => {
+export const saveFileWithKey = async (file, key) => {
   try {
     const paramsS3 = {
       Bucket: bucketName,
@@ -73,4 +79,3 @@ const saveFileWithKey = async (file, key) => {
     throw new Error("Upload file to AWS S3 failed");
   }
 };
-module.exports = { upload, saveFile, saveFileWithKey };

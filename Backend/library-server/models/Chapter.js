@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const chapterSchema = new mongoose.Schema({
   book: { type: mongoose.Schema.Types.ObjectId, ref: "Book" },
@@ -9,4 +9,4 @@ const chapterSchema = new mongoose.Schema({
 });
 
 const Chapter = mongoose.model("Chapter", chapterSchema);
-module.exports = Chapter;
+export default Chapter;
