@@ -1,13 +1,23 @@
-const express = require("express");
-const http = require("http");
-const ConnectDB = require("./database/ConnectDB");
-const dotenv = require("dotenv");
-const cors = require("cors");
-const authRouter = require("./routers/AuthRouter");
+// const express = require("express");
+// const http = require("http");
+// const ConnectDB = require("./database/ConnectDB");
+// const dotenv = require("dotenv");
+// const cors = require("cors");
+// const authRouter = require("./routers/AuthRouter");
+// const bookRouter = require("./routers/BookRouter");
+
+import express from "express";
+import http from "http";
+import dotenv from "dotenv";
+import cors from "cors";
+
+import ConnectDB from "./database/ConnectDB.js";
+import authRouter from "./routers/AuthRouter.js";
+import bookRouter from "./routers/BookRouter.js";
 
 dotenv.config();
 const app = express();
-const port = 3000;
+const port = 5000;
 
 const corsOprions = {
   origin: "*",
@@ -22,6 +32,7 @@ app.use(cors(corsOprions));
 const server = http.createServer(app);
 
 app.use("/api/v1", authRouter);
+app.use("/api/v1", bookRouter);
 
 server.listen(port, () => {
   ConnectDB();

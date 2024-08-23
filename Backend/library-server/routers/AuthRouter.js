@@ -1,9 +1,19 @@
-const express = require("express");
-const { sendCode, verifyCode } = require("../services/MailService");
-const { signup, login,loginWithMicrosoft, addMajors } = require("../controllers/AuthController");
-const { authenticateJWT, authorizeRoles } = require("../middlewares/Auth");
-const authRouter = express.Router();
+// const express = require("express");
+// const { sendCode, verifyCode } = require("../services/MailService");
+// const { signup, login,loginWithMicrosoft, addMajors } = require("../controllers/AuthController");
+// const { authenticateJWT, authorizeRoles } = require("../middlewares/Auth");
 
+import express from "express";
+import {
+  signup,
+  login,
+  loginWithMicrosoft,
+  addMajors,
+} from "../controllers/AuthController.js";
+
+import { authenticateJWT, authorizeRoles } from "../middlewares/Auth.js";
+
+const authRouter = express.Router();
 // authRouter.post("/send-code", sendCode);
 // authRouter.post("/verify-code", verifyCode);
 authRouter.post("/signup", signup);
@@ -30,4 +40,4 @@ authRouter.get("/user", authenticateJWT, authorizeRoles("user"), (req, res) => {
   res.json({ message: "User content" });
 });
 
-module.exports = authRouter;
+export default authRouter;
