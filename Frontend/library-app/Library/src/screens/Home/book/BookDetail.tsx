@@ -136,7 +136,7 @@ const BookDetail = ({ navigation, route }: any) => {
                                         <View className='flex-row'>
                                             <Image source={HOME.AVATAR} className='w-8 h-8' />
                                             <View className='pl-3'>
-                                                <AppText text='Nguyễn Văn A' font={fontFamilies.robotoBold} />
+                                                <AppText text='Phạm Đức Nhân' font={fontFamilies.robotoBold} />
                                                 <View>
                                                     <Rate rating={4} />
                                                 </View>
@@ -157,13 +157,15 @@ const BookDetail = ({ navigation, route }: any) => {
                             color={globalColor.primary_2}
                             styles={{ width: '40%', height: '80%', borderRadius: 10 }}
                             onPress={() => {
-                                Toast.show({
-                                    type: 'info',
-                                    position: 'bottom',
-                                    text1: 'Mình chưa có voice nhé',
-                                    visibilityTime: 2000,
-                                    text1Style: { fontSize: 18 }
-                                });
+                                // Toast.show({
+                                //     type: 'info',
+                                //     position: 'bottom',
+                                //     text1: 'Mình chưa có voice nhé',
+                                //     visibilityTime: 2000,
+                                //     text1Style: { fontSize: 18 }
+                                // });
+                                navigation.navigate(ScreenName.AudioBook, { id })
+
                             }}
                             title='Nghe sách'
                         />

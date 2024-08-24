@@ -90,7 +90,7 @@ const LoginScreen = () => {
   return (
     <ImageBackground source={LOGIN.BACKGROUND} className='flex-1' >
       <SafeAreaView className='flex-1 justify-between items-center py-5'>
-        <Image source={MAIN.LOGO} className='w-60 h-60' />
+        <Image resizeMode='stretch' source={MAIN.LOGOIUH} className='w-9/12 h-40' />
         <View className='justify-center items-center mb-40'>
           <AppText text='Wellcome to Library IUH' color='white' size={24} font={fontFamilies.robotoBold} />
           <AppText text='Please login to continue' color='white' size={16} />

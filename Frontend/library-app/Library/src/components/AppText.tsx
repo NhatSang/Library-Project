@@ -8,17 +8,19 @@ type Props = {
     numberOfLines?: number,
     color?: string,
     styles?: StyleProp<TextStyle>,
-    onPress?: () => void
+    onPress?: () => void,
+    center?: boolean
 }
 
 const AppText = (props: Props) => {
-    const { text, size, font, numberOfLines, color, styles, onPress } = props;
+    const { text, center, size, font, numberOfLines, color, styles, onPress } = props;
 
     const textComponent = (
         <Text
             numberOfLines={numberOfLines}
             style={[
                 {
+                    textAlign: center ? 'center' : 'left',
                     fontFamily: font ?? 'Roboto-Regular',
                     fontSize: size ?? 14,
                     color: color ?? 'black'

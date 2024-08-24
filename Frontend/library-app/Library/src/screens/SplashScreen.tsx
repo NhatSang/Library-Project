@@ -1,4 +1,5 @@
 
+import { globalColor } from '@constants/globalColor';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -13,8 +14,9 @@ const SplashScreen = () => {
 
   return (
     <View
-      className={`flex-1 bg-background-${colorScheme} items-center justify-center `}>
-      <Image source={MAIN.LOGO} className="w-72 h-72" />
+      style={{ backgroundColor: colorScheme === 'dark' ? globalColor.bg_dark : globalColor.bg_light }}
+      className={`flex-1 items-center justify-center `}>
+      <Image resizeMode='contain' source={MAIN.LOGOIUH} className="w-72 h-72" />
       <ActivityIndicator
         size={50}
         className="color-primary absolute bottom-10"

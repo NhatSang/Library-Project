@@ -17,13 +17,15 @@ const HomeScreen = ({ navigation, route }: any) => {
         <SafeAreaView className='flex-1 px-3'>
             <View className='flex-row justify-between py-4 pb-8'>
                 <Pressable>
-                    <Image source={HOME.AVATAR} className='w-12 h-12' />
+                    <Image source={HOME.AVATAR} className='w-10 h-10' />
                 </Pressable>
                 <Pressable>
-                    <Ionicons name='notifications-sharp' size={48} color={globalColor.primary} />
+                    <Ionicons name='notifications-sharp' size={40} color={globalColor.primary} />
                     <Badge className='absolute'>3</Badge>
                 </Pressable>
-                <Pressable className='w-4/6 bg-gray-400 items-center flex-row rounded-xl px-4'>
+                <Pressable
+                    onPress={() => { navigation.navigate(ScreenName.SearchScreen) }}
+                    className='w-4/6 bg-gray-400 items-center flex-row rounded-xl px-4'>
                     <Ionicons name='search' size={32} />
                     <AppText size={16} color={globalColor.text_light} text='Tên sách, tên ngành ....' />
                 </Pressable>
@@ -44,9 +46,9 @@ const HomeScreen = ({ navigation, route }: any) => {
                                 <Pressable
                                     onPress={() => navigation.navigate(ScreenName.BookDetail, { id: '12345678' })}
                                     className='px-6'>
-                                    <Image source={HOME.BOOK1} className='w-40 h-52' />
-                                    <View className='w-40 justify-center items-center pt-3'>
-                                        <AppText numberOfLines={2} size={16} font={fontFamilies.robotoBold} text='Tư tưởng Hồ Chí Minh' />
+                                    <Image source={HOME.BOOK1} className='w-36 h-48' />
+                                    <View className='w-36 justify-center items-center pt-3'>
+                                        <AppText center numberOfLines={2} size={16} font={fontFamilies.robotoBold} text='Tư tưởng Hồ Chí Minh' />
                                         <AppText numberOfLines={1} size={12} text='Bộ giáo duc và dào tạo' />
                                     </View>
                                 </Pressable>
