@@ -69,7 +69,7 @@ export const saveFileWithKey = async (file, key) => {
       Bucket: bucketName,
       Key: key,
       Body: file,
-      ContentType: "application/pdf",
+      ContentType: file.mimetype,
     };
 
     const data = await s3.upload(paramsS3).promise();

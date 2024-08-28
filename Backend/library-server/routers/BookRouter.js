@@ -4,7 +4,8 @@
 
 import express from "express";
 import { upload } from "../services/AwsServices.js";
-import { addBook } from "../controllers/BookController.js";
+import { addBook } from "../controllers/book_controller/BookController.js";
+
 const bookRouter = express.Router();
 
 bookRouter.post("/add-book", upload.single("pdf"), addBook);
