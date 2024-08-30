@@ -25,7 +25,8 @@ export const addBook = async (req, res) => {
           req.file.buffer,
           outline[i].title,
           outline[i].startPage,
-          outline[i].endPageNumber
+          outline[i].endPageNumber,
+          newBook._id
         );
 
         newChapter = new Chapter({
@@ -40,7 +41,7 @@ export const addBook = async (req, res) => {
     } else {
       // lưu cả file thành 1 chương
       // chuyển thành audio cho cả file
-      const audioLink = await handleTextToSpeech(req.file, title);
+      const audioLink = await handleTextToSpeech(req.file, newBook._id);
       newChapter = new Chapter({
         book: newBook._id,
         title: title,
@@ -50,7 +51,7 @@ export const addBook = async (req, res) => {
       });
       await newChapter.save();
     }
-    return res.status(204).json({ message: "Success" });
+    return res.status(200).json({ message: "Success" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: err });

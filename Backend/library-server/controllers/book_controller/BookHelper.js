@@ -4,13 +4,13 @@ import { PDFDocument } from "pdf-lib";
 import pdf from "pdf-parse";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import { saveFileWithKey } from "../../services/AwsServices.js";
-const ffmpegPath = "../../ffmpeg_build/bin/ffmpeg";
-const ffprobePath = "../ffmpeg_build/bin/ffprobe";
+const ffmpegPath = "./ffmpeg-7.0.2-essentials_build/bin/ffmpeg.exe";
+const ffprobePath = "./ffmpeg-7.0.2-essentials_build/bin/ffprobe.exe";
 import ffmpeg from "fluent-ffmpeg";
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
 
-const client = new textToSpeech.TextToSpeechClient({
+const client = new textToSpeech.TextToSpeechLongAudioSynthesizeClient({
   keyFilename: "./json-key/library-project-433704-6c89745a241a.json",
 });
 
@@ -36,11 +36,13 @@ export const getPdfOutline = async (filePath) => {
         startPageNumber = pageIndex + 1;
         endPageNumber = outline[i + 1]
           ? (await pdfDocument.getPageIndex(outline[i + 1].dest[0])) - 1
-          : pdfDocument.numPages;
+          : pdfDocument.numPages - 1;
         // console.log(pageNumber);
       }
 
-      //   console.log(`Title: ${title}, Page: ${pageNumber}`);
+      console.log(
+        `Title: ${title}, startPage: ${startPageNumber},end:${endPageNumber}`
+      );
       list.push({ title: title, startPage: startPageNumber, endPageNumber });
       // if (outline[i].items && outline[i].items.length > 0) {
       //   for (let j = 0; j < outline[i].items.length; j++) {
@@ -75,7 +77,13 @@ export const getPdfOutline = async (filePath) => {
   }
 };
 
-export const splitPDF = async (pdfBuffer, title, startPage, endPage) => {
+export const splitPDF = async (
+  pdfBuffer,
+  title,
+  startPage,
+  endPage,
+  bookId
+) => {
   try {
     // Tạo tài liệu PDF mới
     const pdfDoc = await PDFDocument.load(pdfBuffer);
@@ -98,7 +106,7 @@ export const splitPDF = async (pdfBuffer, title, startPage, endPage) => {
     const pdfSublink = await saveFileWithKey(pdfBytes, key);
 
     // Lưu audio (chưa thực hiện)
-    const audioLink = await handleTextToSpeech(pdfBytes, title);
+    const audioLink = await handleTextToSpeech(pdfBytes, bookId);
 
     return { pdfSublink, audioLink };
   } catch (err) {
@@ -109,46 +117,11 @@ export const splitPDF = async (pdfBuffer, title, startPage, endPage) => {
 
 export const handleTextToSpeech = async (PdfFile, title) => {
   try {
-    if (PdfFile) {
-      const pdfData = await pdf(PdfFile);
-      const text = pdfData.text;
-      const textChunks = splitTextIntoChunks(text, 5000);
-
-      // Convert text chunks to speech
-      const promises = textChunks.map((chunk, index) =>
-        convertTextToSpeech(chunk, `output_${index}.mp3`)
-      );
-
-      await Promise.all(promises);
-
-      // Merge audio files
-      const files = textChunks.map((_, index) => `./temp/output_${index}.mp3`);
-      await mergeAudioFiles(files, "final_output.mp3");
-
-      // Clean up intermediate files
-      cleanup(files);
-
-      const key = `${Date.now().toString()}_${title}.mp3`;
-
-      // Read the final output file and upload it
-      const audioLink = await new Promise((resolve, reject) => {
-        fs.readFile("./temp/final_output.mp3", async (err, data) => {
-          if (err) {
-            console.log("Fail to read file mp3");
-            return reject(err);
-          }
-          try {
-            const audioLink = await saveFileWithKey(data, key);
-            fs.unlink("./temp/final_output.mp3");
-            resolve(audioLink);
-          } catch (uploadErr) {
-            reject(uploadErr);
-          }
-        });
-      });
-
-      return audioLink;
-    }
+    const pdfData = await pdf(PdfFile);
+    const text = pdfData.text;
+    const outputFilename = `${Date.now().toString()}_${title}.wav`;
+    const audioLink = await convertTextToSpeech(text, outputFilename);
+    return audioLink;
   } catch (err) {
     console.log(err);
     throw err;
@@ -166,56 +139,54 @@ function splitTextIntoChunks(text, chunkSize) {
   }
   return chunks;
 }
-function convertTextToSpeech(text, outputFilename) {
-  return new Promise((resolve, reject) => {
-    const request = {
-      input: { text: text },
-      voice: {
-        languageCode: "vi-VN",
-        name: "vi-VN-Standard-A",
-        ssmlGender: "NEUTRAL",
-      },
-      audioConfig: { audioEncoding: "MP3" },
-    };
-
-    client.synthesizeSpeech(request, (err, response) => {
-      if (err) {
-        console.error("Error during text-to-speech conversion:", err);
-        return reject(err);
-      }
-
-      fs.writeFileSync(
-        "./temp/" + outputFilename,
-        response.audioContent,
-        "binary"
-      );
-      console.log(`Audio content written to file: ${outputFilename}`);
-      resolve();
-    });
-  });
-}
-function mergeAudioFiles(files, outputFilename) {
-  const mergedStream = ffmpeg();
-
-  files.forEach((file) => {
-    mergedStream.input(file);
-  });
-
-  mergedStream
-    .on("error", function (err) {
-      console.log("Error:", err);
+async function convertTextToSpeech(text, outputFilename) {
+  const request = {
+    parent: "projects/library-project-433704/locations/asia",
+    input: { text: text },
+    voice: {
+      languageCode: "vi-VN",
+      name: "vi-VN-Standard-A",
+      ssmlGender: "NEUTRAL",
+    },
+    audioConfig: { audioEncoding: "LINEAR16" },
+    outputGcsUri: `gs://audio-book-2024/${outputFilename}`,
+  };
+  // Perform the Text-to-Speech request
+  await client
+    .synthesizeLongAudio(request)
+    .then(() => {
+      console.log("text to speech success");
     })
-    .on("end", function () {
-      console.log("Merged audio saved as", outputFilename);
-    })
-    .mergeToFile("./temp/" + outputFilename);
-  return outputFilename;
-}
-function cleanup(files) {
-  files.forEach((file) => {
-    fs.unlink(file, (err) => {
-      if (err) console.error(`Error deleting file ${file}:`, err);
-      else console.log(`Deleted file ${file}`);
+    .catch((err) => {
+      console.log("text to speech fail: ", err);
     });
-  });
+
+  // Generate and return the public URL
+  const publicUrl = `https://storage.googleapis.com/audio-book-2024/${outputFilename}`;
+  return publicUrl;
 }
+// function mergeAudioFiles(files, outputFilename) {
+//   const mergedStream = ffmpeg();
+
+//   files.forEach((file) => {
+//     mergedStream.input(file);
+//   });
+
+//   mergedStream
+//     .on("error", function (err) {
+//       console.log("Error:", err);
+//     })
+//     .on("end", function () {
+//       console.log("Merged audio saved as", outputFilename);
+//     })
+//     .mergeToFile("./temp/" + outputFilename);
+//   return outputFilename;
+// }
+// function cleanup(files) {
+//   files.forEach((file) => {
+//     fs.unlink(file, (err) => {
+//       if (err) console.error(`Error deleting file ${file}:`, err);
+//       else console.log(`Deleted file ${file}`);
+//     });
+//   });
+// }
