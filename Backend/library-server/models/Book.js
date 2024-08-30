@@ -6,7 +6,8 @@ const bookSchema = new mongoose.Schema({
   pdfLink: { type: String, required: true },
   genre: { type: mongoose.Schema.Types.ObjectId, ref: "Genre" },
   avgRating: { type: Number, required: true },
+  image: { type: String, required: true },
 });
 
 const Book = mongoose.model("Book", bookSchema);
-export default Book
+export default Book;

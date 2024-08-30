@@ -8,6 +8,10 @@ import { addBook } from "../controllers/book_controller/BookController.js";
 
 const bookRouter = express.Router();
 
-bookRouter.post("/add-book", upload.single("pdf"), addBook);
+bookRouter.post(
+  "/add-book",
+  upload.fields([{ name: "image" }, { name: "pdf" }]),
+  addBook
+);
 
 export default bookRouter;
