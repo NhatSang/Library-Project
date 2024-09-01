@@ -6,8 +6,8 @@ export default function AddBookScreen() {
     author: "",
     genre: "",
   });
-  const [selectedFile, setSelectedFile] = useState(null);
-
+  const [selectedPdfFile, setSelectedPdfFile] = useState(null);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -17,19 +17,21 @@ export default function AddBookScreen() {
     console.log(formData);
   };
 
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
+  const handleFilePdfChange = (e) => {
+    setSelectedPdfFile(e.target.files[0]);
   };
-
+const handleFileImageChange = (e) => {
+  setSelectedImageFile(e.target.files[0]);
+};
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (selectedFile) {
+    if (selectedPdfFile && selectedImageFile) {
       const data = new FormData();
       data.append("title", formData.title);
       data.append("author", formData.author);
       data.append("genre", formData.genre);
-      data.append("pdf", selectedFile);
-
+      data.append("pdf", selectedPdfFile);
+      data.append("image", selectedImageFile);
       fetch("http://localhost:5000/api/v1/add-book", {
         method: "POST",
         body: data,
@@ -78,11 +80,20 @@ export default function AddBookScreen() {
         />
       </div>
       <div>
-        <label>File:</label>
+        <label>PDF File:</label>
         <input
           type="file"
           accept="application/pdf"
-          onChange={handleFileChange}
+          onChange={handleFilePdfChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Image File:</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileImageChange}
           required
         />
       </div>

@@ -36,9 +36,11 @@ export const upload = multer({
 });
 
 function checkFileType(file, cb) {
-  const fileTypes = /pdf/;
+  const fileTypes = /pdf|jpeg|jpg|png/;
   const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = fileTypes.test(file.mimetype);
+  console.log(file.originalname);
+  
   if (extname && mimetype) {
     return cb(null, true);
   }
