@@ -40,7 +40,7 @@ function checkFileType(file, cb) {
   const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = fileTypes.test(file.mimetype);
   console.log(file.originalname);
-  
+
   if (extname && mimetype) {
     return cb(null, true);
   }
@@ -79,5 +79,31 @@ export const saveFileWithKey = async (file, key) => {
     return data.Location;
   } catch (err) {
     throw new Error("Upload file to AWS S3 failed");
+  }
+};
+export const readPdfFromS3 = async (keyName) => {
+  try {
+    // Tải file từ S3
+    const params = {
+      Bucket: bucketName,
+      Key: keyName,
+    };
+    const file = await s3.getObject(params).promise();
+    return file.Body;
+  } catch (error) {
+    console.error("Error reading PDF from S3:", error);
+  }
+};
+export const deleteFileFromS3 = async (keyName) => {
+  try {
+    const params = {
+      Bucket: bucketName,
+      Key: keyName,
+    };
+
+    const data = await s3.deleteObject(params).promise();
+    console.log("File deleted successfully", data);
+  } catch (error) {
+    console.error("Error deleting file from S3:", error);
   }
 };
