@@ -4,11 +4,6 @@ import { PDFDocument } from "pdf-lib";
 import pdf from "pdf-parse";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import { saveFileWithKey } from "../../services/AwsServices.js";
-const ffmpegPath = "./ffmpeg-7.0.2-essentials_build/bin/ffmpeg.exe";
-const ffprobePath = "./ffmpeg-7.0.2-essentials_build/bin/ffprobe.exe";
-import ffmpeg from "fluent-ffmpeg";
-ffmpeg.setFfmpegPath(ffmpegPath);
-ffmpeg.setFfprobePath(ffprobePath);
 
 const client = new textToSpeech.TextToSpeechLongAudioSynthesizeClient({
   keyFilename: "./json-key/library-project-433704-6c89745a241a.json",

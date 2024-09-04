@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Book from "../../models/Book.js";
 import Chapter from "../../models/Chapter.js";
-import { saveFile } from "../../services/AwsServices.js";
+import { readPdfFromS3, saveFile } from "../../services/AwsServices.js";
 import { getPdfOutline, handleTextToSpeech, splitPDF } from "./BookHelper.js";
 
 export const addBook = async (req, res) => {
@@ -43,23 +43,47 @@ export const addBook = async (req, res) => {
         await newChapter.save();
       }
     } else {
-      // lưu cả file thành 1 chương
-      // chuyển thành audio cho cả file
-      const audioLink = await handleTextToSpeech(pdfFile, newBook._id);
-      newChapter = new Chapter({
-        book: newBook._id,
-        title: title,
-        startPage: 1,
-        pdfLink: pdfLink,
-        audioLink: audioLink,
-      });
-      await newChapter.save();
+      return res.status(201).json({ message: "add chapter", data: newBook });
     }
-    return res.status(201).json({ message: "Success" });
+    return res.status(201).json({ message: "Success", data: newBook });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: err.message });
   }
+};
+
+export const addChapter = async (req, res) => {
+  try {
+    const { bookId, title, startPage, endPage, bookLink } = req.body;
+    const tempArray = bookLink.split("/");
+    const keyName = tempArray[tempArray.length - 1];
+    const pdfFile = await readPdfFromS3(keyName);
+
+    const linkObj = await splitPDF(pdfFile, title, startPage, endPage, bookId);
+    const newChapter = new Chapter({
+      book: bookId,
+      title: title,
+      startPage: startPage,
+      pdfLink: linkObj.pdfSublink,
+      audioLink: linkObj.audioLink,
+    });
+    await newChapter.save();
+    return res.status(201).json({ message: "Success", data: newChapter });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+export const deleteChapter = async(req, res)=>{
+   try {
+     const chapterId = req.body.id;
+     const result = await Chapter.deleteOne({ _id: chapterId });
+     return res.status(200).json({ message: "Success" });
+   } catch (err) {
+     console.log(err);
+     return res.status(500).json({ message: err.message });
+   }
 };
 
 export const deleteBook = async (req, res) => {
