@@ -1,4 +1,4 @@
-import { HOME, MAIN } from '@assets/images';
+import { MAIN } from '@assets/images';
 import AppText from '@components/AppText';
 import Space from '@components/Space';
 import { fontFamilies } from '@constants/fontFamilies';
@@ -8,20 +8,23 @@ import Slider from '@react-native-community/slider';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Image, Pressable, View } from 'react-native';
 import ImageColors from 'react-native-image-colors';
-import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import TrackPlayer, { useProgress } from 'react-native-track-player';
+import SoundPlayer from 'react-native-sound-player';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { iBook } from 'src/types/iBook';
+import { IChapter } from 'src/types/iChapter';
 
-const AudioBook = ({ navigation }: any) => {
+const AudioBook = ({ navigation,route }: any) => {
+    const {bookDetail,chapterBook} = route?.params;
+    const [book, setBook] = useState<iBook>(bookDetail);
+    const [chapter, setChapter] = useState<IChapter>(chapterBook);
     const [color1, setColor1] = useState('white');
     const [color2, setColor2] = useState('white');
-    const [isPlaying, setIsPlaying] = useState(true);
-    const progress = useProgress();
+    const [isPlaying, setIsPlaying] = useState(false);
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
-    const image: any = HOME.BOOK1;
+    const [currentTime, setCurrentTime] = useState(0);
 
     const spinValue = useRef(new Animated.Value(0)).current;
     const spinAnimation = useRef<any>(null);
@@ -31,54 +34,75 @@ const AudioBook = ({ navigation }: any) => {
     }, []);
 
     const getImageColors = async () => {
-        const result: any = await ImageColors.getColors(image, {
+        const result: any = await ImageColors.getColors(book.image, {
             fallback: '#fff',
             cache: true,
-            key: image,
+            key: book.image,
         });
         setColor1(isAndroid ? result.lightVibrant : result.lightVibrant);
         setColor2(isAndroid ? result.vibrant : result.darkMuted);
     };
-
-
     useEffect(() => {
-        const setupPlayer = async () => {
-            await TrackPlayer.setupPlayer();
-            await TrackPlayer.add({
-                url: 'https://pdf8888.s3.ap-southeast-1.amazonaws.com/1h.mp3',
-            });
-        };
-        setupPlayer();
-        play();
+    const setupSoundPlayer = async () => {
+        try {
+            toggleSpinning();
+            SoundPlayer.playUrl(chapter.audioLink);
+            const info = await SoundPlayer.getInfo(); 
+            setDuration(info.duration); 
+            setCurrentTime(info.currentTime); 
+        } catch (e) {
+            console.log('Cannot play the sound file', e);
+        }
+    };
 
-        return () => {
-            TrackPlayer.stop();
-        };
-    }, []);
+    setupSoundPlayer();
+
+    const interval = setInterval(async () => {
+        try {
+            const info = await SoundPlayer.getInfo();
+            setPosition(info.currentTime);
+            setCurrentTime(info.currentTime);
+        } catch (e) {
+            console.log('Error getting sound info', e);
+        }
+    }, 1000);
+
+    return () => {
+        clearInterval(interval);
+        SoundPlayer.stop();
+    };
+}, []);
+
+console.log('chapter', chapter);
 
 
-    useEffect(() => {
-        setPosition(progress.position);
-        setDuration(progress.duration);
-        console.log('progress', Number.isNaN((position / duration) * 100) ? 0 : (position / duration) * 100);
-    }, [progress]);
 
-    const play = async () => {
+    const playSound = () => {
+        try {
+            toggleSpinning();
+            SoundPlayer.play();
+        } catch (e) {
+            console.log('Cannot play the sound file', e);
+        }
+    }
+
+    const pauseSound = () => {
         toggleSpinning();
-        await TrackPlayer.play();
+        SoundPlayer.pause();
     };
 
-    const pause = async () => {
-        toggleSpinning();
-        await TrackPlayer.pause();
+    const stopSound = () => {
+        SoundPlayer.stop();
+        setPosition(0);
     };
 
-    const stop = async () => {
-        await TrackPlayer.stop();
-    };
-
-    const seekTo = async (time: number) => {
-        await TrackPlayer.seekTo(time);
+    const seekTo = async (value:number) => {
+        try {
+            SoundPlayer.seek(value);
+            setPosition(value);
+        } catch (e) {
+            console.log('Error seeking sound', e);
+        }
     };
 
     const startSpinning = () => {
@@ -111,19 +135,23 @@ const AudioBook = ({ navigation }: any) => {
 
     const spin = spinValue.interpolate({
         inputRange: [0, 1],
-        outputRange: ['0deg', '360deg'],
+        outputRange: ['0deg', '360deg'], 
     });
 
+    const formatTime = (time: number) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    };
+
+
     return (
-        <SafeAreaView className='flex-1'>
-            <LinearGradient
-                start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-                className='flex-1'
-                colors={[color1, color2]}
-                style={{ flex: 1 }}
-            >
+        <SafeAreaView className='flex-1' style={{backgroundColor:globalColor.bg_dark}}>
                 <View className='flex-row justify-between h-16 items-center px-3'>
-                    <Pressable onPress={() => navigation.goBack()}>
+                    <Pressable onPress={() => {
+                        stopSound();
+                        navigation.goBack();
+                    }}>
                         <AntDesign name='left' size={30} color={globalColor.text_dark} />
                     </Pressable>
                     <AppText size={20} color={globalColor.text_light} text='Sách' font={fontFamilies.robotoBold} />
@@ -140,13 +168,18 @@ const AudioBook = ({ navigation }: any) => {
                     </Animated.View>
                     <Image
                         className='absolute top-1/4 rounded-xl'
-                        source={HOME.BOOK1}
+                        source={{ uri: book.image }}
                     />
                 </View>
                 <View className='p-4'>
-                    <AppText size={20} text='Chương I Demo...' />
+                    <AppText size={20} text={chapter.title}/>
                 </View>
                 <View className='w-full h-05/10 justify-center items-center'>
+                <View className='flex-row justify-between w-full px-4'>
+                <AppText text={formatTime(currentTime)} size={16} color={globalColor.text_light}/>
+
+                <AppText text={formatTime(duration)} size={16} color={globalColor.text_light}/>
+            </View>
                     <Slider
                         style={{ width: '90%', height: 5 }}
                         minimumValue={0}
@@ -160,22 +193,22 @@ const AudioBook = ({ navigation }: any) => {
                 </View>
                 <View className='flex-1 w-full flex-row justify-center items-start'>
                     <View className='flex-row w-full justify-around items-center'>
-                        <Pressable onPress={stop}>
+                        <Pressable onPress={stopSound}>
                             <AntDesign name='stepbackward' size={30} color={globalColor.text_light} />
                         </Pressable>
-                        <Pressable onPress={stop}>
+                        <Pressable onPress={stopSound}>
                             <AntDesign name='fastbackward' size={30} color={globalColor.text_light} />
                         </Pressable>
                         <Pressable onPress={() => {
-                            isPlaying ? play() : pause();
+                            isPlaying ? playSound() : pauseSound();
                             setIsPlaying(!isPlaying);
                         }}>
                             <AntDesign name={isPlaying ? 'play' : 'pause'} size={60} color={globalColor.text_light} />
                         </Pressable>
-                        <Pressable onPress={stop}>
+                        <Pressable onPress={stopSound}>
                             <AntDesign name='fastforward' size={30} color={globalColor.text_light} />
                         </Pressable>
-                        <Pressable onPress={stop}>
+                        <Pressable onPress={stopSound}>
                             <AntDesign name='stepforward' size={30} color={globalColor.text_light} />
                         </Pressable>
                     </View>
@@ -186,11 +219,10 @@ const AudioBook = ({ navigation }: any) => {
                         <AppText font={fontFamilies.robotoBold} color={globalColor.white} size={16} text='Chương' />
                     </Pressable>
                     <Pressable className='justify-center items-center'>
-                        <MaterialCommunityIcons name='speedometer' size={30} />
+                        <MaterialCommunityIcons name='speedometer' size={30} color={globalColor.text_light} />
                         <AppText font={fontFamilies.robotoBold} color={globalColor.white} size={16} text='Tốc độ' />
                     </Pressable>
                 </View>
-            </LinearGradient>
         </SafeAreaView>
     );
 };

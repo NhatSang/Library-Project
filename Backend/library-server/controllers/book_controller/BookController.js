@@ -43,7 +43,7 @@ export const addBook = async (req, res) => {
         await newChapter.save();
       }
     } else {
-      return res.status(201).json({ message: "add chapter", data: newBook });
+      return res.status(201).json({ message: "add_chapter", data: newBook });
     }
     return res.status(201).json({ message: "Success", data: newBook });
   } catch (err) {
@@ -163,3 +163,54 @@ export const updateBook = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
+
+//get book new
+export const getNewestBooks = async (req, res) => {
+  try {
+    const books = await Book.find().sort({ createdAt: -1 }).limit(5);
+    return res.status(200).json({
+      status:200,
+      message: "Success",
+      data: books,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+//get book by genre
+export const getBooksByGenre = async (req, res) => {
+  try {
+    const genreId = req.params.genreId;
+    const books = await Book.find({ genre: genreId });
+    return res.status(200).json({
+      message: "Success",
+      data: books,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+//get book by id
+export const getBookById = async (req, res) => {
+  try {
+    const bookId = req.params.bookId;
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+    return res.status(200).json({
+      message: "Success",
+      data: book,
+    });
+  }
+  catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: err.message });
+  }
+}
+
+

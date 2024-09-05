@@ -14,10 +14,11 @@ import cors from "cors";
 import ConnectDB from "./database/ConnectDB.js";
 import authRouter from "./routers/AuthRouter.js";
 import bookRouter from "./routers/BookRouter.js";
+import chapterRouter from "./routers/ChapterRouter.js";
 
 dotenv.config();
 const app = express();
-const port = 5000;
+const port = 5001;
 
 const corsOprions = {
   origin: "*",
@@ -33,6 +34,7 @@ const server = http.createServer(app);
 
 app.use("/api/v1", authRouter);
 app.use("/api/v1", bookRouter);
+app.use("/api/v1", chapterRouter);
 
 server.listen(port, () => {
   ConnectDB();

@@ -1,65 +1,79 @@
-import { globalColor } from '@constants/globalColor';
-import Slider from '@react-native-community/slider';
 import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import TrackPlayer, { usePlaybackState, useProgress } from 'react-native-track-player';
+import Slider from '@react-native-community/slider';
+import SoundPlayer from 'react-native-sound-player';
+import { globalColor } from '@constants/globalColor';
 
 const HistoryScreen = () => {
-    const playbackState = usePlaybackState();
-    const progress = useProgress();
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
 
     useEffect(() => {
-        const setupPlayer = async () => {
-            await TrackPlayer.setupPlayer();
-            await TrackPlayer.add({
-                url: 'https://pdf8888.s3.ap-southeast-1.amazonaws.com/1h.mp3',
-            });
+        const setupSoundPlayer = async () => {
+            try {
+                SoundPlayer.playUrl('https://storage.googleapis.com/audio-book-2024/1725432037712_undefined.wav');
+                const info = await SoundPlayer.getInfo(); // Lấy thông tin về file âm thanh
+                setDuration(info.duration); // Cập nhật thời lượng
+            } catch (e) {
+                console.log('Cannot play the sound file', e);
+            }
         };
-        setupPlayer();
+
+        setupSoundPlayer();
+
+        // Xử lý sự kiện cập nhật vị trí phát nhạc
+        const interval = setInterval(async () => {
+            try {
+                const info = await SoundPlayer.getInfo();
+                setPosition(info.currentTime);
+            } catch (e) {
+                console.log('Error getting sound info', e);
+            }
+        }, 1000);
 
         return () => {
-            TrackPlayer.stop();
+            clearInterval(interval);
+            SoundPlayer.stop();
         };
     }, []);
 
-
-    useEffect(() => {
-        setPosition(progress.position);
-        setDuration(progress.duration);
-        console.log('progress', (position / duration) * 100);
-    }, [progress]);
-
-
-
-    const play = async () => {
-        await TrackPlayer.play();
+    const playSoundFromUrl = () => {
+        try {
+            SoundPlayer.playUrl('https://pdf8888.s3.ap-southeast-1.amazonaws.com/SampleAudio_0.4mb.mp3');
+        } catch (e) {
+            console.log('Cannot play the sound file', e);
+        }
     };
 
-    const pause = async () => {
-        await TrackPlayer.pause();
+    const pauseSound = () => {
+        SoundPlayer.pause();
     };
 
-    const stop = async () => {
-        await TrackPlayer.stop();
+    const stopSound = () => {
+        SoundPlayer.stop();
+        setPosition(0); // Reset vị trí về 0 khi dừng
     };
 
-    const seekTo = async (time: number) => {
-        await TrackPlayer.seekTo(time);
+    const seekTo = async (value) => {
+        try {
+            SoundPlayer.seek(value);
+            setPosition(value);
+        } catch (e) {
+            console.log('Error seeking sound', e);
+        }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>HistoryScreen</Text>
             <View style={styles.controls}>
-                <Button title="Play" onPress={play} />
-                <Button title="Pause" onPress={pause} />
-                <Button title="Stop" onPress={stop} />
+                <Button title="Play" onPress={playSoundFromUrl} />
+                <Button title="Pause" onPress={pauseSound} />
+                <Button title="Stop" onPress={stopSound} />
             </View>
             <View style={styles.progressContainer}>
-                <Text style={styles.progressText}>{`Position: ${Math.floor(progress.position)}s`}</Text>
-                <Text style={styles.progressText}>{`Duration: ${Math.floor(progress.duration)}s`}</Text>
+                <Text style={styles.progressText}>{`Position: ${Math.floor(position)}s`}</Text>
+                <Text style={styles.progressText}>{`Duration: ${Math.floor(duration)}s`}</Text>
                 <Slider
                     style={styles.slider}
                     minimumValue={0}
@@ -92,6 +106,8 @@ const styles = StyleSheet.create({
     },
     progressText: {
         fontSize: 16,
+        color: 'white',
+        marginBottom: 10,
     },
     slider: {
         width: '100%',

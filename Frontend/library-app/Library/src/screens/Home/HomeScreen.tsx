@@ -3,15 +3,33 @@ import AppText from '@components/AppText';
 import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
 import { ScreenName } from '@constants/ScreenName';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, Image, Pressable, ScrollView, useColorScheme, View } from 'react-native';
 import { Badge } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SwiperImage from './book/components/SwiperImage';
+import { _getNewestBooks } from './apis';
+import { defaultListBook } from '../../types/iBook';
 
 const HomeScreen = ({ navigation, route }: any) => {
     const colorScheme = useColorScheme();
+    const [listNewBook, setListNewBook] = useState(defaultListBook);
+
+    useEffect(()=>{
+        getNewestBooks();
+    },[]);
+
+    const getNewestBooks = async () => {
+        try {
+            const response = await _getNewestBooks();
+            if(response.status === 200){
+                setListNewBook(response.data);
+            }
+        } catch (error) {
+            console.log('error',error);
+        }
+    }
 
     return (
         <SafeAreaView className='flex-1 px-3'>
@@ -40,16 +58,16 @@ const HomeScreen = ({ navigation, route }: any) => {
                     </View>
                     <FlatList
                         showsHorizontalScrollIndicator={false}
-                        data={{ length: 5 }}
+                        data={listNewBook}
                         renderItem={({ item }) => {
                             return (
                                 <Pressable
-                                    onPress={() => navigation.navigate(ScreenName.BookDetail, { id: '12345678' })}
+                                    onPress={() => navigation.navigate(ScreenName.BookDetail, { item })}
                                     className='px-6'>
-                                    <Image source={HOME.BOOK1} className='w-36 h-48' />
+                                    <Image source={{uri:item.image}} className='w-36 h-48' />
                                     <View className='w-36 justify-center items-center pt-3'>
-                                        <AppText center numberOfLines={2} size={16} font={fontFamilies.robotoBold} text='Tư tưởng Hồ Chí Minh' />
-                                        <AppText numberOfLines={1} size={12} text='Bộ giáo duc và dào tạo' />
+                                        <AppText center numberOfLines={2} size={16} font={fontFamilies.robotoBold} text={item.title} />
+                                        <AppText numberOfLines={1} size={12} text={item.author} />
                                     </View>
                                 </Pressable>
                             )

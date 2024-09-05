@@ -1,7 +1,7 @@
 import { ScreenName } from '@constants/ScreenName';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DemoDownLoad from '@screens/DemoDownLoad';
-import { AudioBook, BookDetail, RatingScreen, ReadText, SearchScreen } from '@screens/index';
+import { AudioBook, BookDetail, ChapterAudio, RatingScreen, ReadText, SearchScreen } from '@screens/index';
 import React from 'react';
 import TabRouter from './TabRouter';
 const Stack = createNativeStackNavigator();
@@ -10,8 +10,6 @@ const Stack = createNativeStackNavigator();
 const MainRouter = () => {
   return (
     <Stack.Navigator initialRouteName={ScreenName.TabRouter} screenOptions={{ headerShown: false }}>
-      {/* <Stack.Screen name={ScreenName.LoginScreen} component={LoginScreen} /> */}
-      {/* <Stack.Screen name={ScreenName.UserFormScreen} component={UserFormScreen} /> */}
       <Stack.Screen name={ScreenName.DemoDownLoad} component={DemoDownLoad} />
       <Stack.Screen name={ScreenName.TabRouter} component={TabRouter} />
       <Stack.Screen name={ScreenName.BookDetail} component={BookDetail} />
@@ -19,6 +17,7 @@ const MainRouter = () => {
       <Stack.Screen name={ScreenName.RatingScreen} component={RatingScreen} />
       <Stack.Screen name={ScreenName.SearchScreen} component={SearchScreen} />
       <Stack.Screen name={ScreenName.AudioBook} component={AudioBook} />
+      <Stack.Screen name={ScreenName.ChapterAudio} component={ChapterAudio} />
     </Stack.Navigator>
   )
 }

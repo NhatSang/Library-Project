@@ -3,39 +3,52 @@ import { AppButton, AppInput, ButtobnCenter } from '@components/index';
 import PdfViewer from '@components/PdfViewer';
 import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, Modal, Pressable, StyleSheet, useColorScheme, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import { _getChapterByIdBook } from '../apis';
+import { defaultListChapter, IChapter } from '../../../types/iChapter';
 
-const data = Array.from({ length: 10 }, (_, index) => ({
-    id: String(index + 1),
-    name: `Item ${index + 1}`,
-    page: `Page ${index + 1}`
-}));
 
 const ReadText = ({ navigation, route }: any) => {
-    const { path } = route?.params;
+    const { path,id } = route?.params;
     const colorScheme = useColorScheme();
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [modalNoteVisible, setModalNoteVisible] = useState<boolean>(false);
     const [buttonFocused, setButtonFocused] = useState<string>('mucluc');
     const [selectedPage, setSelectedPage] = useState<number | null>(null);
+    const [chapter, setChapter] = useState<IChapter[]>(defaultListChapter);
+
+    useEffect(() => {
+        getChapterByIdBook();
+    },[]);
+
+    const getChapterByIdBook = async () => {
+        try {
+            const response = await _getChapterByIdBook(id);
+            if (response.status === 200) {
+                setChapter(response.data);
+            }
+        } catch (error) {
+            console.log('Error getChapterByIdBook: ', error);
+        }
+    }
 
     const handleButtonFocused = (button: string) => {
         setButtonFocused(button);
     }
 
-    const Item = ({ item }: { item: any }) => (
+    const Item = ({ item }: { item: IChapter }) => (
         <Pressable onPress={() => {
-            setSelectedPage(Number(item.id))
+            setSelectedPage(Number(item.startPage))
             setModalVisible(false);
         }} style={styles.item}>
-            <AppText styles={styles.name} text={item.name} />
-            <AppText styles={styles.page} text={item.page} />
+            <AppText styles={styles.name} text={item.title} />
+            <AppText styles={styles.page} text={item.startPage} />
         </Pressable>
     );
 
@@ -117,8 +130,8 @@ const ReadText = ({ navigation, route }: any) => {
                         {
                             buttonFocused == 'mucluc' ? (
                                 <FlatList
-                                    data={data}
-                                    keyExtractor={(item) => item.id}
+                                    data={chapter}
+                                    keyExtractor={(item) => item._id}
                                     renderItem={({ item }) => (
                                         <Item item={item} />
                                     )}
