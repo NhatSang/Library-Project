@@ -4,7 +4,13 @@
 
 import express from "express";
 import { upload } from "../services/AwsServices.js";
-import { addBook ,addChapter,getNewestBooks,getBookById} from "../controllers/book_controller/BookController.js";
+import {
+  addBook,
+  addChapter,
+  deleteBook,
+  deleteChapter,
+  getChapters,
+addChapter,getNewestBooks,getBookById} from "../controllers/book_controller/BookController.js";
 
 const bookRouter = express.Router();
 
@@ -13,6 +19,10 @@ bookRouter.post(
   upload.fields([{ name: "image" }, { name: "pdf" }]),
   addBook
 );
+bookRouter.post("/add-chapter", upload.none(), addChapter);
+bookRouter.get("/get-chapters/:id", getChapters);
+bookRouter.delete("/delete-chapter/:id", deleteChapter);
+bookRouter.delete("/delete-book/:id", deleteBook);
 bookRouter.post(
   "/add-chapter",
   addChapter

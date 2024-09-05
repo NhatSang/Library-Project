@@ -54,7 +54,10 @@ export const addBook = async (req, res) => {
 
 export const addChapter = async (req, res) => {
   try {
+    console.log("Request Body:", req.body);
     const { bookId, title, startPage, endPage, bookLink } = req.body;
+    console.log(`start ${startPage} end ${endPage}`);
+
     const tempArray = bookLink.split("/");
     const keyName = tempArray[tempArray.length - 1];
     const pdfFile = await readPdfFromS3(keyName);
@@ -75,25 +78,69 @@ export const addChapter = async (req, res) => {
   }
 };
 
-export const deleteChapter = async(req, res)=>{
-   try {
-     const chapterId = req.body.id;
-     const result = await Chapter.deleteOne({ _id: chapterId });
-     return res.status(200).json({ message: "Success" });
-   } catch (err) {
-     console.log(err);
-     return res.status(500).json({ message: err.message });
-   }
+export const getBooks = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+    const data = await Book.find().skip(skip).limit(limit);
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+export const getChapters = async (req, res) => {
+  try {
+    const bookId = req.params.id;
+    const data = await Chapter.find({book:bookId});
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+export const deleteChapter = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    // Delete the book by its id
+    const result = await Chapter.findByIdAndDelete(id);
+
+    if (!result) {
+      return res.status(404).send("Chapter not found");
+    }
+
+    res.status(200).send("Chapter  deleted successfully");
+  } catch (error) {
+    console.error("Error deleting chapter :", error);
+    res.status(500).send("Server Error");
+  }
 };
 
 export const deleteBook = async (req, res) => {
   try {
-    const bookId = req.body.id;
-    const result = await Book.deleteOne({ _id: bookId });
-    return res.status(200).json({ message: "Success" });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: err.message });
+    const id = req.params.id;
+
+    // Delete the book by its id
+    const result = await Book.findByIdAndDelete(id);
+
+    if (!result) {
+      return res.status(404).send("Book not found");
+    }
+
+    res.status(200).send("Book deleted successfully");
+  } catch (error) {
+    console.error("Error deleting book:", error);
+    res.status(500).send("Server Error");
   }
 };
 
