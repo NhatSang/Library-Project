@@ -3,6 +3,7 @@ import { AppButton, AppInput, ButtobnCenter } from '@components/index';
 import PdfViewer from '@components/PdfViewer';
 import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Modal, Pressable, StyleSheet, useColorScheme, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,22 +11,33 @@ import Toast from 'react-native-toast-message';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import { _getChapterByIdBook } from '../apis';
 import { defaultListChapter, IChapter } from '../../../types/iChapter';
+import { _getChapterByIdBook } from '../apis';
 
 
 const ReadText = ({ navigation, route }: any) => {
-    const { path,id } = route?.params;
+    const { path, id } = route?.params;
     const colorScheme = useColorScheme();
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [modalNoteVisible, setModalNoteVisible] = useState<boolean>(false);
     const [buttonFocused, setButtonFocused] = useState<string>('mucluc');
-    const [selectedPage, setSelectedPage] = useState<number | null>(null);
+    const [selectedPage, setSelectedPage] = useState<number>(1);
     const [chapter, setChapter] = useState<IChapter[]>(defaultListChapter);
 
     useEffect(() => {
+        handleGetPageReaded();
         getChapterByIdBook();
-    },[]);
+    }, []);
+
+    const handleGetPageReaded = async () => {
+        const pageReaded = await AsyncStorage.getItem(`pageReaded_${id}`);
+        if (pageReaded) {
+            console.log('pageReaded: ', pageReaded);
+            setSelectedPage(Number(pageReaded));
+        }
+    };
+
+
 
     const getChapterByIdBook = async () => {
         try {
@@ -69,8 +81,9 @@ const ReadText = ({ navigation, route }: any) => {
                 </View>
                 <View className='h-5/6 bg-slate-200'>
                     <PdfViewer
+                        id={id}
                         pdfUrl={path}
-                        initialPage={selectedPage || 1}
+                        initialPage={selectedPage}
                     />
                 </View>
                 <View className=' bg-primary-light flex-1 flex-row justify-around'>

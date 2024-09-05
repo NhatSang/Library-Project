@@ -8,26 +8,26 @@ import { FlatList, Image, Pressable, ScrollView, useColorScheme, View } from 're
 import { Badge } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import SwiperImage from './book/components/SwiperImage';
-import { _getNewestBooks } from './apis';
 import { defaultListBook } from '../../types/iBook';
+import { _getNewestBooks } from './apis';
+import SwiperImage from './book/components/SwiperImage';
 
 const HomeScreen = ({ navigation, route }: any) => {
     const colorScheme = useColorScheme();
     const [listNewBook, setListNewBook] = useState(defaultListBook);
 
-    useEffect(()=>{
+    useEffect(() => {
         getNewestBooks();
-    },[]);
+    }, []);
 
     const getNewestBooks = async () => {
         try {
             const response = await _getNewestBooks();
-            if(response.status === 200){
+            if (response.status === 200) {
                 setListNewBook(response.data);
             }
         } catch (error) {
-            console.log('error',error);
+            console.log('error', error);
         }
     }
 
@@ -63,13 +63,14 @@ const HomeScreen = ({ navigation, route }: any) => {
                             return (
                                 <Pressable
                                     onPress={() => navigation.navigate(ScreenName.BookDetail, { item })}
-                                    className='px-6'>
-                                    <Image source={{uri:item.image}} className='w-36 h-48' />
-                                    <View className='w-36 justify-center items-center pt-3'>
-                                        <AppText center numberOfLines={2} size={16} font={fontFamilies.robotoBold} text={item.title} />
-                                        <AppText numberOfLines={1} size={12} text={item.author} />
+                                    className="px-3 mx-1 py-2 rounded-md bg-white">
+                                    <Image resizeMode='stretch' source={{ uri: item.image }} className="w-36 h-44 rounded-md" />
+                                    <View className="w-32 justify-center items-center pt-2">
+                                        <AppText center numberOfLines={2} size={14} font={fontFamilies.robotoBold} text={item.title} />
+                                        <AppText numberOfLines={1} size={11} text={item.author} />
                                     </View>
                                 </Pressable>
+
                             )
                         }}
                         keyExtractor={(item, index) => index.toString()}

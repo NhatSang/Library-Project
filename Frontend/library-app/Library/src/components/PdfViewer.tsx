@@ -1,15 +1,17 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, useColorScheme, View } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 import Pdf from 'react-native-pdf';
 
 type Props = {
+    id: string;
     pdfUrl: string;
     initialPage?: number;
 }
 
 const PdfViewer = (props: Props) => {
-    const { pdfUrl, initialPage } = props;
+    const { id, pdfUrl, initialPage } = props;
     const [pageCount, setPageCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(initialPage || 1);
     const [progress, setProgress] = useState(0);
@@ -25,13 +27,19 @@ const PdfViewer = (props: Props) => {
     }, [initialPage, pageCount]);
 
 
+    const handleSavePageReaded = async (page: number) => {
+        console.log('currentPageSave: ', page);
+        await AsyncStorage.setItem(`pageReaded_${id}`, page.toString());
+    };
+
+
     return (
         <View className='flex-1'>
             <Pdf
                 page={currentPage}
                 trustAllCerts={false}
                 source={{ uri: pdfUrl, cache: true }}
-                onLoadComplete={(numberOfPages) => {
+                onLoadComplete={async (numberOfPages) => {
                     try {
                         setPageCount(numberOfPages);
                         if (initialPage && initialPage <= numberOfPages) {
@@ -42,7 +50,7 @@ const PdfViewer = (props: Props) => {
                     }
                 }}
                 onPageChanged={(page) => {
-                    console.log(`Current page: ${page}`);
+                    handleSavePageReaded(page);
                     const progress = (page / pageCount);
                     setProgress(progress);
                 }}
