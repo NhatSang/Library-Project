@@ -34,7 +34,7 @@ export default function AddBookScreen() {
       data.append("genre", formData.genre);
       data.append("pdf", selectedPdfFile);
       data.append("image", selectedImageFile);
-      fetch("http://localhost:5000/api/v1/add-book", {
+      fetch("http://localhost:5001/api/v1/add-book", {
         method: "POST",
         body: data,
       })
@@ -42,7 +42,7 @@ export default function AddBookScreen() {
         .then((data) => {
           if (data.message === "success") {
             window.alert("Them thanh cong");
-          } else if (data.message === "add chapter") {
+          } else if (data.message === "add_chapter") {
             navigate("/add-chapter", { state: { data: data.data } });
           }
         })
