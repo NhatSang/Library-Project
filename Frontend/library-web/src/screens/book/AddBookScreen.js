@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AddBookScreen() {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ export default function AddBookScreen() {
   });
   const [selectedPdfFile, setSelectedPdfFile] = useState(null);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const navigate = useNavigate();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -20,9 +22,9 @@ export default function AddBookScreen() {
   const handleFilePdfChange = (e) => {
     setSelectedPdfFile(e.target.files[0]);
   };
-const handleFileImageChange = (e) => {
-  setSelectedImageFile(e.target.files[0]);
-};
+  const handleFileImageChange = (e) => {
+    setSelectedImageFile(e.target.files[0]);
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     if (selectedPdfFile && selectedImageFile) {
@@ -38,7 +40,11 @@ const handleFileImageChange = (e) => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("Form submitted successfully:", data.message);
+          if (data.message === "success") {
+            window.alert("Them thanh cong");
+          } else if (data.message === "add chapter") {
+            navigate("/add-chapter", { state: { data: data.data } });
+          }
         })
         .catch((error) => {
           console.error("Error submitting form:", error);
