@@ -6,7 +6,7 @@
 import { generateToken } from "../jwt/JwtService.js";
 import Majors from "../models/Majors.js";
 import User from "../models/User.js";
-import * as bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 
 export const signup = async (req, res) => {
   try {

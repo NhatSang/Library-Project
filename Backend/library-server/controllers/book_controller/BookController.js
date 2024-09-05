@@ -43,7 +43,7 @@ export const addBook = async (req, res) => {
         await newChapter.save();
       }
     } else {
-      return res.status(201).json({ message: "add chapter", data: newBook });
+      return res.status(201).json({ message: "add_chapter", data: newBook });
     }
     return res.status(201).json({ message: "Success", data: newBook });
   } catch (err) {
@@ -123,6 +123,7 @@ export const getNewestBooks = async (req, res) => {
   try {
     const books = await Book.find().sort({ createdAt: -1 }).limit(5);
     return res.status(200).json({
+      status:200,
       message: "Success",
       data: books,
     });
@@ -150,7 +151,10 @@ export const getBooksByGenre = async (req, res) => {
 export const getBookById = async (req, res) => {
   try {
     const bookId = req.params.bookId;
-    const book = await Book.finrById(bookId);
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
     return res.status(200).json({
       message: "Success",
       data: book,
@@ -161,4 +165,5 @@ export const getBookById = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 }
+
 

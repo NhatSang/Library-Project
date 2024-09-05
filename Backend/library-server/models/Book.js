@@ -7,7 +7,6 @@ const bookSchema = new mongoose.Schema({
   genre: { type: mongoose.Schema.Types.ObjectId, ref: "Genre" },
   avgRating: { type: Number, default: 0 },
   image: { type: String, required: true },
-  like: { type: Number, default: 0 },
 });
 
 const Book = mongoose.model("Book", bookSchema);

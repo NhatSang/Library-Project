@@ -1,4 +1,5 @@
 import textToSpeech from "@google-cloud/text-to-speech";
+import { SpeechClient } from "@google-cloud/speech";
 import fs from "fs";
 import { PDFDocument } from "pdf-lib";
 import pdf from "pdf-parse";
@@ -185,3 +186,61 @@ async function convertTextToSpeech(text, outputFilename) {
 //     });
 //   });
 // }
+
+const client1 = new SpeechClient({
+  keyFilename: "./json-key/library-project-433704-6c89745a241a.json",
+});
+
+export async function speechToText() {
+
+  const gcsUri = 'gs://audio-book-2024/1725433325380_undefined.wav';
+  const audio = {
+    uri: gcsUri,
+  };
+  const config = {
+    encoding: 'LINEAR16',
+    sampleRateHertz: 24000,
+    languageCode: 'vi-VN',
+    enableWordTimeOffsets: true, // Bật thông tin thời gian cho từng từ
+  };
+  const request = {
+    audio: audio,
+    config: config,
+  };
+
+  try {
+    const [operation] = await client1.longRunningRecognize(request);
+    console.log('Waiting for operation to complete...');
+    const [response] = await operation.promise();
+
+    // In toàn bộ phản hồi để kiểm tra cấu trúc
+    console.log('Full response:', response);
+
+    // Kiểm tra cấu trúc của phản hồi
+    if (response.results && Array.isArray(response.results)) {
+      const transcription = response.results
+        .map(result => {
+          return {
+            transcript: result.alternatives[0].transcript,
+            words: result.alternatives[0].words.map(wordInfo => ({
+              word: wordInfo.word,
+              startTime: wordInfo.startTime.seconds + wordInfo.startTime.nanos / 1e9,
+              endTime: wordInfo.endTime.seconds + wordInfo.endTime.nanos / 1e9,
+            })),
+          };
+        });
+
+      // Ghi kết quả vào file output.ts
+      fs.writeFileSync('output.ts', `const transcription = ${JSON.stringify(transcription)};`);
+      
+      console.log('Transcription with timings saved to output.ts');
+    } else {
+      console.error('Unexpected response structure:', response);
+    }
+  } catch (error) {
+    console.error('Error during speech recognition:', error);
+  }
+}
+
+speechToText();
+

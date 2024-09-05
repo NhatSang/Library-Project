@@ -14,22 +14,23 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Feather from 'react-native-vector-icons/Feather'
+import { _getChapterByIdBook } from '../apis'
+import { iBook } from 'src/types/iBook'
 
 
 const BookDetail = ({ navigation, route }: any) => {
-    const { id } = route?.params;
-    console.log('id', id);
+    const { item } = route?.params;
+    const [book, setBook] = useState<iBook>(item);
     const [background, setBackground] = useState('white');
     const [loading, setLoading] = useState(false);
-    const image: any = HOME.BOOK1;
     useEffect(() => {
         getImageColors();
     }, [])
     const getImageColors = async () => {
-        const result: any = await ImageColors.getColors(image, {
+        const result: any = await ImageColors.getColors(book.image, {
             fallback: '#fff',
             cache: true,
-            key: image,
+            key:book.image,
         });
         setBackground(isAndroid ? result.average : result.secondary);
     };
@@ -39,11 +40,14 @@ const BookDetail = ({ navigation, route }: any) => {
         setLoading(true);
         const { config, fs } = RNFetchBlob;
         const { DocumentDir } = fs.dirs;
-        const filePath = `${DocumentDir}/book_${id}.pdf`;
+        const filePath = `${DocumentDir}/book_${book._id}.pdf`;
         const isFileExist = await RNFetchBlob.fs.exists(filePath);
         if (isFileExist) {
             setLoading(false);
-            navigation.navigate(ScreenName.ReadText, { path: filePath });
+            navigation.navigate(ScreenName.ReadText, {
+                id: book._id,
+                 path: filePath
+                 });
         } else {
             Toast.show({
                 type: 'info',
@@ -90,8 +94,8 @@ const BookDetail = ({ navigation, route }: any) => {
                 <View className='h-9/10 bg-white px-3 rounded-tl-3xl rounded-tr-3xl'>
                     <View className='h-32 w-full' />
                     <View className='justify-center items-center'>
-                        <AppText font={fontFamilies.robotoBold} size={20} text='Tư tưởng Hồ Chí Minh' />
-                        <AppText size={16} text='Bộ giáo duc và dào tạo' />
+                        <AppText font={fontFamilies.robotoBold} size={20} text={item.title} />
+                        <AppText size={16} text={item.author} />
                     </View>
                     <View className='py-4'>
                         <View style={{ height: 1 }} className='border-t bg-black' />
@@ -124,7 +128,7 @@ const BookDetail = ({ navigation, route }: any) => {
                     </View>
                     <View className='flex-row justify-between'>
                         <AppText text='Đánh giá gần đây' font={fontFamilies.robotoBold} />
-                        <AppText onPress={() => { navigation.navigate(ScreenName.RatingScreen, { id }) }} size={16} text='Viết đánh giá' color={globalColor.primary} />
+                        <AppText onPress={() => { navigation.navigate(ScreenName.RatingScreen, { id:book._id }) }} size={16} text='Viết đánh giá' color={globalColor.primary} />
                     </View>
                     <FlatList
                         showsVerticalScrollIndicator={false}
@@ -157,30 +161,22 @@ const BookDetail = ({ navigation, route }: any) => {
                             color={globalColor.primary_2}
                             styles={{ width: '40%', height: '80%', borderRadius: 10 }}
                             onPress={() => {
-                                // Toast.show({
-                                //     type: 'info',
-                                //     position: 'bottom',
-                                //     text1: 'Mình chưa có voice nhé',
-                                //     visibilityTime: 2000,
-                                //     text1Style: { fontSize: 18 }
-                                // });
-                                navigation.navigate(ScreenName.AudioBook, { id })
-
+                                navigation.navigate(ScreenName.ChapterAudio, {bookDetail:book})
                             }}
-                            title='Nghe sách'
+                            title='Sách nói'
                         />
                         <AppButton
                             loading={loading}
                             color={globalColor.primary}
                             styles={{ width: '40%', height: '80%', borderRadius: 10 }}
-                            onPress={() => { downloadPDF('http://www.ctump.edu.vn/DesktopModules/NEWS/DinhKem/8496_GIAO-TRINH-TT-HCM.pdf') }}
+                            onPress={() => { downloadPDF(book.pdfLink) }}
                             title='Đọc sách'
                         />
                     </View>
                 </View>
                 {/* image book */}
                 <View className='h-40 w-full absolute top-0 justify-center items-center'>
-                    <Image source={image} className='w-40 h-52 rounded-xl' />
+                    <Image source={{uri:book.image}} className='w-40 h-52 rounded-xl' />
                 </View>
             </View>
         </SafeAreaView>

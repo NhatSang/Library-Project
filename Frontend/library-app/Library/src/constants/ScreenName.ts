@@ -11,4 +11,5 @@ export const ScreenName = {
     SearchScreen: 'SearchScreen',
     HistoryScreen: 'HistoryScreen',
     AudioBook: 'AudioBook',
+    ChapterAudio: 'ChapterAudio',
 };
