@@ -14,7 +14,7 @@ export default function AddChapterScreen() {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/v1/get-chapters/${data._id}`
+        `http://localhost:5001/api/v1/get-chapters/${data._id}`
       );
       const json = await response.json();
       console.log(json.data);
@@ -53,7 +53,7 @@ export default function AddChapterScreen() {
        console.log(`${key}: ${value}`);
      }
 
-    fetch("http://localhost:5000/api/v1/add-chapter", {
+    fetch("http://localhost:5001/api/v1/add-chapter", {
       method: "POST",
       body: data,
     })
@@ -70,7 +70,7 @@ export default function AddChapterScreen() {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/v1/delete-chapter/${id}`,
+        `http://localhost:5001/api/v1/delete-chapter/${id}`,
         {
           method: "DELETE",
         }
