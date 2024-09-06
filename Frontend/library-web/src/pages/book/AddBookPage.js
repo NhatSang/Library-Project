@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function AddBookScreen() {
+export default function AddBookPage() {
   const [formData, setFormData] = useState({
     title: "",
     author: "",

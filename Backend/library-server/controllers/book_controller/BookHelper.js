@@ -4,9 +4,18 @@ import fs from "fs";
 import { PDFDocument } from "pdf-lib";
 import pdf from "pdf-parse";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
-import { saveFileWithKey } from "../../services/AwsServices.js";
+import {
+  deleteFileFromS3,
+  saveFileWithKey,
+} from "../../services/AwsServices.js";
+import { Storage } from "@google-cloud/storage";
+import Chapter from "../../models/Chapter.js";
 
 const client = new textToSpeech.TextToSpeechLongAudioSynthesizeClient({
+  keyFilename: "./json-key/library-project-433704-6c89745a241a.json",
+});
+
+const storage = new Storage({
   keyFilename: "./json-key/library-project-433704-6c89745a241a.json",
 });
 
@@ -40,30 +49,6 @@ export const getPdfOutline = async (filePath) => {
         `Title: ${title}, startPage: ${startPageNumber},end:${endPageNumber}`
       );
       list.push({ title: title, startPage: startPageNumber, endPageNumber });
-      // if (outline[i].items && outline[i].items.length > 0) {
-      //   for (let j = 0; j < outline[i].items.length; j++) {
-      //     const subTitle = outline[i].items[j].title;
-      //     let subPageNumber = null;
-      //     let endSubPage = null;
-      //     if (outline[i].items[j].dest) {
-      //       const subPageIndex = await pdfDocument.getPageIndex(
-      //         outline[i].items[j].dest[0]
-      //       );
-      //       subPageNumber = subPageIndex + 1;
-      //       endSubPage = outline[i].items[j + 1]
-      //         ? (await pdfDocument.getPageIndex(outline[i].items[j].dest[0])) -
-      //           1
-      //         : pdfDocument.numPages;
-      //     }
-
-      //     list.push({
-      //       title: subTitle,
-      //       startPage: subPageNumber,
-      //       endPage: endSubPage,
-      //     });
-      //     //   console.log(`  SubTitle: ${subTitle}, Page: ${subPageNumber}`);
-      //   }
-      // }
     }
     return list;
   } catch (err) {
@@ -124,17 +109,6 @@ export const handleTextToSpeech = async (PdfFile, title) => {
   }
 };
 
-function splitTextIntoChunks(text, chunkSize) {
-  const chunks = [];
-  let start = 0;
-  while (start < text.length) {
-    let end = start + chunkSize;
-    if (end > text.length) end = text.length;
-    chunks.push(text.slice(start, end));
-    start = end;
-  }
-  return chunks;
-}
 async function convertTextToSpeech(text, outputFilename) {
   const request = {
     parent: "projects/library-project-433704/locations/asia",
@@ -161,33 +135,30 @@ async function convertTextToSpeech(text, outputFilename) {
   const publicUrl = `https://storage.googleapis.com/audio-book-2024/${outputFilename}`;
   return publicUrl;
 }
-// function mergeAudioFiles(files, outputFilename) {
-//   const mergedStream = ffmpeg();
 
-//   files.forEach((file) => {
-//     mergedStream.input(file);
-//   });
+export async function deleteFileFromGG(filename) {
+  // Tạo một tham chiếu đến bucket
+  const bucket = storage.bucket("audio-book-2024");
 
-//   mergedStream
-//     .on("error", function (err) {
-//       console.log("Error:", err);
-//     })
-//     .on("end", function () {
-//       console.log("Merged audio saved as", outputFilename);
-//     })
-//     .mergeToFile("./temp/" + outputFilename);
-//   return outputFilename;
-// }
-// function cleanup(files) {
-//   files.forEach((file) => {
-//     fs.unlink(file, (err) => {
-//       if (err) console.error(`Error deleting file ${file}:`, err);
-//       else console.log(`Deleted file ${file}`);
-//     });
-//   });
-// }
+  // Tạo một tham chiếu đến file trong bucket
+  const file = bucket.file(filename);
 
+  try {
+    // Xóa file
+    await file.delete();
+    console.log(`File ${filename} đã được xóa.`);
+  } catch (err) {
+    console.error("Lỗi khi xóa file:", err);
+  }
+}
 
-
-
-
+export const deleteChapterById = async (id) => {
+  const result = await Chapter.findByIdAndDelete(id);
+  const tempPdfArr = result.pdfLink.split("/");
+  const pdfName = tempPdfArr[tempPdfArr.length - 1];
+  await deleteFileFromS3(pdfName);
+  const tempAudioArr = result.audioLink.split("/");
+  const audioName = tempAudioArr[tempAudioArr.length - 1];
+  await deleteFileFromGG(audioName);
+  return result;
+};

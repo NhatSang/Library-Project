@@ -1,8 +1,18 @@
 import mongoose from "mongoose";
 import Book from "../../models/Book.js";
 import Chapter from "../../models/Chapter.js";
-import { readPdfFromS3, saveFile } from "../../services/AwsServices.js";
-import { getPdfOutline, handleTextToSpeech, splitPDF } from "./BookHelper.js";
+import {
+  deleteFileFromS3,
+  readPdfFromS3,
+  saveFile,
+} from "../../services/AwsServices.js";
+import {
+  deleteChapterById,
+  deleteFileFromGG,
+  getPdfOutline,
+  handleTextToSpeech,
+  splitPDF,
+} from "./BookHelper.js";
 
 export const addBook = async (req, res) => {
   try {
@@ -97,7 +107,7 @@ export const getBooks = async (req, res) => {
 export const getChapters = async (req, res) => {
   try {
     const bookId = req.params.id;
-    const data = await Chapter.find({book:bookId});
+    const data = await Chapter.find({ book: bookId });
     res.status(200).json({
       success: true,
       data,
@@ -112,9 +122,7 @@ export const deleteChapter = async (req, res) => {
   try {
     const id = req.params.id;
 
-    // Delete the book by its id
-    const result = await Chapter.findByIdAndDelete(id);
-
+    const result = await deleteChapterById(id);
     if (!result) {
       return res.status(404).send("Chapter not found");
     }
@@ -130,9 +138,18 @@ export const deleteBook = async (req, res) => {
   try {
     const id = req.params.id;
 
-    // Delete the book by its id
     const result = await Book.findByIdAndDelete(id);
+    const tempPdfArr = result.pdfLink.split("/");
+    const pdfName = tempPdfArr[tempPdfArr.length - 1];
+    const tempImgArr = result.image.split("/");
+    const imgName = tempImgArr[tempImgArr.length - 1];
+    await deleteFileFromS3(pdfName);
+    await deleteFileFromS3(imgName);
 
+    const chapters = await Chapter.find({ book: id });
+    chapters.forEach(async (c) => {
+      await deleteChapterById(c._id);
+    });
     if (!result) {
       return res.status(404).send("Book not found");
     }
@@ -164,13 +181,12 @@ export const updateBook = async (req, res) => {
   }
 };
 
-
 //get book new
 export const getNewestBooks = async (req, res) => {
   try {
     const books = await Book.find().sort({ createdAt: -1 }).limit(5);
     return res.status(200).json({
-      status:200,
+      status: 200,
       message: "Success",
       data: books,
     });
@@ -206,11 +222,8 @@ export const getBookById = async (req, res) => {
       message: "Success",
       data: book,
     });
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
     return res.status(500).json({ message: err.message });
   }
-}
-
-
+};

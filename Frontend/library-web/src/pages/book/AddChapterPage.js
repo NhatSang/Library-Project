@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-export default function AddChapterScreen() {
+export default function AddChapterPage() {
   const location = useLocation();
   const { state } = location || {};
   const { data } = state || {};
