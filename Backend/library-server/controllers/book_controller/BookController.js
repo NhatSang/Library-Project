@@ -64,7 +64,6 @@ export const addBook = async (req, res) => {
 
 export const addChapter = async (req, res) => {
   try {
-    console.log("Request Body:", req.body);
     const { bookId, title, startPage, endPage, bookLink } = req.body;
     console.log(`start ${startPage} end ${endPage}`);
 
