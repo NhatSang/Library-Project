@@ -69,13 +69,13 @@ const LoginScreen = () => {
     }
     if (isValidStudentEmail(userInfo.mail)) {
       const res = await _login(user);
-      if (res.status === 404) {
+      if (!res.status) {
         navigation.navigate(ScreenName.UserFormScreen, {
           email: userInfo.mail,
           password: userInfo.id,
         });
       }
-      if (res.status === 200) {
+      if (res.status) {
         dispatch(setUser(res.data.user));
         dispatch(setAuth(res.data.accessToken));
         await saveToken(res.data.accessToken);
