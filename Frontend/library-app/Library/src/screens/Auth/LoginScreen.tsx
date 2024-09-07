@@ -7,7 +7,7 @@ import { fontFamilies } from '@constants/fontFamilies'
 import { globalColor } from '@constants/globalColor'
 import { ScreenName } from '@constants/ScreenName'
 import { useNavigation } from '@react-navigation/native'
-import { saveToken } from '@utils/storage'
+import { saveToken, saveUserLocalStorage } from '@utils/storage'
 import React, { useCallback, useState } from 'react'
 import { Alert, Image, ImageBackground, Platform, View } from 'react-native'
 import { authorize } from 'react-native-app-auth'
@@ -79,6 +79,7 @@ const LoginScreen = () => {
         dispatch(setUser(res.data.user));
         dispatch(setAuth(res.data.accessToken));
         await saveToken(res.data.accessToken);
+        await saveUserLocalStorage(res.data.user);
       }
 
     } else {

@@ -1,9 +1,9 @@
 
 import { SplashScreen } from '@screens/index';
-import { getToken } from '@utils/storage';
+import { getToken, getUserLocalStorage } from '@utils/storage';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAuth } from '../redux/authReducer';
+import { setAuth, setUser } from '../redux/authReducer';
 import AuthStack from './AuthStack';
 import MainRouter from './MainRouter';
 
@@ -17,7 +17,8 @@ const Router = () => {
     checkAuth();
     const timeout = setTimeout(() => {
       setIsWelcome(false);
-    }, 3000);
+    }
+      , 3000);
     return () => {
       clearTimeout(timeout);
     }
@@ -25,8 +26,11 @@ const Router = () => {
 
   const checkAuth = async () => {
     const token = await getToken();
-    if (token) {
+    const user = await getUserLocalStorage();
+    if (token && user) {
       dispatch(setAuth(token));
+      dispatch(setUser(user));
+      // setIsWelcome(false);
     }
   };
 

@@ -24,3 +24,20 @@ export const saveToken = async (token: string) => {
         console.log(e);
     }
 };
+
+export const saveUserLocalStorage = async (user: any) => {
+    try {
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+export const getUserLocalStorage = async () => {
+    try {
+        const user = await AsyncStorage.getItem('user');
+        return user;
+    } catch (e) {
+        console.log(e);
+    }
+};

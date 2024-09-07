@@ -10,10 +10,11 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use(
-    function (config) {
-        getToken().then(async token => {
+    async function (config) {
+        const token = await getToken();
+        if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
-        });
+        }
         config.params = {
             ...config.params,
             // locale: getDeviceLanguage(),

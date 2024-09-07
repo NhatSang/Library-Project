@@ -24,6 +24,8 @@ interface Props {
     maxLength?: number;
     onEndEditing?: () => string;
     showCount?: boolean;
+    noBorder?: boolean;
+    placehodelColor?: string;
 
 }
 
@@ -45,6 +47,8 @@ const AppInput = (props: Props) => {
         maxLength,
         onEndEditing,
         placeholder,
+        noBorder,
+        placehodelColor,
     } = props;
     const [isError, setIsError] = useState<boolean>(false);
     const [isFocus, setIsFocus] = useState(false);
@@ -67,11 +71,15 @@ const AppInput = (props: Props) => {
             }
             <Row styles={[
                 styles.inputContainer,
-                styles.center
+                styles.center,
+                {
+                    borderColor: noBorder ? 'transparent' : 'gray'
+                }
             ]}>
                 {prefix && prefix}
                 <TextInput
                     placeholder={placeholder}
+                    placeholderTextColor={placehodelColor ? placehodelColor : '#0F1414'}
                     value={value}
                     maxLength={maxLength}
                     style={[
@@ -81,7 +89,7 @@ const AppInput = (props: Props) => {
                             paddingRight: clear || affix ? 12 : 0,
                             textAlignVertical: textAreal ? 'top' : 'center',
                             minHeight:
-                                contentHeight > 200 ? contentHeight : textAreal ? 120 : 'auto',
+                                contentHeight > 200 ? contentHeight : textAreal ? 70 : 'auto',
                         },
                         inputStyles,
                     ]}

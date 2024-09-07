@@ -3,7 +3,7 @@ import Note from '../models/Note.js';
 export const getNoteByBookId = async (req, res) => {
     try {
         const _user = req.user;
-        const bookId = req.params.bookId;
+        const bookId = req.query.bookId;
         const notes = await Note.find({ user: _user.userId, book: bookId });
         return res.status(200).json({
             status: true,
@@ -48,7 +48,7 @@ export const createNote = async (req, res) => {
 export const deleteNote = async (req, res) => {
     try {
         const _user = req.user;
-        const noteId = req.params.noteId;
+        const noteId = req.query.noteId;
         const note = await Note.findOne({ user: _user.userId, _id: noteId });
         if (!note) {
             return res.status(404).json({
