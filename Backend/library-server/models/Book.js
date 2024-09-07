@@ -7,6 +7,8 @@ const bookSchema = new mongoose.Schema({
   genre: { type: mongoose.Schema.Types.ObjectId, ref: "Genre" },
   avgRating: { type: Number, default: 0 },
   image: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 const Book = mongoose.model("Book", bookSchema);

@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   majors: { type: mongoose.Schema.Types.ObjectId, ref: "Majors" },
   role: { type: String, enum: ["admin", "user"] },
-  active: { type: Boolean, default: false },
+  active: { type: Boolean, default: true },
   studentCode: { type: String },
   studentYear: { type: Number },
   image: { type: String, default: "" },

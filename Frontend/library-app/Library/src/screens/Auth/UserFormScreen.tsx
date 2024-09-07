@@ -98,7 +98,6 @@ const UserFormScreen = ({ navigation, route }: any) => {
                 dispatch(setUser(res.data.user));
                 dispatch(setAuth(res.data.accessToken));
                 await saveToken(res.data.accessToken);
-
             }
         } catch (error) {
             console.log('error', error);
