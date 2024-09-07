@@ -1,5 +1,5 @@
 export interface iUser {
-    id?: string;
+    _id?: string;
     name: string;
     gender:eGender;
     majors: iMajor;
@@ -11,6 +11,12 @@ export interface iUser {
     studnetYear: number;
     accessToken?: string;
     dob:Date
+}
+
+export interface iUserReview {
+    _id: string;
+    name: string;
+    image: string;
 }
 
 export interface iMajor {

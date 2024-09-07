@@ -32,17 +32,15 @@ const ReadText = ({ navigation, route }: any) => {
     const handleGetPageReaded = async () => {
         const pageReaded = await AsyncStorage.getItem(`pageReaded_${id}`);
         if (pageReaded) {
-            console.log('pageReaded: ', pageReaded);
             setSelectedPage(Number(pageReaded));
         }
     };
 
 
-
     const getChapterByIdBook = async () => {
         try {
             const response = await _getChapterByIdBook(id);
-            if (response.status === 200) {
+            if (response.status) {
                 setChapter(response.data);
             }
         } catch (error) {

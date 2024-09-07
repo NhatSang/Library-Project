@@ -2,8 +2,9 @@ import Review from '../models/Review.js';
 
 export const getReviewByBookId = async (req, res) => {
     try {
-        const bookId = req.params.bookId;
-        const reviews = await Review.find({ book: bookId });
+        const bookId = req.query.bookId;
+        const reviews = await Review.find({ book: bookId })
+        .populate('user', '_id name image');
         return res.status(200).json({
             status: true,
             message: 'Success',
@@ -20,8 +21,9 @@ export const getReviewByBookId = async (req, res) => {
 
 export const createReview = async (req, res) => {
     try {
-        const _user = req._user;
+        const _user = req.user;
         const { content, rating, book } = req.body;
+        console.log(req.body);
         const reviewExist = await Review.findOne({ user:_user.userId, book });
         if (reviewExist) {
             reviewExist.content = content;
@@ -57,7 +59,7 @@ export const createReview = async (req, res) => {
 
 export const getReviewNewestByBookId = async (req, res) => {
     try {
-        const bookId = req.params.bookId;
+        const bookId = req.query.bookId;
         const reviews = await Review.find({ book: bookId }).sort({ createdAt: -1 }).limit(5);
         return res.status(200).json({
             status: true,

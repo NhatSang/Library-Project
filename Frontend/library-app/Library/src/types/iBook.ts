@@ -7,15 +7,5 @@ export interface iBook {
   avgRating: number
   image: string
 }
-export const defaultListBook: iBook[] = [
-  {
-    _id: '',
-    title: '',
-    author: "",
-    pdfLink: "",
-    genre: "",
-    avgRating: 0,
-    image: ""
-  }
-]
+
 

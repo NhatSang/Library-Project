@@ -4,27 +4,30 @@ import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
 import { ScreenName } from '@constants/ScreenName';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, Pressable, ScrollView, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, useColorScheme, View } from 'react-native';
 import { Badge } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { defaultListBook } from '../../types/iBook';
+import { iBook } from 'src/types/iBook';
 import { _getNewestBooks } from './apis';
 import SwiperImage from './book/components/SwiperImage';
 
-const HomeScreen = ({ navigation, route }: any) => {
+const HomeScreen = ({ navigation }: any) => {
     const colorScheme = useColorScheme();
-    const [listNewBook, setListNewBook] = useState(defaultListBook);
+    const [listNewBook, setListNewBook] = useState<iBook[]>([]);
+    const [loadImage, setLoadImage] = useState<boolean>(false);
 
     useEffect(() => {
         getNewestBooks();
     }, []);
 
     const getNewestBooks = async () => {
+        setLoadImage(true);
         try {
             const response = await _getNewestBooks();
-            if (response.status === 200) {
+            if (response.status) {
                 setListNewBook(response.data);
+                setLoadImage(false);
             }
         } catch (error) {
             console.log('error', error);
@@ -64,7 +67,15 @@ const HomeScreen = ({ navigation, route }: any) => {
                                 <Pressable
                                     onPress={() => navigation.navigate(ScreenName.BookDetail, { item })}
                                     className="px-3 mx-1 py-2 rounded-md bg-white">
-                                    <Image resizeMode='stretch' source={{ uri: item.image }} className="w-36 h-44 rounded-md" />
+                                    {
+                                        loadImage ? (
+                                            <View className="w-36 h-44 rounded-md justify-center items-center">
+                                                <ActivityIndicator size="large" color={globalColor.primary} />
+                                            </View>
+                                        ) : (
+                                            <Image resizeMode='stretch' source={{ uri: item.image }} className="w-36 h-44 rounded-md" />
+                                        )
+                                    }
                                     <View className="w-32 justify-center items-center pt-2">
                                         <AppText center numberOfLines={2} size={14} font={fontFamilies.robotoBold} text={item.title} />
                                         <AppText numberOfLines={1} size={11} text={item.author} />
