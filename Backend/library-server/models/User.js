@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   active: { type: Boolean, default: true },
   studentCode: { type: String },
   studentYear: { type: Number },
-  image: { type: String, default: null },
+  image: { type: String, default: 'https://pdf8888.s3.ap-southeast-1.amazonaws.com/avata_default.jpg' },
 });
 
 const User = mongoose.model("User", userSchema);

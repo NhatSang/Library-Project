@@ -1,4 +1,3 @@
-import { HOME } from '@assets/images'
 import AppButton from '@components/AppButton'
 import AppText from '@components/AppText'
 import Loading from '@components/Loading'
@@ -7,6 +6,7 @@ import { fontFamilies } from '@constants/fontFamilies'
 import { globalColor } from '@constants/globalColor'
 import { isAndroid } from '@constants/index'
 import { ScreenName } from '@constants/ScreenName'
+import { getUserLocalStorage } from '@utils/storage'
 import React, { useEffect, useState } from 'react'
 import { FlatList, Image, Pressable, View } from 'react-native'
 import RNFetchBlob from 'react-native-blob-util'
@@ -15,7 +15,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Feather from 'react-native-vector-icons/Feather'
-import { useSelector } from 'react-redux'
 import { iBook } from 'src/types/iBook'
 import { IReview } from 'src/types/iReview'
 import { _getReviewNewest } from '../apis'
@@ -23,8 +22,7 @@ import { _getReviewNewest } from '../apis'
 
 const BookDetail = ({ navigation, route }: any) => {
     const { item } = route?.params;
-    const user = useSelector((state: any) => state.auth.user);
-    console.log('item', user);
+    const [userId, setUserId] = useState<string>('');
     const [book, setBook] = useState<iBook>(item);
     const [background, setBackground] = useState<string>('white');
     const [loading, setLoading] = useState<boolean>(false);
@@ -35,11 +33,29 @@ const BookDetail = ({ navigation, route }: any) => {
         const fetchData = async () => {
             setLoading(true);
             await getImageColors();
-            await getReviewNewest();
+            await getUserLocal();
             setLoading(false);
         };
         fetchData();
     }, []);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            getReviewNewest();
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+    const getUserLocal = async () => {
+        try {
+            const user = await getUserLocalStorage();
+            if (user) {
+                setUserId(JSON.parse(user)._id);
+            }
+        } catch (error) {
+            console.log('Error get user local: ', error);
+        }
+    }
 
     const getImageColors = async () => {
         try {
@@ -68,6 +84,13 @@ const BookDetail = ({ navigation, route }: any) => {
             console.log('Error get review newest: ', error);
         }
     };
+
+    const getName = (id: string) => {
+        if (id === userId) {
+            return 'Bạn';
+        }
+        return reviews.find((item) => item.user._id === id)?.user.name;
+    }
 
     const downloadPDF = async (url: string) => {
         setLoadingBtn(true);
@@ -162,7 +185,7 @@ const BookDetail = ({ navigation, route }: any) => {
                         </View>
                         <View className='flex-row justify-between'>
                             <AppText text='Đánh giá gần đây' font={fontFamilies.robotoBold} />
-                            <AppText onPress={() => { navigation.navigate(ScreenName.RatingScreen, { id: book._id }) }} size={16} text='Viết đánh giá' color={globalColor.primary} />
+                            <AppText onPress={() => { navigation.navigate(ScreenName.RatingScreen, { id: book._id, userId }) }} size={16} text='Viết đánh giá' color={globalColor.primary} />
                         </View>
                         {reviews.length > 0 ?
                             (<FlatList
@@ -173,10 +196,12 @@ const BookDetail = ({ navigation, route }: any) => {
                                         <View className='py-4 px-4'>
                                             <View className='flex-row justify-between '>
                                                 <View className='flex-row'>
-                                                    <Image source={HOME.AVATAR} className='w-8 h-8' />
+                                                    <View className='w-9 h-9 rounded-full border border-red-500 justify-center items-center'>
+                                                        <Image source={{ uri: item.user.image }} className='w-8 h-8' />
+                                                    </View>
                                                     <View className='pl-3'>
                                                         <AppText text={
-                                                            item.user._id == user._id ? 'Bạn' : item.user.name
+                                                            getName(item.user._id)
                                                         } font={fontFamilies.robotoBold} />
                                                         <View>
                                                             <Rate rating={item.rating} />

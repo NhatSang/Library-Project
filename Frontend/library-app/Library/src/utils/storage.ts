@@ -41,3 +41,11 @@ export const getUserLocalStorage = async () => {
         console.log(e);
     }
 };
+
+export const clearUserLocalStorage = async () => {
+    try {
+        await AsyncStorage.removeItem('user');
+    } catch (e) {
+        console.log(e);
+    }
+};

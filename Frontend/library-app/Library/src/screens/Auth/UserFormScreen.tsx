@@ -1,7 +1,7 @@
 import { AppButton, AppInput, AppText } from '@components/index'
 import { fontFamilies } from '@constants/fontFamilies'
 import { globalColor } from '@constants/globalColor'
-import { saveToken } from '@utils/storage'
+import { saveToken, saveUserLocalStorage } from '@utils/storage'
 import React, { useEffect, useState } from 'react'
 import { Alert, FlatList, Modal, Pressable, ScrollView, TouchableHighlight, View } from 'react-native'
 import DatePicker from 'react-native-date-picker'
@@ -11,7 +11,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import { useDispatch } from 'react-redux'
 import { iMajor, iUser } from 'src/types/iUser'
-import { setAuth, setUser } from '../../redux/authReducer'
+import { setAuth, setUser, setUserId } from '../../redux/authReducer'
 import { eGender } from '../../types/iUser'
 import { _loginMS } from './apis'
 import { dataMajor } from './data'
@@ -95,9 +95,11 @@ const UserFormScreen = ({ navigation, route }: any) => {
         try {
             const res = await _loginMS(data);
             if (res.status) {
+                dispatch(setUserId(res.data.user._id));
                 dispatch(setUser(res.data.user));
                 dispatch(setAuth(res.data.accessToken));
                 await saveToken(res.data.accessToken);
+                await saveUserLocalStorage(res.data.user);
             }
         } catch (error) {
             console.log('error', error);

@@ -15,8 +15,8 @@ export interface iUser {
 
 export interface iUserReview {
     _id: string;
-    name: string;
-    image: string;
+    name?: string;
+    image?: string;
 }
 
 export interface iMajor {

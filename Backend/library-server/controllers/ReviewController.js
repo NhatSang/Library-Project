@@ -60,7 +60,9 @@ export const createReview = async (req, res) => {
 export const getReviewNewestByBookId = async (req, res) => {
     try {
         const bookId = req.query.bookId;
-        const reviews = await Review.find({ book: bookId }).sort({ createdAt: -1 }).limit(5);
+        const reviews = await Review.find({ book: bookId }).sort({ createdAt: -1 })
+        .populate('user', '_id name image')
+        .limit(5);
         return res.status(200).json({
             status: true,
             message: 'Success',
