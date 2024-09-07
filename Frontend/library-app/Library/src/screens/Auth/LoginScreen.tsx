@@ -14,7 +14,7 @@ import { authorize } from 'react-native-app-auth'
 import AzureAuth from 'react-native-azure-auth'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
-import { setAuth, setUser } from '../../redux/authReducer'
+import { setAuth, setUser, setUserId } from '../../redux/authReducer'
 import { _login } from './apis'
 
 
@@ -76,6 +76,7 @@ const LoginScreen = () => {
         });
       }
       if (res.status) {
+        dispatch(setUserId(res.data.user._id));
         dispatch(setUser(res.data.user));
         dispatch(setAuth(res.data.accessToken));
         await saveToken(res.data.accessToken);
