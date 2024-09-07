@@ -47,13 +47,13 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   const { username, password } = req.body;
   try {
-    const user = await User.findOne({ username: username });
+    const user = await User.findOne({ email: username });
     if (user) {
       const result = await bcrypt.compare(password, user.password);
       if (result) {
-        const token = generateToken(user.username, user.role);
+        const token = generateToken(user.email,user._id, user.role);
         return res.status(200).json({
-          status: 200,
+          status: true,
           data: {
             user: user,
             accessToken: token,
@@ -64,7 +64,8 @@ export const login = async (req, res) => {
       return res.send("Incorrect password");
     }
     return res.json({
-      status: 404,
+      status: false,
+      message: "User not found",
     });
   } catch (err) {
     console.log("Error login: ", err.message);
@@ -78,9 +79,9 @@ export const loginWithMicrosoft = async (req, res) => {
     if (user) {
       const result = await bcrypt.compare(userInfo.password, user.password);
       if (result) {
-        const token = generateToken(user.email, user.role);
+        const token = generateToken(user.email,user._id ,user.role);
         return res.status(200).json({
-          status: 200,
+          status: true,
           data: {
             user: user,
             accessToken: token,
@@ -88,7 +89,10 @@ export const loginWithMicrosoft = async (req, res) => {
           message: "Login successfully",
         });
       }
-      return res.status(401).josn({ message: "Incorrect password" });
+      return res.status(401).josn({ 
+        status: false,
+        message: "Incorrect password"
+       });
     } else {
       const major = await Majors.findOne({ name: userInfo.majors.name });
       const salt = await bcrypt.genSalt(10);
@@ -105,10 +109,13 @@ export const loginWithMicrosoft = async (req, res) => {
         studentYear: userInfo.studentYear,
       });
       await newUser.save();
-      const token = generateToken(newUser.username, newUser.role);
+      const token = generateToken(newUser.email,newUser._id, newUser.role);
       return res.status(201).json({
-        data: newUser,
-        accessToken: token,
+        status: true,
+        data: {
+          user: newUser,
+          accessToken: token,
+        },
         message: "Create new user successfully",
       });
     }
@@ -117,14 +124,5 @@ export const loginWithMicrosoft = async (req, res) => {
   }
 };
 
-export const addMajors = async (req, res) => {
-  const { name } = req.body;
-  try {
-    const newMajors = new Majors({ name: name });
-    await newMajors.save();
-    return res.status(201).json({ data: newMajors });
-  } catch (err) {
-    return res.status(500).json({ message: "lỗi" });
-  }
-};
+
 

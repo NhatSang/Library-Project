@@ -15,6 +15,10 @@ import ConnectDB from "./database/ConnectDB.js";
 import authRouter from "./routers/AuthRouter.js";
 import bookRouter from "./routers/BookRouter.js";
 import chapterRouter from "./routers/ChapterRouter.js";
+import reviewRouter from "./routers/ReviewRouter.js";
+import noteRouter from "./routers/NoteRouter.js";
+import { authenticateJWT } from "./middlewares/Auth.js";
+import majorRouter from "./routers/MajorRouter.js";
 
 dotenv.config();
 const app = express();
@@ -35,6 +39,10 @@ const server = http.createServer(app);
 app.use("/api/v1", authRouter);
 app.use("/api/v1", bookRouter);
 app.use("/api/v1", chapterRouter);
+app.use("/api/v1", majorRouter);
+app.use("/api/v1",authenticateJWT ,reviewRouter);
+app.use("/api/v1", authenticateJWT,noteRouter);
+
 
 server.listen(port, () => {
   ConnectDB();
