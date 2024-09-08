@@ -36,6 +36,10 @@ pod 'react-native-blob-util',
     :path => '../node_modules/react-native-blob-util'
 pod 'react-native-track-player',
      path: '../node_modules/react-native-track-player'
+pod 'react-native-restart', 
+      :path => '../node_modules/react-native-restart'
+
+
 
 
   target 'LibraryTests' do

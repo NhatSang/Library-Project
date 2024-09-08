@@ -10,7 +10,8 @@ export interface iUser {
     studentCode: string;
     studnetYear: number;
     accessToken?: string;
-    dob:Date
+    dob:Date,
+    image: string;
 }
 
 export interface iUserReview {
