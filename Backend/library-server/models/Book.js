@@ -9,6 +9,7 @@ const bookSchema = new mongoose.Schema({
   image: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  pageNumber: { type: Number, required: true },
 });
 
 const Book = mongoose.model("Book", bookSchema);

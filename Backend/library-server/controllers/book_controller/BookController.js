@@ -9,6 +9,7 @@ import {
 import {
   deleteChapterById,
   deleteFileFromGG,
+  getPageNumber,
   getPdfOutline,
   handleTextToSpeech,
   splitPDF,
@@ -21,6 +22,7 @@ export const addBook = async (req, res) => {
     const pdfFile = req.files["pdf"][0];
     const pdfLink = await saveFile(pdfFile);
     const imageLink = await saveFile(imageFile);
+    const pageNumber = await getPageNumber(pdfLink);
     const newBook = new Book({
       title: title,
       author: author,
@@ -28,6 +30,7 @@ export const addBook = async (req, res) => {
       genre: new mongoose.Types.ObjectId(genre),
       avgRating: 0,
       image: imageLink,
+      pageNumber: pageNumber,
     });
     await newBook.save();
     const outline = await getPdfOutline(pdfLink);
@@ -99,10 +102,10 @@ export const getBooks = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ 
+    return res.status(500).json({
       status: false,
-      message: err.message
-     });
+      message: err.message,
+    });
   }
 };
 
@@ -194,10 +197,10 @@ export const getNewestBooks = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ 
+    return res.status(500).json({
       status: false,
-      message: err.message
-     });
+      message: err.message,
+    });
   }
 };
 //get book by genre
@@ -212,10 +215,10 @@ export const getBooksByGenre = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ 
+    return res.status(500).json({
       status: false,
-      message: err.message
-     });
+      message: err.message,
+    });
   }
 };
 
@@ -225,10 +228,10 @@ export const getBookById = async (req, res) => {
     const bookId = req.query.bookId;
     const book = await Book.findById(bookId);
     if (!book) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         status: false,
-        message: "Book not found"
-       });
+        message: "Book not found",
+      });
     }
     return res.status(200).json({
       status: true,
@@ -237,9 +240,9 @@ export const getBookById = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ 
+    return res.status(500).json({
       status: false,
-      message: err.message
-     });
+      message: err.message,
+    });
   }
 };
