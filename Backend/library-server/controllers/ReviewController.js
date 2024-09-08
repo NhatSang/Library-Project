@@ -23,7 +23,6 @@ export const createReview = async (req, res) => {
     try {
         const _user = req.user;
         const { content, rating, book } = req.body;
-        console.log(req.body);
         const reviewExist = await Review.findOne({ user:_user.userId, book });
         if (reviewExist) {
             reviewExist.content = content;

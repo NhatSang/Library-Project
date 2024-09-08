@@ -208,16 +208,18 @@ const BookDetail = ({ navigation, route }: any) => {
                                                         </View>
                                                     </View>
                                                 </View>
-                                                <AppText text={
-                                                    new Date(item.createdAt).toLocaleDateString('vi-VN', {
-                                                        year: 'numeric',
-                                                        month: 'numeric',
-                                                        day: 'numeric',
-                                                        hour: 'numeric',
-                                                        minute: 'numeric',
-                                                        second: 'numeric',
-                                                    })
-                                                } />
+                                                <View>
+                                                    <AppText text={
+                                                        new Date(item.createdAt).toLocaleDateString('vi-VN', {
+                                                            year: 'numeric',
+                                                            month: 'numeric',
+                                                            day: 'numeric',
+                                                            hour: 'numeric',
+                                                            minute: 'numeric',
+                                                            second: 'numeric',
+                                                        })
+                                                    } />
+                                                </View>
                                             </View>
                                             <AppText text={item.content} />
                                         </View>
