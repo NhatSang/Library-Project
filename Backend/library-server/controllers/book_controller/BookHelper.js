@@ -19,6 +19,16 @@ const storage = new Storage({
   keyFilename: "./json-key/library-project-433704-6c89745a241a.json",
 });
 
+export const getPageNumber = async (filePath) => {
+  try {
+    const loadingTask = pdfjsLib.getDocument(filePath);
+    const pdfDocument = await loadingTask.promise;
+    return pdfDocument.numPages;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export const getPdfOutline = async (filePath) => {
   try {
     const loadingTask = pdfjsLib.getDocument(filePath);
