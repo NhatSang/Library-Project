@@ -37,10 +37,36 @@ const _createReview = async (data: any) => {
     return api.post(url, data);
 };
 
+const _createNote = async (data: any) => {
+    const url = '/create-note';
+    return api.post(url, data);
+};
+
+const _getNoteByBookId = async (id: string) => {
+    const url = '/get-note-by-book-id';
+    return api.get(url, {
+        params: {
+            bookId: id,
+        },
+    });
+};
+
+const _deleteNote = async (id: string) => {
+    const url = '/delete-note';
+    return api.delete(url, {
+        params: {
+            noteId: id,
+        },
+    });
+};
+
 export {
+    _createNote,
     _createReview,
+    _deleteNote,
     _getAllReviewByBookId,
     _getChapterByIdBook,
     _getNewestBooks,
+    _getNoteByBookId,
     _getReviewNewest,
 };

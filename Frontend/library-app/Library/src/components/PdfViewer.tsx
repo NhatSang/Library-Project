@@ -8,10 +8,11 @@ type Props = {
     id: string;
     pdfUrl: string;
     initialPage?: number;
+    setPage?: (page: number) => void;
 }
 
 const PdfViewer = (props: Props) => {
-    const { id, pdfUrl, initialPage } = props;
+    const { id, pdfUrl, initialPage, setPage } = props;
     const [pageCount, setPageCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(initialPage || 1);
     const [progress, setProgress] = useState(0);
@@ -50,6 +51,7 @@ const PdfViewer = (props: Props) => {
                     }
                 }}
                 onPageChanged={(page) => {
+                    setPage && setPage(page);
                     handleSavePageReaded(page);
                     const progress = (page / pageCount);
                     setProgress(progress);

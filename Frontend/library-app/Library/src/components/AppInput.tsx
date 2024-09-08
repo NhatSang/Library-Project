@@ -1,7 +1,7 @@
 import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
 import React, { ReactNode, useState } from 'react';
-import { KeyboardType, StyleProp, StyleSheet, TextInput, TextStyle, TouchableOpacity, View } from 'react-native';
+import { KeyboardType, StyleProp, StyleSheet, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AppText from './AppText';
 import Row from './Row';
@@ -20,6 +20,7 @@ interface Props {
     onClear?: () => void;
     iconClear?: ReactNode;
     inputStyles?: StyleProp<TextStyle>;
+    containerStyle?: StyleProp<ViewStyle>;
     placeholder?: string;
     maxLength?: number;
     onEndEditing?: () => string;
@@ -49,6 +50,7 @@ const AppInput = (props: Props) => {
         placeholder,
         noBorder,
         placehodelColor,
+        containerStyle
     } = props;
     const [isError, setIsError] = useState<boolean>(false);
     const [isFocus, setIsFocus] = useState(false);
@@ -73,8 +75,9 @@ const AppInput = (props: Props) => {
                 styles.inputContainer,
                 styles.center,
                 {
-                    borderColor: noBorder ? 'transparent' : 'gray'
-                }
+                    borderColor: noBorder ? 'transparent' : 'gray',
+                },
+                containerStyle,
             ]}>
                 {prefix && prefix}
                 <TextInput

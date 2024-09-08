@@ -23,9 +23,9 @@ export const getNoteByBookId = async (req, res) => {
 export const createNote = async (req, res) => {
     try {
         const _user = req.user;
-        const { title,content, book } = req.body;
+        const { page,content, book } = req.body;
         const note = await Note.create({
-            title,
+            page,
             content,
             user: _user.userId,
             book,
@@ -56,7 +56,7 @@ export const deleteNote = async (req, res) => {
                 message: 'Note not found',
             });
         }
-        await note.remove();
+        await note.deleteOne();
         return res.status(200).json({
             status: true,
             message: 'Delete Success',
