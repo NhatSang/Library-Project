@@ -93,7 +93,7 @@ export const addChapter = async (req, res) => {
 export const getBooks = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 20;
+    const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
     const data = await Book.find().skip(skip).limit(limit);
     res.status(200).json({
@@ -207,7 +207,10 @@ export const getNewestBooks = async (req, res) => {
 export const getBooksByGenre = async (req, res) => {
   try {
     const genreId = req.query.genreId;
-    const books = await Book.find({ genre: genreId });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+    const books = await Book.find({ genre: genreId }).skip(skip).limit(limit);
     return res.status(200).json({
       status: true,
       message: "Success",

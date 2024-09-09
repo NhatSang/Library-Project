@@ -19,6 +19,7 @@ export const signup = async (req, res) => {
       conformPassword,
       majors,
       role,
+      code,
     } = req.body;
     if (password !== conformPassword)
       return res.send({ message: "Conform password is invalid!" });
@@ -36,6 +37,7 @@ export const signup = async (req, res) => {
       password: hashpassword,
       majors: majors,
       role: role,
+      code: code,
     });
     await newUser.save();
     return res.status(201).json({ data: newUser });
@@ -47,11 +49,11 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email: email, active: true });
     if (user) {
       const result = await bcrypt.compare(password, user.password);
       if (result) {
-        const token = generateToken(user.email,user._id, user.role);
+        const token = generateToken(user.email, user._id, user.role);
         return res.status(200).json({
           status: true,
           data: {
@@ -79,7 +81,7 @@ export const loginWithMicrosoft = async (req, res) => {
     if (user) {
       const result = await bcrypt.compare(userInfo.password, user.password);
       if (result) {
-        const token = generateToken(user.email,user._id ,user.role);
+        const token = generateToken(user.email, user._id, user.role);
         return res.status(200).json({
           status: true,
           data: {
@@ -89,10 +91,10 @@ export const loginWithMicrosoft = async (req, res) => {
           message: "Login successfully",
         });
       }
-      return res.status(401).josn({ 
+      return res.status(401).josn({
         status: false,
-        message: "Incorrect password"
-       });
+        message: "Incorrect password",
+      });
     } else {
       const major = await Majors.findOne({ name: userInfo.majors.name });
       const salt = await bcrypt.genSalt(10);
@@ -104,12 +106,10 @@ export const loginWithMicrosoft = async (req, res) => {
         email: userInfo.email,
         password: hashpassword,
         majors: major._id,
-        role: userInfo.role,
-        studentCode: userInfo.studentCode,
-        studentYear: userInfo.studentYear,
+        code: userInfo.code,
       });
       await newUser.save();
-      const token = generateToken(newUser.email,newUser._id, newUser.role);
+      const token = generateToken(newUser.email, newUser._id, newUser.role);
       return res.status(201).json({
         status: true,
         data: {
@@ -123,6 +123,3 @@ export const loginWithMicrosoft = async (req, res) => {
     console.log("Error loginWithMicrosoft: ", error);
   }
 };
-
-
-
