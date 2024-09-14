@@ -66,7 +66,7 @@ const ChapterAudio = ({ navigation, route }: any) => {
                             bookDetail: book
                         });
                     }} className='flex-row justify-between items-center p-6 border-b border-gray-200'>
-                        <AppText size={16} color={globalColor.text_light} text={item.title} font={fontFamilies.robotoRegular} />
+                        <AppText size={16} color={globalColor.text_light} text={item?.title} font={fontFamilies.robotoRegular} />
                         <AntDesign name='right' size={20} color={globalColor.text_dark} />
                     </Pressable>
                 )}

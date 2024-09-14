@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, useColorScheme, View } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
@@ -28,10 +27,7 @@ const PdfViewer = (props: Props) => {
     }, [initialPage, pageCount]);
 
 
-    const handleSavePageReaded = async (page: number) => {
-        console.log('currentPageSave: ', page);
-        await AsyncStorage.setItem(`pageReaded_${id}`, page.toString());
-    };
+
 
 
     return (
@@ -52,7 +48,6 @@ const PdfViewer = (props: Props) => {
                 }}
                 onPageChanged={(page) => {
                     setPage && setPage(page);
-                    handleSavePageReaded(page);
                     const progress = (page / pageCount);
                     setProgress(progress);
                 }}

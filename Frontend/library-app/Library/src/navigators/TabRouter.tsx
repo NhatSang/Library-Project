@@ -4,8 +4,8 @@ import { globalColor } from '@constants/globalColor';
 import { isiOS } from '@constants/index';
 import { ScreenName } from '@constants/ScreenName';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React from 'react';
-import { View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, View } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AccountScreen, HistoryScreen, HomeScreen } from '../screens';
@@ -26,8 +26,31 @@ const TabRouter = () => {
         paddingHorizontal: 20,
       },
       tabBarIcon: ({ focused, color, size }) => {
+        const scaleAnim = useRef(new Animated.Value(1)).current;
+
+        useEffect(() => {
+          console.log('focused', focused);
+          handlePress();
+        }, [focused]);
+
+        const handlePress = () => {
+          Animated.spring(scaleAnim, {
+            toValue: 1.2,
+            friction: 3,
+            tension: 100,
+            useNativeDriver: true,
+          }).start(() => {
+            Animated.spring(scaleAnim, {
+              toValue: 1,
+              friction: 3,
+              tension: 100,
+              useNativeDriver: true,
+            }).start();
+          });
+        };
+
         color = focused ? globalColor.primary : globalColor.text_dark;
-        size = focused ? 28 : 24;
+        size = focused ? 30 : 24;
         let name = '';
         let icon = <Entypo name='home' size={size} color={color} />;
         switch (route.name) {
@@ -46,6 +69,7 @@ const TabRouter = () => {
         }
         return (
           <View
+
             style={
               focused
                 ? {
@@ -56,10 +80,11 @@ const TabRouter = () => {
                 }
                 : { flexDirection: 'row' }
             }>
-            <View
+            <Animated.View
               style={
                 focused
                   ? {
+                    transform: [{ scale: focused ? scaleAnim : 1 }],
                     width: 40,
                     height: 40,
                     borderRadius: 20,
@@ -70,12 +95,12 @@ const TabRouter = () => {
                   : undefined
               }>
               {icon}
-            </View>
+            </Animated.View>
             {focused && <AppText color={globalColor.text_light} styles={{
               alignSelf: 'center',
               fontFamily: fontFamilies.robotoBold,
               paddingHorizontal: 6,
-              paddingRight: 9,
+              paddingRight: 12,
             }} text={name} size={14} />}
           </View>
         );
@@ -84,7 +109,7 @@ const TabRouter = () => {
       <Tab.Screen name={ScreenName.HomeScreen} component={HomeScreen} />
       <Tab.Screen name={ScreenName.HistoryScreen} component={HistoryScreen} />
       <Tab.Screen name={ScreenName.AccountScreen} component={AccountScreen} />
-    </Tab.Navigator>
+    </Tab.Navigator >
   )
 }
 

@@ -60,12 +60,28 @@ const _deleteNote = async (id: string) => {
     });
 };
 
+const _createHistory = async (data: any) => {
+    const url = '/create-history';
+    return api.post(url, data);
+};
+
+const _getHistoryByBookIdAndUser = async (bookId: string) => {
+    const url = '/get-history-by-book-id-and-user';
+    return api.get(url, {
+        params: {
+            bookId,
+        },
+    });
+};
+
 export {
+    _createHistory,
     _createNote,
     _createReview,
     _deleteNote,
     _getAllReviewByBookId,
     _getChapterByIdBook,
+    _getHistoryByBookIdAndUser,
     _getNewestBooks,
     _getNoteByBookId,
     _getReviewNewest,

@@ -4,7 +4,7 @@ import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
 import { ScreenName } from '@constants/ScreenName';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, Pressable, ScrollView, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, Alert, BackHandler, FlatList, Image, Pressable, ScrollView, useColorScheme, View } from 'react-native';
 import { Badge } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -19,6 +19,40 @@ const HomeScreen = ({ navigation }: any) => {
 
     useEffect(() => {
         getNewestBooks();
+    }, []);
+
+    useEffect(() => {
+        const backAction = () => {
+            if (navigation.isFocused()) {
+                Alert.alert(
+                    'Thoát ứng dụng',
+                    'Bạn có chắc chắn muốn thoát ứng dụng không?',
+                    [
+                        {
+                            text: 'Hủy',
+                            onPress: () => null,
+                            style: 'cancel'
+                        },
+                        {
+                            text: 'Đồng ý',
+                            onPress: () => BackHandler.exitApp()
+                        },
+                    ],
+                    { cancelable: false }
+                );
+                return true;
+            } else {
+                return false;
+            }
+
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => backHandler.remove();
     }, []);
 
     const getNewestBooks = async () => {
