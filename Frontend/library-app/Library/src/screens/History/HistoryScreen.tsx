@@ -1,116 +1,115 @@
+import AppText from '@components/AppText';
+import { ButtobnCenter } from '@components/index';
+import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScreenName } from '@constants/ScreenName';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { vi } from 'date-fns/locale';
+import React, { useEffect, useState } from 'react';
+import { FlatList, Image, View } from 'react-native';
+import RNFetchBlob from 'react-native-blob-util';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { iHistory } from 'src/types/iHistory';
+import { _getHistoryByUser } from './apis';
 
-const HistoryScreen = () => {
-    const [position, setPosition] = useState(0);
-    const [duration, setDuration] = useState(0);
+const HistoryScreen = ({ navigation }: any) => {
+    const [history, setHistory] = useState<iHistory[]>([]);
+    const { fs } = RNFetchBlob;
+    const { DocumentDir } = fs.dirs;
 
-    // useEffect(() => {
-    //     const setupSoundPlayer = async () => {
-    //         try {
-    //             SoundPlayer.playUrl('https://storage.googleapis.com/audio-book-2024/1725432037712_undefined.wav');
-    //             const info = await SoundPlayer.getInfo(); // Lấy thông tin về file âm thanh
-    //             setDuration(info.duration); // Cập nhật thời lượng
-    //         } catch (e) {
-    //             console.log('Cannot play the sound file', e);
-    //         }
-    //     };
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            getHistory();
+        });
+        return unsubscribe;
+    }, [navigation]);
 
-    //     setupSoundPlayer();
+    const getHistory = async () => {
+        try {
+            const response = await _getHistoryByUser();
+            if (response.status) {
+                setHistory(response.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-    //     // Xử lý sự kiện cập nhật vị trí phát nhạc
-    //     const interval = setInterval(async () => {
-    //         try {
-    //             const info = await SoundPlayer.getInfo();
-    //             setPosition(info.currentTime);
-    //         } catch (e) {
-    //             console.log('Error getting sound info', e);
-    //         }
-    //     }, 1000);
+    const itemHistory = ({ item }: { item: iHistory }) => {
+        const updatedAt = formatDistanceToNow(parseISO(item.updatedAt.toString()), { addSuffix: true, locale: vi });
+        return (
+            <View className='w-full flex-row items-center justify-between py-4 border-b border-gray-300'>
+                <View className='flex-row items-center'>
+                    <Image
+                        source={{ uri: item.book.image }}
+                        className='w-16 h-24 mr-4'
+                        style={{ borderRadius: 8 }}
+                    />
+                    <View>
+                        <AppText
+                            text={item.book.title}
+                            font={fontFamilies.robotoBold}
+                            size={18}
+                        />
+                        <AppText
+                            text={`Trang: ${item.page}`}
+                            font={fontFamilies.robotoRegular}
+                            size={16}
+                        />
+                        <AppText
+                            text={`Tác giả: ${item.book.author}`}
+                            font={fontFamilies.robotoRegular}
+                            size={16}
+                        />
+                    </View>
+                </View>
+                <View className='h-full w-1/4 '>
+                    <AppText
+                        text={`${updatedAt}`}
+                        font={fontFamilies.robotoRegular}
+                        size={12}
+                    />
+                    <View className='flex-1 justify-end'>
+                        <ButtobnCenter
+                            label={'Đọc tiếp'}
+                            colorLabel={globalColor.white}
+                            sizeLabel={14}
+                            onPress={() => navigation.navigate(ScreenName.ReadText,
+                                {
+                                    id: item.book._id,
+                                    path: `${DocumentDir}/book_${item.book._id}.pdf`,
+                                    book: item.book
+                                }
+                            )}
+                            style={{ width: 80, height: 36, backgroundColor: globalColor.primary, borderRadius: 8 }}
+                        />
+                    </View>
+                </View>
+            </View>
+        );
+    }
 
-    //     return () => {
-    //         clearInterval(interval);
-    //         SoundPlayer.stop();
-    //     };
-    // }, []);
-
-    // const playSoundFromUrl = () => {
-    //     try {
-    //         SoundPlayer.playUrl('https://pdf8888.s3.ap-southeast-1.amazonaws.com/SampleAudio_0.4mb.mp3');
-    //     } catch (e) {
-    //         console.log('Cannot play the sound file', e);
-    //     }
-    // };
-
-    // const pauseSound = () => {
-    //     SoundPlayer.pause();
-    // };
-
-    // const stopSound = () => {
-    //     SoundPlayer.stop();
-    //     setPosition(0); // Reset vị trí về 0 khi dừng
-    // };
-
-    // const seekTo = async (value) => {
-    //     try {
-    //         SoundPlayer.seek(value);
-    //         setPosition(value);
-    //     } catch (e) {
-    //         console.log('Error seeking sound', e);
-    //     }
-    // };
 
     return (
-        <View style={styles.container}>
-            {/* <Text style={styles.title}>HistoryScreen</Text>
-            <View style={styles.controls}>
-                <Button title="Play" onPress={playSoundFromUrl} />
-                <Button title="Pause" onPress={pauseSound} />
-                <Button title="Stop" onPress={stopSound} />
-            </View>
-            <View style={styles.progressContainer}>
-                <Text style={styles.progressText}>{`Position: ${Math.floor(position)}s`}</Text>
-                <Text style={styles.progressText}>{`Duration: ${Math.floor(duration)}s`}</Text>
-                <Slider
-                    style={styles.slider}
-                    minimumValue={0}
-                    maximumValue={duration}
-                    value={position}
-                    onSlidingComplete={seekTo}
+        <SafeAreaView className='flex-1 px-4'>
+            <View className='py-4'>
+                <AppText
+                    text={'Lịch sử đã đọc'}
+                    font={fontFamilies.robotoBold}
+                    size={24}
                 />
-            </View> */}
-        </View>
+            </View>
+            <View className='flex-1'>
+                <FlatList
+                    data={history}
+                    renderItem={itemHistory}
+                    keyExtractor={(item: iHistory) => item._id}
+                />
+            </View>
+        </SafeAreaView>
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: globalColor.dark,
-    },
-    title: {
-        fontSize: 24,
-        marginBottom: 20,
-    },
-    controls: {
-        flexDirection: 'row',
-        marginBottom: 20,
-    },
-    progressContainer: {
-        width: '80%',
-    },
-    progressText: {
-        fontSize: 16,
-        color: 'white',
-        marginBottom: 10,
-    },
-    slider: {
-        width: '100%',
-        height: 40,
-    },
-});
+
 
 export default HistoryScreen;

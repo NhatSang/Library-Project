@@ -162,7 +162,7 @@ const AudioBook = ({ navigation, route }: any) => {
                 }}>
                     <AntDesign name='left' size={30} color={globalColor.text_dark} />
                 </Pressable>
-                <AppText size={20} color={globalColor.text_light} text='Sách' font={fontFamilies.robotoBold} />
+                <AppText size={20} color={globalColor.text_light} text={book?.title} font={fontFamilies.robotoBold} />
                 <Space width={30} />
             </View>
             <View className='h-6/10 justify-center items-center'>
@@ -180,10 +180,10 @@ const AudioBook = ({ navigation, route }: any) => {
                 />
             </View>
             <View className='p-4'>
-                <AppText size={20} text={chapter.title} />
+                <AppText size={20} text={chapter.title} font={fontFamilies.robotoBold} />
             </View>
             <View className='w-full h-05/10 justify-center items-center'>
-                <View className='flex-row justify-between w-full px-4'>
+                <View className='flex-row justify-between w-full px-4 py-2'>
                     <AppText text={formatTime(currentTime)} size={16} color={globalColor.text_light} />
 
                     <AppText text={formatTime(duration)} size={16} color={globalColor.text_light} />

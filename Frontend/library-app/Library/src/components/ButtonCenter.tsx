@@ -4,7 +4,7 @@ import { Pressable, StyleProp, ViewStyle } from 'react-native';
 import AppText from './AppText';
 
 interface Props {
-    icon: React.ReactNode;
+    icon?: React.ReactNode;
     label?: string;
     sizeLabel?: number;
     onPress: () => void;
@@ -27,6 +27,7 @@ const ButtonCenter = (props: Props) => {
         <Pressable
             className='justify-center items-center'
             onPress={onPress}
+            style={style}
         >
             {icon}
             <AppText

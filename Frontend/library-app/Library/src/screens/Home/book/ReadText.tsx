@@ -3,22 +3,26 @@ import { AppButton, AppInput, ButtobnCenter, Loading } from '@components/index';
 import PdfViewer from '@components/PdfViewer';
 import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
+import { listColorNote } from '@constants/index';
+import { ScreenName } from '@constants/ScreenName';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Modal, Pressable, useColorScheme, View } from 'react-native';
+import { AppState, FlatList, Modal, Pressable, useColorScheme, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { INote } from 'src/types/iNote';
 import { defaultListChapter, IChapter } from '../../../types/iChapter';
-import { _createNote, _deleteNote, _getChapterByIdBook, _getNoteByBookId } from '../apis';
+import { _createHistory, _createNote, _deleteNote, _getChapterByIdBook, _getHistoryByBookIdAndUser, _getNoteByBookId } from '../apis';
 
 
 const ReadText = ({ navigation, route }: any) => {
-    const { path, id } = route?.params;
+    const { path, id, book } = route?.params;
+    const [appState, setAppState] = useState(AppState.currentState);
     const colorScheme = useColorScheme();
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [modalNoteVisible, setModalNoteVisible] = useState<boolean>(false);
@@ -29,6 +33,7 @@ const ReadText = ({ navigation, route }: any) => {
     const [note, setNote] = useState<string>('');
     const [noteList, setNoteList] = useState<INote[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,10 +46,54 @@ const ReadText = ({ navigation, route }: any) => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const handleAppStateChange = async (nextAppState: any) => {
+            if (appState.match(/active/) && nextAppState === 'background') {
+                await handleSavePageReaded(page);
+            }
+
+            if (nextAppState === 'inactive') {
+                await handleSavePageReaded(page);
+            }
+            setAppState(nextAppState);
+        };
+        const subscription = AppState.addEventListener('change', handleAppStateChange);
+        return () => {
+            subscription.remove();
+        };
+    }, [appState]);
+
     const handleGetPageReaded = async () => {
         const pageReaded = await AsyncStorage.getItem(`pageReaded_${id}`);
         if (pageReaded) {
             setSelectedPage(Number(pageReaded));
+        } else {
+            try {
+                const response = await _getHistoryByBookIdAndUser(id);
+                if (response.status) {
+                    setSelectedPage(response.data.page);
+                }
+            } catch (error) {
+                console.log('Error handleGetPageReaded: ', error);
+            }
+        }
+    }
+
+
+    const handleSavePageReaded = async (page: number) => {
+        const data = {
+            book: id,
+            page: page,
+            chapter: chapter.find((item) => Number(item.startPage) <= page)?._id,
+        }
+        try {
+            const response = await _createHistory(data);
+            if (response.status) {
+                console.log('Save page readed success');
+                await AsyncStorage.setItem(`pageReaded_${id}`, page.toString());
+            }
+        } catch (error) {
+            console.log('Error handleSavePageReaded: ', error);
         }
     };
 
@@ -135,27 +184,7 @@ const ReadText = ({ navigation, route }: any) => {
     }
 
     const randomBackground = () => {
-        const colors = [
-            '#FFEBEE', // Light Red
-            '#FCE4EC', // Light Pink
-            '#E1F5FE', // Light Blue
-            '#E8F5E9', // Light Green
-            '#FFF3E0', // Light Orange
-            '#FFFDE7', // Light Yellow
-            '#F3E5F5', // Light Purple
-            '#F1F8E9', // Light Lime
-            '#D7CCC8', // Light Brown
-            '#E0F7FA', // Light Cyan
-            '#F9FBE7', // Light Lime Yellow
-            '#FBE9E7', // Light Peach
-            '#F0F4C3', // Light Olive
-            '#FFCDD2', // Light Coral
-            '#E6EE9C', // Light Olive Green
-            '#B2EBF2', // Light Aqua
-            '#DCEDC8', // Light Greenish Yellow
-            '#D1C4E9', // Light Lavender
-            '#FFECB3', // Light Gold
-        ];
+        const colors = listColorNote;
         const random = Math.floor(Math.random() * colors.length);
         return colors[random];
     }
@@ -216,7 +245,10 @@ const ReadText = ({ navigation, route }: any) => {
             <>
                 <SafeAreaView className='flex-1'>
                     <View className='bg-primary-dark w-full h-16 flex-row justify-between px-3'>
-                        <Pressable onPress={() => { navigation.goBack() }} className='flex-row justify-center items-center'>
+                        <Pressable onPress={async () => {
+                            navigation.goBack();
+                            await handleSavePageReaded(page);
+                        }} className='flex-row justify-center items-center'>
                             <MaterialIcons name='clear' size={28} color={globalColor.white} />
                         </Pressable>
                         <View className='flex-row justify-center items-center'>
@@ -246,9 +278,19 @@ const ReadText = ({ navigation, route }: any) => {
                             fontLabel='bold'
                         />
                         <ButtobnCenter
+                            icon={<FontAwesome name='file-audio-o' size={25} color={globalColor.white} />}
+                            label='Sách nói'
+                            onPress={() => {
+                                navigation.navigate(ScreenName.ChapterAudio, { bookDetail: book })
+                            }}
+                            sizeLabel={16}
+                            fontLabel='bold'
+                        />
+
+                        <ButtobnCenter
                             icon={<FontAwesome5 name='bookmark' size={24} color={globalColor.white} />}
                             label='Đánh dấu'
-                            onPress={() => {
+                            onPress={async () => {
                                 Toast.show({
                                     type: 'success',
                                     position: 'bottom',
@@ -256,6 +298,7 @@ const ReadText = ({ navigation, route }: any) => {
                                     visibilityTime: 2000,
                                     text1Style: { fontSize: 18 }
                                 });
+                                await handleSavePageReaded(page);
                             }}
                             sizeLabel={16}
                             fontLabel='bold'

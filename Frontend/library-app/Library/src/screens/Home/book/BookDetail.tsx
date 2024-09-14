@@ -17,7 +17,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Feather from 'react-native-vector-icons/Feather'
 import { iBook } from 'src/types/iBook'
 import { IReview } from 'src/types/iReview'
-import { _getReviewNewest } from '../apis'
+import { _createHistory, _getReviewNewest } from '../apis'
 
 
 const BookDetail = ({ navigation, route }: any) => {
@@ -102,9 +102,11 @@ const BookDetail = ({ navigation, route }: any) => {
             setLoadingBtn(false);
             navigation.navigate(ScreenName.ReadText, {
                 id: book._id,
-                path: filePath
+                path: filePath,
+                book: book
             });
         } else {
+            await _createHistory({ book: book._id });
             Toast.show({
                 type: 'info',
                 position: 'bottom',

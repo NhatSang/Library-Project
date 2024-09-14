@@ -58,7 +58,7 @@ const LoginScreen = () => {
   }, []);
 
   const isValidStudentEmail = (email: string) => {
-    const studentEmailPattern = /@student\.iuh\.edu\.vn$/;
+    const studentEmailPattern = /@(student\.iuh\.edu\.vn|iuh\.edu\.vn)$/;
     return studentEmailPattern.test(email);
   };
 
@@ -84,7 +84,7 @@ const LoginScreen = () => {
       }
 
     } else {
-      Alert.alert('Thông báo', 'Vui lòng sử dụng email sinh viên để đăng nhập');
+      Alert.alert('Thông báo', 'Vui lòng sử dụng email sinh viên hoặc giáo viên để đăng nhập');
     }
     setIsLoading(false);
   };
