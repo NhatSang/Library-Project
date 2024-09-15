@@ -165,12 +165,16 @@ const RatingScreen = ({ navigation, route }: any) => {
                         </View>
                     </View>)}
 
-                {showReviewForm == false ? (<AppButton
-                    color={globalColor.primary}
-                    styles={{ borderRadius: 10 }}
-                    onPress={toggleReviewForm}
-                    title='Đánh giá'
-                />) : (
+                {showReviewForm == false ? (
+                    <View className='px-4'>
+                        <AppButton
+                            color={globalColor.primary}
+                            styles={{ borderRadius: 10 }}
+                            onPress={toggleReviewForm}
+                            title='Đánh giá'
+                        />
+                    </View>
+                ) : (
                     <Animated.View
                         style={{
                             opacity: animation,
@@ -183,7 +187,7 @@ const RatingScreen = ({ navigation, route }: any) => {
                                 },
                             ],
                         }}
-                        className='px-2 h-26 w-full pt-4 border'
+                        className='px-2 h-26 w-full pt-4 border-t'
                     >
                         {userReview && (
                             <AppText

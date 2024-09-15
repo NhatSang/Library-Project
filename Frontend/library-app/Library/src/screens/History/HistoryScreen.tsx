@@ -1,3 +1,4 @@
+import { MAIN } from '@assets/images';
 import AppText from '@components/AppText';
 import { ButtobnCenter } from '@components/index';
 import { fontFamilies } from '@constants/fontFamilies';
@@ -6,7 +7,7 @@ import { ScreenName } from '@constants/ScreenName';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, View } from 'react-native';
+import { FlatList, Image, ImageBackground, View } from 'react-native';
 import RNFetchBlob from 'react-native-blob-util';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { iHistory } from 'src/types/iHistory';
@@ -91,22 +92,24 @@ const HistoryScreen = ({ navigation }: any) => {
 
 
     return (
-        <SafeAreaView className='flex-1 px-4'>
-            <View className='py-4'>
-                <AppText
-                    text={'Lịch sử đã đọc'}
-                    font={fontFamilies.robotoBold}
-                    size={24}
-                />
-            </View>
-            <View className='flex-1'>
-                <FlatList
-                    data={history}
-                    renderItem={itemHistory}
-                    keyExtractor={(item: iHistory) => item._id}
-                />
-            </View>
-        </SafeAreaView>
+        <ImageBackground source={MAIN.BACKGROUND} style={{ flex: 1 }}>
+            <SafeAreaView className='flex-1 px-4'>
+                <View className='py-4'>
+                    <AppText
+                        text={'Lịch sử đã đọc'}
+                        font={fontFamilies.robotoBold}
+                        size={24}
+                    />
+                </View>
+                <View className='flex-1'>
+                    <FlatList
+                        data={history}
+                        renderItem={itemHistory}
+                        keyExtractor={(item: iHistory) => item._id}
+                    />
+                </View>
+            </SafeAreaView>
+        </ImageBackground>
     );
 };
 

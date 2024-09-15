@@ -54,7 +54,7 @@ const ChapterAudio = ({ navigation, route }: any) => {
                     <AntDesign name='left' size={30} color={globalColor.text_dark} />
                 </Pressable>
                 <AppText size={28} color={globalColor.text_light} text={book.title} font={fontFamilies.robotoBold} />
-                <Space />
+                <Space width={1} />
             </View>
             <FlatList
                 data={chapter}
