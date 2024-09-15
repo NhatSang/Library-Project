@@ -8,6 +8,7 @@ export const MAIN = {
     LOGO: require('./Main/logo.png'),
     LOGOIUH: require('./Main/logo_iuh.png'),
     DIANHAC: require('./Main/dianhac.webp'),
+    BACKGROUND: require('./Main/image_background.png'),
 };
 
 export const HOME = {

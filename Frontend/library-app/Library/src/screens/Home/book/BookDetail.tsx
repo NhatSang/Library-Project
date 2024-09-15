@@ -253,7 +253,7 @@ const BookDetail = ({ navigation, route }: any) => {
                     </View>
                     {/* image book */}
                     <View className='h-40 w-full absolute top-0 justify-center items-center'>
-                        <Image source={{ uri: book.image }} className='w-40 h-52 rounded-xl' />
+                        <Image resizeMode='stretch' source={{ uri: book.image }} className='w-40 h-52 rounded-xl' />
                     </View>
                 </View>
             </SafeAreaView>
