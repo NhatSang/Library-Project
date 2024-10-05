@@ -249,3 +249,17 @@ export const getBookById = async (req, res) => {
     });
   }
 };
+
+export const addBookTest = async (req, res) => {
+  const { title, author, genre,summary,mayor } = req.body;
+  const newBook = new Book({
+    title: title,
+    author: author,
+    genre: genre,
+    summary: summary,
+    majors: mayor,
+  });
+  await newBook.save();
+  res.status(201).json({ message: "Success", data: newBook });
+};
+

@@ -10,7 +10,10 @@ import {
   deleteBook,
   deleteChapter,
   getChapters,
-getNewestBooks,getBookById} from "../controllers/book_controller/BookController.js";
+getNewestBooks,
+getBookById,
+addBookTest
+} from "../controllers/book_controller/BookController.js";
 
 const bookRouter = express.Router();
 
@@ -25,5 +28,6 @@ bookRouter.delete("/delete-chapter/:id", deleteChapter);
 bookRouter.delete("/delete-book/:id", deleteBook);
 bookRouter.get("/get-newest-books",getNewestBooks);
 bookRouter.get("/get-book-by-id",getBookById);
+bookRouter.post("/add-book-test",addBookTest);
 
 export default bookRouter;

@@ -123,3 +123,20 @@ export const loginWithMicrosoft = async (req, res) => {
     console.log("Error loginWithMicrosoft: ", error);
   }
 };
+
+export const craeteUser = async (req, res) => {
+  try {
+    const {name,email,password,mayjors} = req.body;
+    const newUser = new User({
+      name: name,
+      email: email,
+      password: password,
+      majors: mayjors,
+    });
+    await newUser.save();
+    return res.status(201).json({ data: newUser });
+  } catch (error) {
+    console.log("Error craeteUser: ", error);
+    
+  }
+}

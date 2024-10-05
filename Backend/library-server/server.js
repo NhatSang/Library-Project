@@ -21,6 +21,7 @@ import { authenticateJWT } from "./middlewares/Auth.js";
 import majorRouter from "./routers/MajorRouter.js";
 import userRouter from "./routers/UserRouter.js";
 import historyRouter from "./routers/HistoryRouter.js";
+import genreRouter from "./routers/GenreRouter.js";
 
 dotenv.config();
 const app = express();
@@ -42,10 +43,12 @@ app.use("/api/v1", authRouter);
 app.use("/api/v1", bookRouter);
 app.use("/api/v1", chapterRouter);
 app.use("/api/v1", majorRouter);
+app.use("/api/v1",genreRouter);
 app.use("/api/v1",authenticateJWT ,reviewRouter);
 app.use("/api/v1", authenticateJWT,noteRouter);
 app.use("/api/v1", authenticateJWT, userRouter);
 app.use("/api/v1", authenticateJWT, historyRouter);
+
 
 
 server.listen(port, () => {
