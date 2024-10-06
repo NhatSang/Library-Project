@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
         "Pressable"
+    ],
+    "python.analysis.extraPaths": [
+        "./Backend/recommendation-system/db"
     ]
 }
