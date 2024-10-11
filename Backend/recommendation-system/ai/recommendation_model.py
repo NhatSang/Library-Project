@@ -216,7 +216,7 @@ def get_recommendations(user_id, num_recommendations=10):
     reviews_df = pd.DataFrame(list(review_collection.find()))
     # Tạo ma trận người dùng - sách
     user_book_matrix = reviews_df.pivot(index='user', columns='book', values='rating').fillna(0)
-
+    print(user_book_matrix)
     # Lấy chuyên ngành của người dùng
     field_of_study = users_df.loc[users_df['_id'] == ObjectId(user_id), 'majors'].values[0]
     
@@ -225,15 +225,15 @@ def get_recommendations(user_id, num_recommendations=10):
         raise ValueError("User does not have a field of study.")
 
     # Lấy người dùng có cùng chuyên ngành
-    similar_users = users_df[users_df['majors'] == field_of_study]
-
-    # Tính điểm gợi ý cho sách từ người dùng tương tự
-    similar_user_ids = similar_users['_id'].tolist()
+    similar_user_ids = users_df[
+        (users_df['majors'] == field_of_study) &
+        (users_df['_id'].isin(reviews_df['user']))
+    ]['_id'].tolist()
 
     # Kiểm tra nếu không có người dùng tương tự
     if len(similar_user_ids) == 0:
         raise ValueError("No similar users found.")
-    
+    print(similar_user_ids)
     # Lấy ma trận đánh giá sách của người dùng tương tự
     similar_user_book_matrix = user_book_matrix.loc[similar_user_ids]
 
