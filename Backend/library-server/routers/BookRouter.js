@@ -10,7 +10,10 @@ import {
   deleteBook,
   deleteChapter,
   getChapters,
-getNewestBooks,getBookById} from "../controllers/book_controller/BookController.js";
+  getNewestBooks,
+  getBookById,
+  getBooksByMajors,
+} from "../controllers/book_controller/BookController.js";
 
 const bookRouter = express.Router();
 
@@ -23,7 +26,7 @@ bookRouter.post("/add-chapter", upload.none(), addChapter);
 bookRouter.get("/get-chapters/:id", getChapters);
 bookRouter.delete("/delete-chapter/:id", deleteChapter);
 bookRouter.delete("/delete-book/:id", deleteBook);
-bookRouter.get("/get-newest-books",getNewestBooks);
-bookRouter.get("/get-book-by-id",getBookById);
-
+bookRouter.get("/get-newest-books", getNewestBooks);
+bookRouter.get("/get-book-by-id", getBookById);
+bookRouter.get("/get-book-by-majors", getBooksByMajors);
 export default bookRouter;
