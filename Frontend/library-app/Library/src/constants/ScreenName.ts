@@ -12,4 +12,5 @@ export const ScreenName = {
     HistoryScreen: 'HistoryScreen',
     AudioBook: 'AudioBook',
     ChapterAudio: 'ChapterAudio',
+    LoginWithAccount: 'LoginWithAccount',
 };

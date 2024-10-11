@@ -8,6 +8,7 @@ import {
   signup,
   login,
   loginWithMicrosoft,
+  loginWithAccount,
 } from "../controllers/AuthController.js";
 
 import { authenticateJWT, authorizeRoles } from "../middlewares/Auth.js";
@@ -15,9 +16,11 @@ import { authenticateJWT, authorizeRoles } from "../middlewares/Auth.js";
 const authRouter = express.Router();
 // authRouter.post("/send-code", sendCode);
 // authRouter.post("/verify-code", verifyCode);
+authRouter.post("/login-with-account", loginWithAccount);
 authRouter.post("/signup", signup);
 authRouter.post("/login", login);
 authRouter.post("/loginms", loginWithMicrosoft);
+
 
 // Protected route for both admin and user
 authRouter.get("/profile", authenticateJWT, (req, res) => {

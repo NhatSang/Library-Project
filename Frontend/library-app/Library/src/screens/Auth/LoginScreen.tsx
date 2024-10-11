@@ -109,6 +109,17 @@ const LoginScreen = () => {
             styles={{ width: '80%' }}
             textStyleProps={{ color: globalColor.white, fontSize: 20, fontFamily: fontFamilies.robotoBold }}
           />
+          <AppButton
+            loading={isLoading}
+            onPress={() => {
+              navigation.navigate(ScreenName.LoginWithAccount);
+            }}
+            title='Login with Account'
+            type='primary'
+            color={globalColor.primary_2}
+            styles={{ width: '80%' }}
+            textStyleProps={{ color: globalColor.white, fontSize: 20, fontFamily: fontFamilies.robotoBold }}
+          />
         </View>
       </SafeAreaView>
     </ImageBackground>

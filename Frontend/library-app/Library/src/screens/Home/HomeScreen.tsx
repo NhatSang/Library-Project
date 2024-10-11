@@ -21,10 +21,13 @@ const HomeScreen = ({ navigation }: any) => {
     const [loadImage, setLoadImage] = useState<boolean>(false);
 
     useEffect(() => {
-        getNewestBooks();
-        getRecommendBook();
-        getRecommendBookByMajors();
-    }, []);
+        const unsubscribe = navigation.addListener('focus', () => {
+            getNewestBooks();
+            getRecommendBook();
+            getRecommendBookByMajors();
+        });
+        return unsubscribe;
+    }, [navigation]);
 
     useEffect(() => {
         const backAction = () => {
@@ -93,7 +96,7 @@ const HomeScreen = ({ navigation }: any) => {
         try {
             const user: any = await getUserLocalStorage();
             if (user) {
-                const response = await _getRecomendBoookByMajor(user.majors);
+                const response = await _getRecomendBoookByMajor(user._id);
                 if (response.status) {
                     setListRecomendByMajors(response.data);
                 }
@@ -121,13 +124,13 @@ const HomeScreen = ({ navigation }: any) => {
                         <AppText size={16} color={globalColor.text_light} text='Tên sách, tên ngành ....' />
                     </Pressable>
                 </View>
-                <ScrollView>
+                <ScrollView showsVerticalScrollIndicator={false}>
                     <View className='h-40'>
                         <SwiperImage />
                     </View>
                     <View className='py-4'>
                         <View className='py-2'>
-                            <AppText size={20} font={fontFamilies.robotoBold} text='Sách theo chuyên ngành' />
+                            <AppText size={20} font={fontFamilies.robotoBold} text='Sách theo chuyên ngành của bạn' />
                         </View>
                         <FlatList
                             showsHorizontalScrollIndicator={false}
@@ -189,7 +192,7 @@ const HomeScreen = ({ navigation }: any) => {
                             horizontal
                         />
                         <View className='py-2'>
-                            <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý dành cho chuyên ngành' />
+                            <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý theo người dùng chung ngành' />
                         </View>
                         <FlatList
                             showsHorizontalScrollIndicator={false}

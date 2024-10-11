@@ -103,6 +103,7 @@ const HistoryScreen = ({ navigation }: any) => {
                 </View>
                 <View className='flex-1'>
                     <FlatList
+                        showsVerticalScrollIndicator={false}
                         data={history}
                         renderItem={itemHistory}
                         keyExtractor={(item: iHistory) => item._id}
