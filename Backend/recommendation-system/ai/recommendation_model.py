@@ -26,8 +26,6 @@ history_collection = db['histories']
 genre_collection = db['genres']
 review_collection = db['reviews']
 
-users_df = pd.DataFrame(list(db['users'].find()))
-
 book_data = list(book_collection.find())
 books_df = pd.DataFrame(book_data)
 
@@ -213,6 +211,7 @@ def recommend_books(userId):
 # print(result)
 
 def get_recommendations(user_id, num_recommendations=10):
+    users_df = pd.DataFrame(list(db['users'].find()))
     reviews_df = pd.DataFrame(list(review_collection.find()))
     # Tạo ma trận người dùng - sách
     user_book_matrix = reviews_df.pivot(index='user', columns='book', values='rating').fillna(0)
