@@ -224,7 +224,29 @@ export const getBooksByGenre = async (req, res) => {
     });
   }
 };
-
+export const getBooksByMajors = async (req, res) => {
+  try {
+    const majorsId = req.query.majorsId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const books = await Book.find({ genre: majorsId })
+      .sort({ rating: -1 })
+      .skip(skip)
+      .limit(limit);
+    return res.status(200).json({
+      status: true,
+      message: "Success",
+      data: books,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      status: false,
+      message: err.message,
+    });
+  }
+};
 //get book by id
 export const getBookById = async (req, res) => {
   try {
