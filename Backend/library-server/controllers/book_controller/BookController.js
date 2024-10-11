@@ -230,7 +230,9 @@ export const getBooksByMajors = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const books = await Book.find({ genre: majorsId })
+    const books = await Book.find({
+      majors: majorsId,
+    })
       .sort({ rating: -1 })
       .skip(skip)
       .limit(limit);

@@ -3,22 +3,27 @@ import AppText from '@components/AppText';
 import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
 import { ScreenName } from '@constants/ScreenName';
+import { getUserLocalStorage } from '@utils/storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, BackHandler, FlatList, Image, ImageBackground, Pressable, ScrollView, useColorScheme, View } from 'react-native';
 import { Badge } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { iBook } from 'src/types/iBook';
-import { _getNewestBooks } from './apis';
+import { _getBooksByMayjors, _getRecomendBoook, _getRecomendBoookByMajor } from './apis';
 import SwiperImage from './book/components/SwiperImage';
 
 const HomeScreen = ({ navigation }: any) => {
     const colorScheme = useColorScheme();
     const [listNewBook, setListNewBook] = useState<iBook[]>([]);
+    const [listRecommendBook, setListRecommendBook] = useState<iBook[]>([]);
+    const [listRecomendByMajors, setListRecomendByMajors] = useState<iBook[]>([]);
     const [loadImage, setLoadImage] = useState<boolean>(false);
 
     useEffect(() => {
         getNewestBooks();
+        getRecommendBook();
+        getRecommendBookByMajors();
     }, []);
 
     useEffect(() => {
@@ -58,10 +63,40 @@ const HomeScreen = ({ navigation }: any) => {
     const getNewestBooks = async () => {
         setLoadImage(true);
         try {
-            const response = await _getNewestBooks();
-            if (response.status) {
-                setListNewBook(response.data);
-                setLoadImage(false);
+            const user: any = await getUserLocalStorage();
+            if (user) {
+                const response = await _getBooksByMayjors(user.majors);
+                if (response.status) {
+                    setListNewBook(response.data);
+                    setLoadImage(false);
+                }
+            }
+        } catch (error) {
+            console.log('error', error);
+        }
+    }
+    const getRecommendBook = async () => {
+        try {
+            const user: any = await getUserLocalStorage();
+            if (user) {
+                const response = await _getRecomendBoook(user._id);
+                if (response.status) {
+                    setListRecommendBook(response.data);
+                }
+            }
+        } catch (error) {
+            console.log('error', error);
+        }
+    }
+
+    const getRecommendBookByMajors = async () => {
+        try {
+            const user: any = await getUserLocalStorage();
+            if (user) {
+                const response = await _getRecomendBoookByMajor(user.majors);
+                if (response.status) {
+                    setListRecomendByMajors(response.data);
+                }
             }
         } catch (error) {
             console.log('error', error);
@@ -92,11 +127,73 @@ const HomeScreen = ({ navigation }: any) => {
                     </View>
                     <View className='py-4'>
                         <View className='py-2'>
-                            <AppText size={20} font={fontFamilies.robotoBold} text='Sách mới' />
+                            <AppText size={20} font={fontFamilies.robotoBold} text='Sách theo chuyên ngành' />
                         </View>
                         <FlatList
                             showsHorizontalScrollIndicator={false}
                             data={listNewBook}
+                            renderItem={({ item }) => {
+                                return (
+                                    <Pressable
+                                        onPress={() => navigation.navigate(ScreenName.BookDetail, { item })}
+                                        className="px-3 mx-1 py-2 rounded-md bg-white">
+                                        {
+                                            loadImage ? (
+                                                <View className="w-36 h-44 rounded-md justify-center items-center">
+                                                    <ActivityIndicator size="large" color={globalColor.primary} />
+                                                </View>
+                                            ) : (
+                                                <Image resizeMode='stretch' source={{ uri: item.image }} className="w-36 h-44 rounded-md" />
+                                            )
+                                        }
+                                        <View className="w-32 justify-center items-center pt-2">
+                                            <AppText center numberOfLines={2} size={14} font={fontFamilies.robotoBold} text={item.title} />
+                                            <AppText numberOfLines={1} size={11} text={item.author} />
+                                        </View>
+                                    </Pressable>
+
+                                )
+                            }}
+                            keyExtractor={(item, index) => index.toString()}
+                            horizontal
+                        />
+                        <View className='py-2'>
+                            <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý dành riêng cho bạn' />
+                        </View>
+                        <FlatList
+                            showsHorizontalScrollIndicator={false}
+                            data={listRecommendBook}
+                            renderItem={({ item }) => {
+                                return (
+                                    <Pressable
+                                        onPress={() => navigation.navigate(ScreenName.BookDetail, { item })}
+                                        className="px-3 mx-1 py-2 rounded-md bg-white">
+                                        {
+                                            loadImage ? (
+                                                <View className="w-36 h-44 rounded-md justify-center items-center">
+                                                    <ActivityIndicator size="large" color={globalColor.primary} />
+                                                </View>
+                                            ) : (
+                                                <Image resizeMode='stretch' source={{ uri: item.image }} className="w-36 h-44 rounded-md" />
+                                            )
+                                        }
+                                        <View className="w-32 justify-center items-center pt-2">
+                                            <AppText center numberOfLines={2} size={14} font={fontFamilies.robotoBold} text={item.title} />
+                                            <AppText numberOfLines={1} size={11} text={item.author} />
+                                        </View>
+                                    </Pressable>
+
+                                )
+                            }}
+                            keyExtractor={(item, index) => index.toString()}
+                            horizontal
+                        />
+                        <View className='py-2'>
+                            <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý dành cho chuyên ngành' />
+                        </View>
+                        <FlatList
+                            showsHorizontalScrollIndicator={false}
+                            data={listRecomendByMajors}
                             renderItem={({ item }) => {
                                 return (
                                     <Pressable

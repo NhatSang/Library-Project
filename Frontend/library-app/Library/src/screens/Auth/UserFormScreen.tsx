@@ -20,7 +20,7 @@ const UserFormScreen = ({ navigation, route }: any) => {
     const { email, password } = route?.params;
     const dispatch = useDispatch();
     const [name, setName] = useState('');
-    const [studentCode, setStudentCode] = useState('');
+    const [code, setCode] = useState('');
     const [studentYear, setStudentYear] = useState('');
     const [major, setMajor] = useState('');
     const yearNow = new Date().getFullYear();
@@ -38,13 +38,13 @@ const UserFormScreen = ({ navigation, route }: any) => {
 
     useEffect(() => {
         validateForm();
-    }, [name, studentCode, studentYear, major]);
+    }, [name, code, studentYear, major]);
 
     const onChangeName = (text: string) => {
         setName(text);
     }
     const onChangeStudentCode = (text: string) => {
-        setStudentCode(text);
+        setCode(text);
     }
     const onChangeStudentYear = (text: string) => {
         setStudentYear(text);
@@ -66,7 +66,7 @@ const UserFormScreen = ({ navigation, route }: any) => {
             setError('Khóa học không hợp lệ');
             valid = false;
         }
-        if (!studentCode || studentCode.length !== 8) {
+        if (!code || code.length !== 8) {
             setError('Mã số sinh viên không hợp lệ');
             valid = false;
         }
@@ -88,7 +88,7 @@ const UserFormScreen = ({ navigation, route }: any) => {
             password: password,
             role: 'user',
             active: true,
-            studentCode: studentCode,
+            code: code,
             studnetYear: parseInt(studentYear),
             dob: date,
         }
@@ -156,15 +156,15 @@ const UserFormScreen = ({ navigation, route }: any) => {
                             prefix={<AntDesign name="idcard" size={18} color={'gray'} />}
                             placeholder='Mã số sinh viên'
                             keyboardType='number-pad'
-                            maxLength={8} value={studentCode}
+                            maxLength={8} value={code}
                             onChangeText={onChangeStudentCode}
-                            onClear={() => setStudentCode('')}
+                            onClear={() => setCode('')}
                             label='Mã số sinh viên'
                             required
                             clear
                             onEndEditing={() => {
-                                if (studentCode.length !== 0) {
-                                    if (studentCode.length !== 8) {
+                                if (code.length !== 0) {
+                                    if (code.length !== 8) {
                                         return 'Mã số sinh viên không hợp lệ'
                                     }
                                 }

@@ -46,7 +46,7 @@ const HistoryScreen = ({ navigation }: any) => {
                         className='w-16 h-24 mr-4'
                         style={{ borderRadius: 8 }}
                     />
-                    <View>
+                    <View className='w-1/2'>
                         <AppText
                             text={item.book.title}
                             font={fontFamilies.robotoBold}

@@ -2,7 +2,14 @@ import axios from 'axios';
 import { getToken } from '../utils/storage';
 
 export const api = axios.create({
-    baseURL: 'http://192.168.2.34:5001/api/v1',
+    baseURL: 'http://172.17.17.78:5001/api/v1',
+    timeout: 6000,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+export const api2 = axios.create({
+    baseURL: 'http://10.0.2.2:5000',
     timeout: 6000,
     headers: {
         'Content-Type': 'application/json',

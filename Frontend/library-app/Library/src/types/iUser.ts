@@ -7,11 +7,11 @@ export interface iUser {
     password: string;
     role: string;
     active: boolean;
-    studentCode: string;
+    code: string;
     studnetYear: number;
     accessToken?: string;
     dob:Date,
-    image: string;
+    image?: string;
 }
 
 export interface iUserReview {

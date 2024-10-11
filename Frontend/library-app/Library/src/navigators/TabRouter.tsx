@@ -30,10 +30,6 @@ const TabRouter = () => {
         tabBarIcon: ({ focused, color, size }) => {
           const scaleAnim = useRef(new Animated.Value(1)).current;
 
-          useEffect(() => {
-            console.log('focused', focused);
-            handlePress();
-          }, [focused]);
 
           const handlePress = () => {
             Animated.spring(scaleAnim, {
@@ -69,6 +65,7 @@ const TabRouter = () => {
               icon = <MaterialCommunityIcons name='account' size={size} color={color} />
               break;
           }
+          handlePress();
           return (
             <View
               style={

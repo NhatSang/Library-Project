@@ -1,4 +1,4 @@
-import { api } from '../../../apis/configAPI';
+import { api, api2 } from '../../../apis/configAPI';
 
 const _getNewestBooks = async () => {
     const url = `/get-newest-books`;
@@ -74,15 +74,44 @@ const _getHistoryByBookIdAndUser = async (bookId: string) => {
     });
 };
 
+const _getBooksByMayjors = async (id: string) => {
+    const url = '/get-book-by-majors';
+    return api.get(url, {
+        params: {
+            majorsId: id,
+        },
+    });
+};
+
+const _getRecomendBoook = async (id: string) => {
+    const url = `/recommend_books/${id}`;
+    return api2.get(url);
+};
+
+const _getRecomendBoookByMajor = async (id: string) => {
+    const url = `/recommend_books_by_majors/${id}`;
+    return api2.get(url);
+};
+const _updateModel = async (id: string) => {
+    const url = `/update_model`;
+    return api2.post(url, {
+        userId: id,
+    });
+};
+
 export {
     _createHistory,
     _createNote,
     _createReview,
     _deleteNote,
     _getAllReviewByBookId,
+    _getBooksByMayjors,
     _getChapterByIdBook,
     _getHistoryByBookIdAndUser,
     _getNewestBooks,
     _getNoteByBookId,
+    _getRecomendBoook,
+    _getRecomendBoookByMajor,
     _getReviewNewest,
+    _updateModel,
 };
