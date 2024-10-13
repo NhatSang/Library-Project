@@ -1295,7 +1295,7 @@ PODS:
     - Yoga
   - RNSoundPlayer (0.14.3):
     - React-Core
-  - RNSVG (15.6.0):
+  - RNSVG (15.5.0):
     - React-Core
   - SocketRocket (0.7.0)
   - SwiftAudioEx (1.1.0)
@@ -1622,7 +1622,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
   RNScreens: aa943ad421c3ced3ef5a47ede02b0cbfc43a012e
   RNSoundPlayer: 490822518cc1d6d80495ca7e3223df5869c30851
-  RNSVG: 5da7a24f31968ec74f0b091e3440080f347e279b
+  RNSVG: b986585e367f4a49d8aa43065066cc9c290b3d9b
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SwiftAudioEx: f6aa653770f3a0d3851edaf8d834a30aee4a7646
   Yoga: 0efb3e1bd40ba59b009f01badea863281101de78

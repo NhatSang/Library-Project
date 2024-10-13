@@ -14,6 +14,7 @@ import {
   getBookById,
   getBooksByMajors,
 } from "../controllers/book_controller/BookController.js";
+import { authenticateJWT } from "../middlewares/Auth.js";
 
 const bookRouter = express.Router();
 
@@ -28,5 +29,5 @@ bookRouter.delete("/delete-chapter/:id", deleteChapter);
 bookRouter.delete("/delete-book/:id", deleteBook);
 bookRouter.get("/get-newest-books", getNewestBooks);
 bookRouter.get("/get-book-by-id", getBookById);
-bookRouter.get("/get-book-by-majors", getBooksByMajors);
+bookRouter.get("/get-book-by-majors",authenticateJWT, getBooksByMajors);
 export default bookRouter;

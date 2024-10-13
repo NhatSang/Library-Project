@@ -19,6 +19,7 @@ const HomeScreen = ({ navigation }: any) => {
     const [listRecommendBook, setListRecommendBook] = useState<iBook[]>([]);
     const [listRecomendByMajors, setListRecomendByMajors] = useState<iBook[]>([]);
     const [loadImage, setLoadImage] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -64,6 +65,7 @@ const HomeScreen = ({ navigation }: any) => {
     }, []);
 
     const getNewestBooks = async () => {
+        setLoading(true);
         setLoadImage(true);
         try {
             const user: any = await getUserLocalStorage();
@@ -99,6 +101,7 @@ const HomeScreen = ({ navigation }: any) => {
                 const response = await _getRecomendBoookByMajor(user._id);
                 if (response.status) {
                     setListRecomendByMajors(response.data);
+                    setLoading(false);
                 }
             }
         } catch (error) {
@@ -129,43 +132,49 @@ const HomeScreen = ({ navigation }: any) => {
                         <SwiperImage />
                     </View>
                     <View className='py-4'>
+                        {
+                            listRecommendBook.length > 0 && (
+                                <>
+                                    <View className='py-2'>
+                                        <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý dành riêng cho bạn' />
+                                    </View>
+                                    <FlatList
+                                        showsHorizontalScrollIndicator={false}
+                                        data={listRecommendBook}
+                                        renderItem={({ item }) => {
+                                            return (
+                                                <Pressable
+                                                    onPress={() => navigation.navigate(ScreenName.BookDetail, { item })}
+                                                    className="px-3 mx-1 py-2 rounded-md bg-white">
+                                                    {
+                                                        loadImage ? (
+                                                            <View className="w-36 h-44 rounded-md justify-center items-center">
+                                                                <ActivityIndicator size="large" color={globalColor.primary} />
+                                                            </View>
+                                                        ) : (
+                                                            <Image resizeMode='stretch' source={{ uri: item.image }} className="w-36 h-44 rounded-md" />
+                                                        )
+                                                    }
+                                                    <View className="w-32 justify-center items-center pt-2">
+                                                        <AppText center numberOfLines={2} size={14} font={fontFamilies.robotoBold} text={item.title} />
+                                                        <AppText numberOfLines={1} size={11} text={item.author} />
+                                                    </View>
+                                                </Pressable>
+
+                                            )
+                                        }}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        horizontal
+                                    />
+                                </>
+                            )
+                        }
                         <View className='py-2'>
                             <AppText size={20} font={fontFamilies.robotoBold} text='Sách theo chuyên ngành của bạn' />
                         </View>
                         <FlatList
                             showsHorizontalScrollIndicator={false}
                             data={listNewBook}
-                            renderItem={({ item }) => {
-                                return (
-                                    <Pressable
-                                        onPress={() => navigation.navigate(ScreenName.BookDetail, { item })}
-                                        className="px-3 mx-1 py-2 rounded-md bg-white">
-                                        {
-                                            loadImage ? (
-                                                <View className="w-36 h-44 rounded-md justify-center items-center">
-                                                    <ActivityIndicator size="large" color={globalColor.primary} />
-                                                </View>
-                                            ) : (
-                                                <Image resizeMode='stretch' source={{ uri: item.image }} className="w-36 h-44 rounded-md" />
-                                            )
-                                        }
-                                        <View className="w-32 justify-center items-center pt-2">
-                                            <AppText center numberOfLines={2} size={14} font={fontFamilies.robotoBold} text={item.title} />
-                                            <AppText numberOfLines={1} size={11} text={item.author} />
-                                        </View>
-                                    </Pressable>
-
-                                )
-                            }}
-                            keyExtractor={(item, index) => index.toString()}
-                            horizontal
-                        />
-                        <View className='py-2'>
-                            <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý dành riêng cho bạn' />
-                        </View>
-                        <FlatList
-                            showsHorizontalScrollIndicator={false}
-                            data={listRecommendBook}
                             renderItem={({ item }) => {
                                 return (
                                     <Pressable
