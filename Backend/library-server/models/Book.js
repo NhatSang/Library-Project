@@ -10,6 +10,7 @@ const bookSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   pageNumber: { type: Number, required: true },
+  majors: { type: mongoose.Schema.Types.ObjectId, ref: "Majors" },
 });
 
 const Book = mongoose.model("Book", bookSchema);

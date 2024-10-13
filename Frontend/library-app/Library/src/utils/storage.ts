@@ -36,7 +36,10 @@ export const saveUserLocalStorage = async (user: any) => {
 export const getUserLocalStorage = async () => {
     try {
         const user = await AsyncStorage.getItem('user');
-        return user;
+        if (user) {
+            return JSON.parse(user);
+        }
+        return null;
     } catch (e) {
         console.log(e);
     }

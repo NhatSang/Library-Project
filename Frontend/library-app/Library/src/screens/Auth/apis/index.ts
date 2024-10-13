@@ -11,4 +11,12 @@ const _login = (user: iUser) => {
     return api.post(url, user);
 };
 
-export { _login, _loginMS };
+const _loginWithAccount = (user: iUser) => {
+    const url = '/login-with-account';
+    return api.post(url, {
+        email: user.email,
+        password: user.password,
+    });
+};
+
+export { _login, _loginMS, _loginWithAccount };

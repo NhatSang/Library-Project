@@ -4,6 +4,7 @@ const authReducer = createSlice({
     name: 'auth',
     initialState: {
         userId: '',
+        majorId: '',
         user: {},
         accessToken: '',
     },
@@ -13,6 +14,9 @@ const authReducer = createSlice({
         },
         setUser: (state, action) => {
             state.user = action.payload;
+        },
+        setMajorId: (state, action) => {
+            state.majorId = action.payload;
         },
         setAuth: (state, action) => {
             state.accessToken = action.payload;
@@ -35,6 +39,7 @@ export const {
     clearAuth,
     clearUser,
     setUserId,
+    setMajorId,
     clearUserId,
 } = authReducer.actions;
 export default authReducer.reducer;

@@ -46,7 +46,7 @@ const HistoryScreen = ({ navigation }: any) => {
                         className='w-16 h-24 mr-4'
                         style={{ borderRadius: 8 }}
                     />
-                    <View>
+                    <View className='w-1/2'>
                         <AppText
                             text={item.book.title}
                             font={fontFamilies.robotoBold}
@@ -103,6 +103,7 @@ const HistoryScreen = ({ navigation }: any) => {
                 </View>
                 <View className='flex-1'>
                     <FlatList
+                        showsVerticalScrollIndicator={false}
                         data={history}
                         renderItem={itemHistory}
                         keyExtractor={(item: iHistory) => item._id}
