@@ -17,7 +17,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Feather from 'react-native-vector-icons/Feather'
 import { iBook } from 'src/types/iBook'
 import { IReview } from 'src/types/iReview'
-import { _createHistory, _getReviewNewest } from '../apis'
+import { _createHistory, _getReviewNewest, _updateModel } from '../apis'
 
 
 const BookDetail = ({ navigation, route }: any) => {
@@ -50,7 +50,7 @@ const BookDetail = ({ navigation, route }: any) => {
         try {
             const user = await getUserLocalStorage();
             if (user) {
-                setUserId(JSON.parse(user)._id);
+                setUserId(user._id);
             }
         } catch (error) {
             console.log('Error get user local: ', error);
@@ -106,7 +106,14 @@ const BookDetail = ({ navigation, route }: any) => {
                 book: book
             });
         } else {
-            await _createHistory({ book: book._id });
+            try {
+                const response = await _createHistory({ book: book._id });
+                if (response.status) {
+                    await _updateModel('6708c0e4e4d8b3aef5c1ac10')
+                }
+            } catch (error) {
+                console.log('Error create history: ', error);
+            }
             Toast.show({
                 type: 'info',
                 position: 'bottom',

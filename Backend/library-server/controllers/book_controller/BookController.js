@@ -14,6 +14,7 @@ import {
   handleTextToSpeech,
   splitPDF,
 } from "./BookHelper.js";
+import History from "../../models/History.js";
 
 export const addBook = async (req, res) => {
   try {
@@ -226,11 +227,20 @@ export const getBooksByGenre = async (req, res) => {
 };
 export const getBooksByMajors = async (req, res) => {
   try {
+    const _user = req.user;
     const majorsId = req.query.majorsId;
+    console.log(majorsId);
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const books = await Book.find({ genre: majorsId })
+    const bookReaded = await History.find({ user: _user.userId }).distinct(
+      "book"
+    );
+    console.log(bookReaded);
+    const books = await Book.find({
+      majors: majorsId,
+      _id: { $nin: bookReaded },
+    })
       .sort({ rating: -1 })
       .skip(skip)
       .limit(limit);

@@ -8,6 +8,13 @@ export const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
+export const api2 = axios.create({
+    baseURL: 'http://10.0.2.2:5000',
+    timeout: 6000,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
 api.interceptors.request.use(
     async function (config) {

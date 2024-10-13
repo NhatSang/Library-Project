@@ -123,3 +123,37 @@ export const loginWithMicrosoft = async (req, res) => {
     console.log("Error loginWithMicrosoft: ", error);
   }
 };
+
+
+export const loginWithAccount = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email: email });
+    if (user) {
+      const result = password === user.password;
+      if (result) {
+        const token = generateToken(user.email, user._id, user.role);
+        return res.status(200).json({
+          status: true,
+          data: {
+            user: user,
+            accessToken: token,
+          },
+          message: "Login successfully",
+        });
+      }
+      return res.status(401).json({
+        status: false,
+        message: "Incorrect password",
+      });
+    } else {
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+      });
+    }
+  }
+  catch (error) {
+    console.log("Error loginWithAccount: ", error);
+  }
+}
