@@ -15,6 +15,7 @@ import {
   splitPDF,
 } from "./BookHelper.js";
 import History from "../../models/History.js";
+import { ObjectId } from "mongodb";
 
 export const addBook = async (req, res) => {
   try {
@@ -258,26 +259,66 @@ export const getBooksByMajors = async (req, res) => {
   }
 };
 //get book by id
+//http://localhost:5001/api/v1/get-book-by-id?bookId=6708a62cb1d6e9e589c26835 postman
 export const getBookById = async (req, res) => {
   try {
-    const bookId = req.query.bookId;
-    const book = await Book.findById(bookId);
-    if (!book) {
-      return res.status(404).json({
-        status: false,
-        message: "Book not found",
-      });
-    }
+    const bookId = new ObjectId(req.query.bookId);
+    const book = await Book.aggregate([
+      { $match: { _id: bookId} },
+      {
+        $lookup: {
+          from: "views",
+          localField: "_id",
+          foreignField: "book",
+          as: "viewsData",
+        },
+      },
+      {
+        $lookup: {
+          from: "reviews",
+          localField: "_id",
+          foreignField: "book",
+          as: "ratingsData",
+        },
+      },
+      {
+        $project:{
+          title: 1,
+          author: 1,
+          pdfLink: 1,
+          genre: 1,
+          image: 1,
+          pageNumber: 1,
+          majors: 1,
+          genres: 1,
+          totalViews :{
+            $sum: "$viewsData.count"
+          },
+          avgRating:{
+            $cond: {
+              if: { $gt: [{ $size: "$ratingsData" }, 0] },
+              then: {
+                $avg: {
+                  $map: {
+                    input: "$ratingsData",
+                    as: "rating",
+                    in: "$$rating.rating", 
+                  },
+                },
+              },
+              else: 0, 
+            },
+          }
+        }
+      }
+    ]);
     return res.status(200).json({
       status: true,
       message: "Success",
-      data: book,
+      data: book[0],
     });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      status: false,
-      message: err.message,
-    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
   }
 };

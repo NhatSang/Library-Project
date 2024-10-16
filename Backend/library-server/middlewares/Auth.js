@@ -5,7 +5,7 @@ dotenv.config();
 export const authenticateJWT = (req, res, next) => {
   const authHeader = req.header("Authorization");
   const token = authHeader.split(' ')[1];
-  if (!authHeader) return res.status(401).json({ message: "Access denied" });
+  if (!authHeader) return res.status(401).json({ message: "Who are you ?" });
 
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY_JWT);
