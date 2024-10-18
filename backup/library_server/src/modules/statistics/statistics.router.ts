@@ -13,4 +13,9 @@ statisticsRouter.get(
   "/get-highest-rating-books",
   statisticsController.getTop10HighestRatingBooks
 );
+statisticsRouter.get(
+  "/get-num-users",
+  statisticsController.getNumOfUser
+);
+statisticsRouter.get("/get-summary", statisticsController.getSummary);
 export default statisticsRouter;

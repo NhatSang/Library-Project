@@ -1,5 +1,5 @@
-import React from 'react'
-import { Line,Bar } from "react-chartjs-2";
+import React from "react";
+import { Line, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -24,16 +24,21 @@ ChartJS.register(
   Legend
 );
 
-const Chart = ({dataList , direction,barColor, lable ,title}) => {
-  
+const Chart = ({ dataList, direction, barColor, lable, title, type }) => {
   const titles = dataList.map((item) => item.title);
-  const totalViews = dataList.map((item) => item.totalViews);
+  let datasets;
+  if (type === "view") {
+    datasets = dataList.map((item) => item.totalViews);
+  } else if (type === "rating") {
+    datasets = dataList.map((item) => item.avgRating);
+  } else datasets = dataList.map((item) => item.userCount);
+
   const data = {
     labels: titles,
     datasets: [
       {
         label: lable,
-        data: totalViews,
+        data: datasets,
         fill: false,
         backgroundColor: barColor,
         borderColor: "rgba(75, 192, 192, 0.2)",
@@ -63,6 +68,6 @@ const Chart = ({dataList , direction,barColor, lable ,title}) => {
   };
 
   return <Bar data={data} options={options} />;
-}
+};
 
 export default Chart;

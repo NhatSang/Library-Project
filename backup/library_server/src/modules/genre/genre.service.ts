@@ -4,9 +4,7 @@ import { GenreResponeDTO } from "./dto/genre.dto";
 
 @Service()
 export class GenreService {
-  async getListGenres() {
-    console.log(GenreResponeDTO.transformGenre(await Genres.find()));
-    
+  async getListGenres() { 
     return GenreResponeDTO.transformGenre(await Genres.find());
   }
 }

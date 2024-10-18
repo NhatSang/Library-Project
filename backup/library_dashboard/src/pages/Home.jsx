@@ -6,6 +6,8 @@ import axios from "axios";
 const Home = () => {
   const [top10Views, setTop10Views] = useState([]);
   const [listGenres, setListGenres] = useState([]);
+  const [top10Ratings, setTop10Ratings] = useState([]);
+  const [listNumUsers, setListNumUsers] = useState([]);
 
   const today = new Date().toISOString().split("T")[0];
   // Tính ngày của tuần trước (7 ngày trước)
@@ -15,6 +17,7 @@ const Home = () => {
   const [startDate, setStartDate] = useState(oneWeekAgoFormatted);
   const [endDate, setEndDate] = useState(today);
   const [selectedGenre, setSelectedGenre] = useState("");
+  const [summary, setSummary] = useState();
   useEffect(() => {
     fetchData(); // Gọi hàm fetchData
     fetchDataChart();
@@ -36,6 +39,20 @@ const Home = () => {
         `http://localhost:3000/api/v1/get-highest-views-books?startDate=${startDate}&endDate=${endDate}&genreId=${selectedGenre}`
       );
       setTop10Views(resTopViews.data.data);
+      const resTopRatings = await axios.get(
+        `http://localhost:3000/api/v1/get-highest-rating-books?startDate=${startDate}&endDate=${endDate}&genreId=${selectedGenre}`
+      );
+      setTop10Ratings(resTopRatings.data.data);
+      const resListNumUsers = await axios.get(
+        `http://localhost:3000/api/v1/get-num-users?startDate=${startDate}&endDate=${endDate}`
+      );
+      setListNumUsers(resListNumUsers.data.data);
+      const resSummary = await axios.get(
+        `http://localhost:3000/api/v1/get-summary?startDate=${startDate}&endDate=${endDate}&genreId=${selectedGenre}`
+      );
+      console.log(resSummary.data.data);
+
+      setSummary(resSummary.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -112,18 +129,27 @@ const Home = () => {
           <div>
             <p className="text-sm text-slate-500">
               Total:{" "}
-              <span className="font-medium text-black text-base">3.8K</span>
+              <span className="font-medium text-black text-base">
+                {summary?.totalBooksByGenre}
+              </span>
             </p>
             <p className="text-sm text-slate-500">
-              New: <span className="font-medium text-black text-base">20</span>
+              New:{" "}
+              <span className="font-medium text-black text-base">
+                {summary?.newBooksByGenre}
+              </span>
             </p>
             <p className="text-sm text-slate-500">
               Total readers:{" "}
-              <span className="font-medium text-black text-base">800</span>
+              <span className="font-medium text-black text-base">
+                {summary?.totalReadersByGenre}
+              </span>
             </p>
             <p className="text-sm text-slate-500">
               Total views:{" "}
-              <span className="font-medium text-black text-base">87K</span>
+              <span className="font-medium text-black text-base">
+                {summary?.totalViewsByGenre}
+              </span>
             </p>
           </div>
         </div>
@@ -135,15 +161,17 @@ const Home = () => {
               direction={"y"}
               lable={"Views"}
               title={"Top 10 highest views books"}
+              type={"view"}
             />
           </div>
           <div className="bg-white p-4 rounded-lg items-center flex space-x-2">
             <Chart
-              dataList={top10Views}
+              dataList={top10Ratings}
               barColor={"rgb(240, 138, 95)"}
               direction={"y"}
               lable={"Ratings"}
               title={"Top 10 highest ratings books"}
+              type={"rating"}
             />
           </div>
         </div>
@@ -156,20 +184,26 @@ const Home = () => {
           <div>
             <p className="text-sm text-slate-500">
               Total:{" "}
-              <span className="font-medium text-black text-base">1.8K</span>
+              <span className="font-medium text-black text-base">
+                {summary?.totalUsers}
+              </span>
             </p>
             <p className="text-sm text-slate-500">
-              New: <span className="font-medium text-black text-base">20</span>
+              New:{" "}
+              <span className="font-medium text-black text-base">
+                {summary?.newUsers}
+              </span>
             </p>
           </div>
         </div>
         <div className="bg-white p-4 rounded-lg items-center flex">
           <Chart
-            dataList={top10Views}
+            dataList={listNumUsers}
             barColor={"rgb(186, 73, 30)"}
             direction={"x"}
             lable={"Users"}
             title={`New users from ${startDate} to ${endDate}`}
+            type={"user"}
           />
         </div>
       </div>
