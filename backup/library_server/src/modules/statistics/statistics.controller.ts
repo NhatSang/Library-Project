@@ -37,4 +37,24 @@ export class StatisticsController {
       next(error);
     }
   };
+
+  getNumOfUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.statisticsService.getNumOfNewUser(req.query);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
+  getSummary = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.statisticsService.getSummary(req.query);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
 }
