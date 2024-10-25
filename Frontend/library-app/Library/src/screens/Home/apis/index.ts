@@ -99,12 +99,29 @@ const _updateModel = async (id: string) => {
     });
 };
 
+const _getAllBook2 = async () => {
+    const url = '/get-all-book2';
+    return api.get(url);
+};
+
+const _getBookContentBypage = async (id: string, page: number) => {
+    const url = '/get-book-content-by-page';
+    return api.get(url, {
+        params: {
+            bookId: id,
+            page,
+        },
+    });
+};
+
 export {
     _createHistory,
     _createNote,
     _createReview,
     _deleteNote,
+    _getAllBook2,
     _getAllReviewByBookId,
+    _getBookContentBypage,
     _getBooksByMayjors,
     _getChapterByIdBook,
     _getHistoryByBookIdAndUser,

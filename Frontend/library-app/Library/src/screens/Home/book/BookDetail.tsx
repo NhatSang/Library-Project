@@ -245,7 +245,7 @@ const BookDetail = ({ navigation, route }: any) => {
                                 color={globalColor.primary_2}
                                 styles={{ width: '40%', height: '80%', borderRadius: 10 }}
                                 onPress={() => {
-                                    navigation.navigate(ScreenName.ChapterAudio, { bookDetail: book })
+                                    navigation.navigate(ScreenName.ListenText, { bookId: book._id })
                                 }}
                                 title='Sách nói'
                             />

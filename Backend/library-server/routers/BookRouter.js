@@ -15,6 +15,7 @@ import {
   getBooksByMajors,
 } from "../controllers/book_controller/BookController.js";
 import { authenticateJWT } from "../middlewares/Auth.js";
+import { getAllBooks2, getrBookContentByPage } from "../controllers/book_controller/Book2Controller.js";
 
 const bookRouter = express.Router();
 
@@ -23,6 +24,8 @@ bookRouter.post(
   upload.fields([{ name: "image" }, { name: "pdf" }]),
   addBook
 );
+bookRouter.get("/get-all-book2",getAllBooks2);
+bookRouter.get("/get-book-content-by-page", getrBookContentByPage);
 bookRouter.post("/add-chapter", upload.none(), addChapter);
 bookRouter.get("/get-chapters/:id", getChapters);
 bookRouter.delete("/delete-chapter/:id", deleteChapter);

@@ -6,6 +6,13 @@ export interface iBook {
   genre: string
   avgRating: number
   image: string
+  contents:iBookContent[]
+}
+
+export interface iBookContent {
+    _id: string
+    content: string
+    page: number
 }
 
 

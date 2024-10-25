@@ -10,7 +10,7 @@ import { Badge } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { iBook } from 'src/types/iBook';
-import { _getBooksByMayjors, _getRecomendBoook, _getRecomendBoookByMajor } from './apis';
+import { _getAllBook2, _getBooksByMayjors, _getRecomendBoook, _getRecomendBoookByMajor } from './apis';
 import SwiperImage from './book/components/SwiperImage';
 
 const HomeScreen = ({ navigation }: any) => {
@@ -18,6 +18,7 @@ const HomeScreen = ({ navigation }: any) => {
     const [listNewBook, setListNewBook] = useState<iBook[]>([]);
     const [listRecommendBook, setListRecommendBook] = useState<iBook[]>([]);
     const [listRecomendByMajors, setListRecomendByMajors] = useState<iBook[]>([]);
+    const [listBook2, setListBook2] = useState<iBook[]>([]);
     const [loadImage, setLoadImage] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -26,6 +27,7 @@ const HomeScreen = ({ navigation }: any) => {
             getNewestBooks();
             getRecommendBook();
             getRecommendBookByMajors();
+            getBook2();
         });
         return unsubscribe;
     }, [navigation]);
@@ -63,6 +65,17 @@ const HomeScreen = ({ navigation }: any) => {
 
         return () => backHandler.remove();
     }, []);
+
+    const getBook2 = async () => {
+        try {
+            const response = await _getAllBook2();
+            if (response.status) {
+                setListBook2(response.data);
+            }
+        } catch (error) {
+            console.log('error', error);
+        }
+    }
 
     const getNewestBooks = async () => {
         setLoading(true);
@@ -132,6 +145,43 @@ const HomeScreen = ({ navigation }: any) => {
                         <SwiperImage />
                     </View>
                     <View className='py-4'>
+                        {
+                            listBook2.length > 0 && (
+                                <>
+                                    <View className='py-2'>
+                                        <AppText size={20} font={fontFamilies.robotoBold} text='Sách demo' />
+                                    </View>
+                                    <FlatList
+                                        showsHorizontalScrollIndicator={false}
+                                        data={listBook2}
+                                        renderItem={({ item }) => {
+                                            return (
+                                                <Pressable
+                                                    onPress={() => navigation.navigate(ScreenName.BookDetail, { item })}
+                                                    className="px-3 mx-1 py-2 rounded-md bg-white">
+                                                    {
+                                                        loadImage ? (
+                                                            <View className="w-36 h-44 rounded-md justify-center items-center">
+                                                                <ActivityIndicator size="large" color={globalColor.primary} />
+                                                            </View>
+                                                        ) : (
+                                                            <Image resizeMode='stretch' source={{ uri: item.image }} className="w-36 h-44 rounded-md" />
+                                                        )
+                                                    }
+                                                    <View className="w-32 justify-center items-center pt-2">
+                                                        <AppText center numberOfLines={2} size={14} font={fontFamilies.robotoBold} text={item.title} />
+                                                        <AppText numberOfLines={1} size={11} text={item.author} />
+                                                    </View>
+                                                </Pressable>
+
+                                            )
+                                        }}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        horizontal
+                                    />
+                                </>
+                            )
+                        }
                         {
                             listRecommendBook.length > 0 && (
                                 <>
