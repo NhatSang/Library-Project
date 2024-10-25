@@ -15,7 +15,7 @@ export class Pagination {
 
   static fromRequest(req: Request) {
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 5;
+    const limit = parseInt(req.query.limit as string) || 50;
     return new Pagination(page, limit);
   }
 }

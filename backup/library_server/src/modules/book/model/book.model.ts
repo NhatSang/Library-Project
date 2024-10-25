@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { BookStatus } from "../types/book.type";
 
 const bookSchema = new mongoose.Schema(
   {
@@ -10,6 +11,13 @@ const bookSchema = new mongoose.Schema(
     pageNumber: { type: Number },
     majors: { type: mongoose.Schema.Types.ObjectId, ref: "Majors" },
     summary: { type: String },
+    yop: { type: String },
+    publisher: { type: String },
+    status: {
+      type: String,
+      enum: [BookStatus.Deleted, BookStatus.Published],
+      default: BookStatus.Published,
+    },
   },
   { timestamps: true }
 );

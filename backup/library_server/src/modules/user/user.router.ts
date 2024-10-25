@@ -14,4 +14,8 @@ userRouter.post(
   userController.register
 );
 
+userRouter.post("/ban-user", userController.banUser);
+
+userRouter.post("/find-user", userController.findUserByKeyword);
+
 export default userRouter;

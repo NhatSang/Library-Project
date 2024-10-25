@@ -45,3 +45,29 @@ export class BookAvgRatingDTO {
     });
   }
 }
+
+export class BookResponseDTO {
+  @Expose()
+  @Transform(({ obj }) => obj._id.toString())
+  _id: string;
+  @Expose()
+  title: string;
+  @Expose()
+  author: string;
+  @Expose()
+  pdfLink: string;
+  @Expose()
+  genre: string;
+  @Expose()
+  image: string;
+  @Expose()
+  pageNumber: number;
+  @Expose()
+  majors: string;
+  @Expose()
+  summary: string;
+  @Expose()
+  yob: string;
+  @Expose()
+  publisher: string;
+}
