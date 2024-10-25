@@ -13,9 +13,9 @@ const bookSchema = new mongoose.Schema({
   majors: { type: mongoose.Schema.Types.ObjectId, ref: "Majors" },
   contents: [{
     page: { type: Number, required: true },
-    content: { type: String, required: true }
+    content: { type: String}
   }]
 });
 
-const Book = mongoose.model("Book", bookSchema);
-export default Book;
+const Book2 = mongoose.model("Book2", bookSchema);
+export default Book2;

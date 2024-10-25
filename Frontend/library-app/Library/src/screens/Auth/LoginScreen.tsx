@@ -110,7 +110,6 @@ const LoginScreen = () => {
             textStyleProps={{ color: globalColor.white, fontSize: 20, fontFamily: fontFamilies.robotoBold }}
           />
           <AppButton
-            loading={isLoading}
             onPress={() => {
               navigation.navigate(ScreenName.LoginWithAccount);
             }}

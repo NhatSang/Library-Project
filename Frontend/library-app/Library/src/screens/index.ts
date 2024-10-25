@@ -6,18 +6,21 @@ import HomeScreen from './Home/HomeScreen';
 import SearchScreen from './Home/SearchScreen';
 import AudioBook from './Home/book/AudioBook';
 import BookDetail from './Home/book/BookDetail';
+import ChapterAudio from './Home/book/ChapterAudio';
+import ListenText from './Home/book/ListenText';
 import RatingScreen from './Home/book/RatingScreen';
 import ReadText from './Home/book/ReadText';
 import SwiperImage from './Home/book/components/SwiperImage';
 import SplashScreen from './SplashScreen';
-import ChapterAudio from './Home/book/ChapterAudio';
 
 export {
     AccountScreen,
     AudioBook,
     BookDetail,
+    ChapterAudio,
     HistoryScreen,
     HomeScreen,
+    ListenText,
     LoginScreen,
     RatingScreen,
     ReadText,
@@ -25,5 +28,4 @@ export {
     SplashScreen,
     SwiperImage,
     UserFormScreen,
-    ChapterAudio
 };

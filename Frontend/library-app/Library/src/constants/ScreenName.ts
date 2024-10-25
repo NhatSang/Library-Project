@@ -13,4 +13,5 @@ export const ScreenName = {
     AudioBook: 'AudioBook',
     ChapterAudio: 'ChapterAudio',
     LoginWithAccount: 'LoginWithAccount',
+    ListenText: 'ListenText',
 };
