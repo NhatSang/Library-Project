@@ -1,18 +1,24 @@
 import mongoose from "mongoose";
+import { Gender, Role, UserStatus } from "../types/user.type";
 
 const userSchema = new mongoose.Schema(
   {
     name: { type: String },
-    gender: { type: String, enum: ["Male", "Female"] },
+    gender: { type: String, enum: [Gender.Male, Gender.Female] },
     dob: { type: Date },
     email: { type: String, required: true },
     password: { type: String, required: true },
     majors: { type: mongoose.Schema.Types.ObjectId, ref: "Majors" },
-    role: { type: String, enum: ["admin", "user"], default: "user" },
+    role: { type: String, enum: [Role.Admin, Role.User], default: Role.User },
     status: {
       type: String,
-      enum: ["baned", "deleted", "active", "pending"],
-      default: "pending",
+      enum: [
+        UserStatus.Banned,
+        UserStatus.Deleted,
+        UserStatus.Active,
+        UserStatus.Pending,
+      ],
+      default: UserStatus.Pending,
     },
     code: { type: String },
     image: {
