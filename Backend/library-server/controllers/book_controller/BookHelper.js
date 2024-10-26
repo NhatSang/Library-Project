@@ -10,6 +10,12 @@ import {
 } from "../../services/AwsServices.js";
 import { Storage } from "@google-cloud/storage";
 import Chapter from "../../models/Chapter.js";
+import OpenAI from 'openai';
+
+import axios from 'axios';
+import Book from "../../models/Book.js";
+import Majors from "../../models/Majors.js";
+import Genre from "../../models/Genre.js";
 
 const client = new textToSpeech.TextToSpeechLongAudioSynthesizeClient({
   keyFilename: "./json-key/library-project-433704-6c89745a241a.json",
@@ -96,10 +102,10 @@ export const splitPDF = async (
     // Upload file lên S3
     const pdfSublink = await saveFileWithKey(pdfBytes, key);
 
-    // Lưu audio (chưa thực hiện)
-    const audioLink = await handleTextToSpeech(pdfBytes, bookId);
+    // // Lưu audio (chưa thực hiện)
+    // const audioLink = await handleTextToSpeech(pdfBytes, bookId);
 
-    return { pdfSublink, audioLink };
+    return pdfSublink;
   } catch (err) {
     console.error("Error splitting PDF:", err);
     throw new Error("Fail to split pdf");
@@ -171,4 +177,88 @@ export const deleteChapterById = async (id) => {
   const audioName = tempAudioArr[tempAudioArr.length - 1];
   await deleteFileFromGG(audioName);
   return result;
+};
+
+export const processPdfPages = async (pathFile) => {
+  try {
+    const response = await axios.get(pathFile, { responseType: 'arraybuffer' });
+    const data = await pdf(response.data.buffer); 
+
+
+    const textByPage = data.text.split(/\f|\n\n/); 
+
+
+    const contents = textByPage.map((content, index) => ({
+      page: index + 1,
+      content: content.trim()
+    }));
+
+    return contents;
+
+  } catch (error) {
+    console.error("Error processing PDF:", error);
+    return [];
+  }
+};
+
+
+const openai = new OpenAI(
+  {
+    apiKey: process.env.OPENAI_API_KEY,
+  }
+);
+
+export async function generateSummaryByOpenAI(title,tableOfContents){
+  const outline = tableOfContents.map((chapter, index) => `${index + 1}. ${chapter.title}`).join('\n');
+  const prompt = `
+  Hãy đóng vai là một nhà tóm tắt sách hãy 20 đến 30 câu về nội dung của quyển sách
+  Tóm tắt quyển sách "${title}" 
+  dựa trên mục lục sau:\n${outline}\n
+  `;
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+          { role: "system", content: "You are a helpful assistant." },
+          {
+              role: "user",
+              content: prompt,
+          },
+      ],
+  });
+   return completion.choices[0].message.content;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const searchBooks = async (searchString) => {
+  try {
+    const query = {
+      $or: [
+        { title: { $regex: searchString, $options: "i" } }, 
+      ]
+    };
+
+    const major = await Majors.findOne({ name: { $regex: searchString, $options: "i" } });
+    if (major) {
+      query.$or.push({ majors: major._id });
+    }
+
+    const genre = await Genre.findOne({ name: { $regex: searchString, $options: "i" } });
+    if (genre) {
+      query.$or.push({ genre: genre._id });
+    }
+
+
+    const books = await Book.find(query)
+      .populate({ path: "genre", select: "name" })
+      .populate({ path: "majors", select: "name" })
+      .limit(8)
+
+    return books;
+  } catch (error) {
+    console.error("Error searching books:", error);
+    throw error;
+  }
 };

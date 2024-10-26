@@ -6,6 +6,7 @@ export default function AddBookPage() {
     title: "",
     author: "",
     genre: "",
+    majors: "",
   });
   const [selectedPdfFile, setSelectedPdfFile] = useState(null);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
@@ -32,6 +33,7 @@ export default function AddBookPage() {
       data.append("title", formData.title);
       data.append("author", formData.author);
       data.append("genre", formData.genre);
+      data.append("majors", formData.majors);
       data.append("pdf", selectedPdfFile);
       data.append("image", selectedImageFile);
       fetch("http://localhost:5001/api/v1/add-book", {
@@ -81,6 +83,16 @@ export default function AddBookPage() {
           type="text"
           name="genre"
           value={formData.genre}
+          onChange={handleInputChange}
+          required
+        />
+      </div>
+      <div>
+        <label>majors:</label>
+        <input
+          type="text"
+          name="majors"
+          value={formData.majors}
           onChange={handleInputChange}
           required
         />

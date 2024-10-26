@@ -25,7 +25,5 @@ export const processPdfPages = async (pathFile) => {
   }
 };
 
-export const getSummaryByAI = async (req, res) => {
-  
-}
+
 

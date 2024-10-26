@@ -14,59 +14,43 @@ import {
   getPdfOutline,
   handleTextToSpeech,
   splitPDF,
+  processPdfPages,
+  generateSummaryByOpenAI,
+  searchBooks
 } from "./BookHelper.js";
 import History from "../../models/History.js";
-import { processPdfPages } from "./Booktest.js";
 
 export const addBook = async (req, res) => {
-  // const pdfFile = "/Users/phamducnhan/Documents/imageApp/laptrinhcanban.pdf"
-  // let contents = await processPdfPages(pdfFile);
-  
-//  try {
-//   const pdfFile = req.files["pdf"][0];
-//   const pdfLink = await saveFile(pdfFile);
-//   let contents = await processPdfPages(pdfFile);
-
-//   const newBook = new Book2({
-//     title: "Lập Trình Căn Bản",
-//     author: "Bộ Giáo Dục",
-//     pdfLink: pdfLink,
-//     genre: new mongoose.Types.ObjectId("66ef98096316ce75499684d7"),
-//     avgRating: 0,
-//     image:'https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541446499_laptrinhcanban.jpg',
-//     pageNumber: 100,
-//     majors: new mongoose.Types.ObjectId("66c0ba4b73447b36abb7c636"),
-//     contents: contents
-//   });  
-//   console.log(newBook);
-//   await newBook.save();
-//  } catch (error) {
-//   console.log(error);
-//  }
   
   try {
-    const { title, author, genre } = req.body;
+    const { title, author, genre ,majors } = req.body;
     const imageFile = req.files["image"][0];
     const pdfFile = req.files["pdf"][0];
     const pdfLink = await saveFile(pdfFile);
     const imageLink = await saveFile(imageFile);
     const pageNumber = await getPageNumber(pdfLink);
-    const newBook = new Book({
+    let contents = await processPdfPages(pdfLink);
+
+    const newBook = new Book2({
       title: title,
       author: author,
       pdfLink: pdfLink,
       genre: new mongoose.Types.ObjectId(genre),
-      avgRating: 0,
       image: imageLink,
       pageNumber: pageNumber,
+      majors: new mongoose.Types.ObjectId(majors),
+      contents: contents
     });
+
     await newBook.save();
     const outline = await getPdfOutline(pdfLink);
 
-    let newChapter;
+
+    let tableOfContent = [];
+
     if (outline.length > 1) {
       for (let i = 0; i < outline.length; i++) {
-        const o = await splitPDF(
+        const pdfSubLink = await splitPDF(
           pdfFile.buffer,
           outline[i].title,
           outline[i].startPage,
@@ -74,19 +58,34 @@ export const addBook = async (req, res) => {
           newBook._id
         );
 
-        newChapter = new Chapter({
+       const newChapter = new Chapter({
           book: newBook._id,
           title: outline[i].title,
           startPage: outline[i].startPage ? outline[i].startPage : 0,
-          pdfLink: o.pdfSublink,
-          audioLink: o.audioLink,
+          pdfLink: pdfSubLink,
         });
+        tableOfContent.push(newChapter);
         await newChapter.save();
       }
+      const summary = await generateSummaryByOpenAI(
+        newBook.title,
+        tableOfContent
+      )
+      newBook.summary = summary;
+      await newBook.save();
     } else {
-      return res.status(201).json({ message: "add_chapter", data: newBook });
+      return res.status(201).json({
+        status: true,
+        message: "add_chapter",
+        data: newBook,
+      });
     }
-    return res.status(201).json({ message: "Success", data: newBook });
+    console.log("Thêm thành công", newBook.title);
+    return res.status(201).json({
+      status: true,
+      message: "Success",
+      data: newBook,
+     });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: err.message });
@@ -96,27 +95,74 @@ export const addBook = async (req, res) => {
 export const addChapter = async (req, res) => {
   try {
     const { bookId, title, startPage, endPage, bookLink } = req.body;
-    console.log(`start ${startPage} end ${endPage}`);
-
     const tempArray = bookLink.split("/");
     const keyName = tempArray[tempArray.length - 1];
     const pdfFile = await readPdfFromS3(keyName);
 
-    const linkObj = await splitPDF(pdfFile, title, startPage, endPage, bookId);
+    const pdfSublink = await splitPDF(pdfFile, title, startPage, endPage, bookId);
     const newChapter = new Chapter({
       book: bookId,
       title: title,
       startPage: startPage,
-      pdfLink: linkObj.pdfSublink,
-      audioLink: linkObj.audioLink,
+      pdfLink: pdfSublink,
     });
     await newChapter.save();
-    return res.status(201).json({ message: "Success", data: newChapter });
+    return res.status(201).json({ 
+      status: true,
+      message: "Success",
+      data: newChapter,
+     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ message: err.message });
+    return res.status(500).json({
+      status: false,
+      message: err.message,
+    });
   }
 };
+
+export const addSummary = async (req, res) => {
+  try {
+    const bookId = req.query.bookId;
+    const title = req.query.title;
+    const chapters = await Chapter.find({ book: bookId });
+    const summary = await generateSummaryByOpenAI(title, chapters);
+    const book = await Book2.findById(bookId);
+    book.summary = summary;
+    await book.save();
+    return res.status(200).json({ 
+      status: true,
+      message: "Success",
+      data: book,
+     });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+}
+
+export const getSummaryByBookId = async (req, res) => {
+  try {
+    const bookId = req.query.bookId;
+    const book = await Book2.findById(bookId);
+    return res.status(200).json({
+      status: true,
+      message: "Success",
+      data: {
+        summary: book.summary,
+        title: book.title,
+        image: book.image
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+}
 
 export const getBooks = async (req, res) => {
   try {
@@ -308,3 +354,20 @@ export const getBookById = async (req, res) => {
     });
   }
 };
+
+export const searchBooksByName = async (req,res) => {
+  try {
+    const searchString = req.query.searchString;
+    const books = await searchBooks(searchString);
+    return res.status(200).json({
+      status: true,
+      message: "Success",
+      data: books,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+}

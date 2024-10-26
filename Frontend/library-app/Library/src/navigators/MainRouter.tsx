@@ -1,7 +1,7 @@
 import { ScreenName } from '@constants/ScreenName';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DemoDownLoad from '@screens/DemoDownLoad';
-import { AudioBook, BookDetail, ChapterAudio, ListenText, RatingScreen, ReadText, SearchScreen } from '@screens/index';
+import { AccountDetail, AudioBook, BookDetail, ChapterAudio, ListenText, Notification, NotificationDetail, RatingScreen, ReadText, SearchScreen, SummaryBook } from '@screens/index';
 import React from 'react';
 import TabRouter from './TabRouter';
 const Stack = createNativeStackNavigator();
@@ -19,6 +19,10 @@ const MainRouter = () => {
       <Stack.Screen name={ScreenName.AudioBook} component={AudioBook} />
       <Stack.Screen name={ScreenName.ChapterAudio} component={ChapterAudio} />
       <Stack.Screen name={ScreenName.ListenText} component={ListenText} />
+      <Stack.Screen name={ScreenName.SummaryBook} component={SummaryBook} />
+      <Stack.Screen name={ScreenName.AccountDetail} component={AccountDetail} />
+      <Stack.Screen name={ScreenName.Notification} component={Notification} />
+      <Stack.Screen name={ScreenName.NotificationDetail} component={NotificationDetail} />
     </Stack.Navigator>
   )
 }

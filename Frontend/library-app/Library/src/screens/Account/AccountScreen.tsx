@@ -4,6 +4,7 @@ import AppText from '@components/AppText'
 import Loading from '@components/Loading'
 import { fontFamilies } from '@constants/fontFamilies'
 import { isiOS } from '@constants/index'
+import { ScreenName } from '@constants/ScreenName'
 import { clearAuth } from '@redux/authReducer'
 import { clearToken } from '@utils/storage'
 import React, { ReactNode, useEffect, useState } from 'react'
@@ -22,7 +23,7 @@ interface iSetiing {
     onPress: () => void | Promise<void>
 }
 
-const AccountScreen = () => {
+const AccountScreen = ({ navigation }: any) => {
     const dispatch = useDispatch();
     const [user, setUser] = useState<iUser>();
     const [loading, setLoading] = useState(true);
@@ -50,7 +51,9 @@ const AccountScreen = () => {
         {
             title: 'Thông tin cá nhân',
             icon: <AntDesign name="idcard" size={24} color="black" />,
-            onPress: () => { }
+            onPress: () => {
+                navigation.navigate(ScreenName.AccountDetail)
+            }
         },
         {
             title: 'Phiên bản: 0.0.1',
