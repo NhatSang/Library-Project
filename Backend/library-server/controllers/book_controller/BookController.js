@@ -19,71 +19,78 @@ import History from "../../models/History.js";
 import { processPdfPages } from "./Booktest.js";
 
 export const addBook = async (req, res) => {
-  const pdfFile = "/Users/phamducnhan/Documents/imageApp/laptrinhcanban.pdf"
-  let contents = await processPdfPages(pdfFile);
+  // const pdfFile = "/Users/phamducnhan/Documents/imageApp/laptrinhcanban.pdf"
+  // let contents = await processPdfPages(pdfFile);
   
- 
-  const newBook = new Book2({
-    title: "Lập Trình Căn Bản",
-    author: "Bộ Giáo Dục",
-    pdfLink: pdfFile,
-    genre: new mongoose.Types.ObjectId("66ef98096316ce75499684d7"),
-    avgRating: 0,
-    image:'https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541446499_laptrinhcanban.jpg',
-    pageNumber: 100,
-    majors: new mongoose.Types.ObjectId("66c0ba4b73447b36abb7c636"),
-    contents: contents
-  });  
-  console.log(newBook);
-  await newBook.save();
+//  try {
+//   const pdfFile = req.files["pdf"][0];
+//   const pdfLink = await saveFile(pdfFile);
+//   let contents = await processPdfPages(pdfFile);
+
+//   const newBook = new Book2({
+//     title: "Lập Trình Căn Bản",
+//     author: "Bộ Giáo Dục",
+//     pdfLink: pdfLink,
+//     genre: new mongoose.Types.ObjectId("66ef98096316ce75499684d7"),
+//     avgRating: 0,
+//     image:'https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541446499_laptrinhcanban.jpg',
+//     pageNumber: 100,
+//     majors: new mongoose.Types.ObjectId("66c0ba4b73447b36abb7c636"),
+//     contents: contents
+//   });  
+//   console.log(newBook);
+//   await newBook.save();
+//  } catch (error) {
+//   console.log(error);
+//  }
   
-  // try {
-  //   const { title, author, genre } = req.body;
-  //   const imageFile = req.files["image"][0];
-  //   const pdfFile = req.files["pdf"][0];
-  //   const pdfLink = await saveFile(pdfFile);
-  //   const imageLink = await saveFile(imageFile);
-  //   const pageNumber = await getPageNumber(pdfLink);
-  //   const newBook = new Book({
-  //     title: title,
-  //     author: author,
-  //     pdfLink: pdfLink,
-  //     genre: new mongoose.Types.ObjectId(genre),
-  //     avgRating: 0,
-  //     image: imageLink,
-  //     pageNumber: pageNumber,
-  //   });
-  //   await newBook.save();
-  //   const outline = await getPdfOutline(pdfLink);
+  try {
+    const { title, author, genre } = req.body;
+    const imageFile = req.files["image"][0];
+    const pdfFile = req.files["pdf"][0];
+    const pdfLink = await saveFile(pdfFile);
+    const imageLink = await saveFile(imageFile);
+    const pageNumber = await getPageNumber(pdfLink);
+    const newBook = new Book({
+      title: title,
+      author: author,
+      pdfLink: pdfLink,
+      genre: new mongoose.Types.ObjectId(genre),
+      avgRating: 0,
+      image: imageLink,
+      pageNumber: pageNumber,
+    });
+    await newBook.save();
+    const outline = await getPdfOutline(pdfLink);
 
-  //   let newChapter;
-  //   if (outline.length > 1) {
-  //     for (let i = 0; i < outline.length; i++) {
-  //       const o = await splitPDF(
-  //         pdfFile.buffer,
-  //         outline[i].title,
-  //         outline[i].startPage,
-  //         outline[i].endPageNumber,
-  //         newBook._id
-  //       );
+    let newChapter;
+    if (outline.length > 1) {
+      for (let i = 0; i < outline.length; i++) {
+        const o = await splitPDF(
+          pdfFile.buffer,
+          outline[i].title,
+          outline[i].startPage,
+          outline[i].endPageNumber,
+          newBook._id
+        );
 
-  //       newChapter = new Chapter({
-  //         book: newBook._id,
-  //         title: outline[i].title,
-  //         startPage: outline[i].startPage ? outline[i].startPage : 0,
-  //         pdfLink: o.pdfSublink,
-  //         audioLink: o.audioLink,
-  //       });
-  //       await newChapter.save();
-  //     }
-  //   } else {
-  //     return res.status(201).json({ message: "add_chapter", data: newBook });
-  //   }
-  //   return res.status(201).json({ message: "Success", data: newBook });
-  // } catch (err) {
-  //   console.log(err);
-  //   return res.status(500).json({ message: err.message });
-  // }
+        newChapter = new Chapter({
+          book: newBook._id,
+          title: outline[i].title,
+          startPage: outline[i].startPage ? outline[i].startPage : 0,
+          pdfLink: o.pdfSublink,
+          audioLink: o.audioLink,
+        });
+        await newChapter.save();
+      }
+    } else {
+      return res.status(201).json({ message: "add_chapter", data: newBook });
+    }
+    return res.status(201).json({ message: "Success", data: newBook });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: err.message });
+  }
 };
 
 export const addChapter = async (req, res) => {

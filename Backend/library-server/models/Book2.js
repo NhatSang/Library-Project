@@ -14,7 +14,8 @@ const bookSchema = new mongoose.Schema({
   contents: [{
     page: { type: Number, required: true },
     content: { type: String}
-  }]
+  }],
+  summary: { type: String },
 });
 
 const Book2 = mongoose.model("Book2", bookSchema);

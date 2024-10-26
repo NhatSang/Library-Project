@@ -4,42 +4,47 @@ import Tts, { Voice } from 'react-native-tts';
 import { _getBookContentBypage } from '../apis';
 
 function splitIntoSentences(content: string) {
-    // Xóa dòng đầu tiên
-    const contentWithoutFirstLine = content.split('\n').slice(1).join(' ');
-    // Tách các câu dựa trên điều kiện ít nhất hai từ và dấu chấm, dấu chấm hỏi hoặc dấu chấm than
-    return contentWithoutFirstLine.split(/(?<=[.!?])\s+(?=\S{4,})/);
+    const contentWithoutFirstLine = content.split('\n').slice(1);
+    return contentWithoutFirstLine.filter(sentence => sentence.trim() !== '');
 }
 
 const ListentText = ({ navigation, route }: any) => {
     const { bookId } = route.params;
-    const currentSentenceIndex = useRef(0);  // Bắt đầu từ câu đầu tiên
-    const currentPage = useRef(2);  // Trang hiện tại
-    const isPaused = useRef(false);  // Trạng thái tạm dừng
-    const [renderIndex, setRenderIndex] = useState(0);  // Dùng để cập nhật giao diện
-    const [speechRate, setSpeechRate] = useState(0.5);  // Tốc độ đọc
-    const [voices, setVoices] = useState<Voice[]>([]);  // Lưu danh sách các giọng đọc
-    const [currentVoice, setCurrentVoice] = useState('');  // Giọng đọc hiện tại
-    const [sentences, setSentences] = useState<string[]>([]);  // Tách nội dung thành các câu
+    const currentSentenceIndex = useRef(0);
+    const currentPage = useRef(2);
+    const isPaused = useRef(false);
+    const renderIndex = useRef(0);
+    const speechRate = useRef(0.5);
+    const voices = useRef<Voice[]>([]);
+    const currentVoice = useRef('');
+    const [sentences, setSentences] = useState<string[]>([]);
+    const [renderTrigger, setRenderTrigger] = useState(0);
     const flatListRef = useRef<FlatList>(null);
+    const speechRates = [
+        {id:1, label: 'x0.5', value: 0.1 },
+        { id:2,label: 'x1.0', value: 0.5 },
+     { id:3,label: 'x1.5', value: 0.75 },
+        { id:4,label: 'x2.0', value: 0.99 },
+    ]
 
     useEffect(() => {
         const onTtsFinish = () => {
             if (!isPaused.current && currentSentenceIndex.current < sentences.length - 1) {
                 currentSentenceIndex.current += 1;
-                setRenderIndex(currentSentenceIndex.current);  // Cập nhật chỉ số render
-                Tts.speak(sentences[currentSentenceIndex.current]);  // Đọc câu tiếp theo
+                renderIndex.current = currentSentenceIndex.current;
+                setRenderTrigger((prev) => prev + 1);
+                Tts.speak(sentences[currentSentenceIndex.current]);
             } else if (currentSentenceIndex.current >= sentences.length - 1) {
-                nextPage();  // Khi hết câu của trang hiện tại, chuyển sang trang tiếp theo
+                nextPage();
             }
         };
 
         Tts.getInitStatus().then(() => {
             Tts.voices().then(availableVoices => {
-                // Lọc danh sách giọng chỉ lấy những giọng có language là 'vi-VN' (giọng tiếng Việt)
                 const vietnameseVoices = availableVoices.filter(voice => voice.language === 'vi-VN');
                 if (vietnameseVoices.length > 0) {
-                    setVoices(vietnameseVoices);  // Cập nhật danh sách giọng tiếng Việt
-                    setCurrentVoice(vietnameseVoices[0]?.id);  // Chọn giọng tiếng Việt đầu tiên
+                    voices.current = vietnameseVoices;
+                    currentVoice.current = vietnameseVoices[0]?.id;
                 } else {
                     console.log('No Vietnamese voices available.');
                 }
@@ -47,24 +52,27 @@ const ListentText = ({ navigation, route }: any) => {
         });
 
         const finishListener = Tts.addListener('tts-finish', onTtsFinish);
-        Tts.setDefaultRate(speechRate);
+        Tts.setDefaultRate(speechRate.current);
 
         if (sentences.length > 0) {
+           
             Tts.speak(sentences[0]);
+            scrollToIndex(1);
         }
 
         return () => {
+            Tts.stop();
             finishListener.remove();
         };
-    }, [speechRate, sentences]);
+    }, [sentences]);
 
     useEffect(() => {
         getContent();
     }, []);
 
     useEffect(() => {
-        scrollToIndex(renderIndex);
-    }, [renderIndex]);
+        scrollToIndex(renderIndex.current);
+    }, [renderTrigger]);
 
     const getContent = async () => {
         const res: any = await _getBookContentBypage(bookId, currentPage.current);
@@ -74,107 +82,108 @@ const ListentText = ({ navigation, route }: any) => {
         }
     };
 
-    // Hàm chuyển sang trang tiếp theo
     const nextPage = async () => {
+        Tts.stop();
+        isPaused.current = false;
+        currentPage.current += 1;
+        currentSentenceIndex.current = 0;
+        renderIndex.current = 0;
+        setRenderTrigger((prev) => prev + 1);
 
-        Tts.stop();  // Dừng đọc hiện tại
-        isPaused.current = false;  // Reset tạm dừng
-        currentPage.current += 1;  // Tăng số trang hiện tại
-        currentSentenceIndex.current = 0;  // Reset chỉ số câu về 0
-        setRenderIndex(0);  // Cập nhật lại renderIndex
-
-        // Lấy nội dung của trang tiếp theo
         await getContent();
-
-        // // Bắt đầu đọc lại từ câu đầu tiên của trang mới
-        // if (sentences.length > 0) {
-        //     Tts.speak(sentences[1]);
-        // }
+        scrollToIndex(0);
     };
 
-    // Bắt đầu hoặc tiếp tục đọc
+    const prevPage = async () => {
+        Tts.stop();
+        isPaused.current = false;
+        currentPage.current -= 1;
+        currentSentenceIndex.current = 0;
+        renderIndex.current = 0;
+        setRenderTrigger((prev) => prev + 1);
+
+        await getContent();
+        
+    }
+
     const startReading = () => {
         if (isPaused.current) {
             isPaused.current = false;
             Tts.speak(sentences[currentSentenceIndex.current]);
         } else {
             currentSentenceIndex.current = 0;
-            setRenderIndex(0);
+            renderIndex.current = 0;
+            setRenderTrigger((prev) => prev + 1);
             Tts.speak(sentences[0]);
         }
     };
 
-    // Tạm dừng đọc
     const pauseReading = () => {
         isPaused.current = true;
         Tts.stop();
     };
 
-    // Reset và bắt đầu lại từ đầu
     const resetReading = () => {
         isPaused.current = false;
         Tts.stop();
         currentSentenceIndex.current = 0;
-        setRenderIndex(0);
+        renderIndex.current = 0;
+        setRenderTrigger((prev) => prev + 1);
         Tts.speak(sentences[0]);
     };
 
-    // Thay đổi tốc độ đọc
     const changeRate = (rate: number) => {
-        setSpeechRate(rate);
+        pauseReading();
+        speechRate.current = rate;
         Tts.setDefaultRate(rate);
+        startReading();
     };
 
-    // Thay đổi giọng đọc
     const switchVoice = (voiceId: string) => {
-        setCurrentVoice(voiceId);
-        Tts.setDefaultVoice(voiceId);  // Thiết lập giọng đọc mới
+        pauseReading();
+        currentVoice.current = voiceId;
+        Tts.setDefaultVoice(voiceId);
+        startReading();
     };
 
-    const renderItem = ({ item, index }: { item: string; index: number }) => {
-        return (
-            <Text style={[styles.sentence, renderIndex === index && styles.highlighted]}>
-                {item}
-            </Text>
-        );
-    };
+    const renderItem = ({ item, index }: { item: string; index: number }) => (
+        <Text style={[styles.sentence, renderIndex.current === index && styles.highlighted]}>
+            {item}
+        </Text>
+    );
 
     const scrollToIndex = (index: number) => {
         if (index > 0) {
-            flatListRef.current?.scrollToIndex({ animated: true, index });
+            flatListRef.current?.scrollToIndex({ animated: true, index,viewPosition: 0.2 });
         }
-    }
-
+    };
 
     return (
         <View style={styles.container}>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={startReading} style={styles.button}>
-                    <Text style={styles.buttonText}>
-                        {'Bắt đầu'}
-                    </Text>
+                    <Text style={styles.buttonText}>Đọc</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={pauseReading} style={styles.button}>
-                    <Text style={styles.buttonText}>
-                        {'Tạm dừng'}
-                    </Text>
+                    <Text style={styles.buttonText}>Tạm dừng</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={resetReading} style={[styles.button, styles.resetButton]}>
-                    <Text style={styles.buttonText}>
-                        {'Đoc lại từ đầu'}
-                    </Text>
+                    <Text style={styles.buttonText}>Đọc lại từ đầu</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={nextPage} style={styles.button}>
                     <Text style={styles.buttonText}>Chuyển trang</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={prevPage} style={styles.button}>
+                    <Text style={styles.buttonText}>Trang trước</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.rateContainer}>
                 <Text style={styles.label}>Chọn tốc độ:</Text>
                 <View style={styles.rateButtons}>
-                    {[0.5, 1.0, 1.5, 2.0].map(rate => (
-                        <TouchableOpacity key={rate} onPress={() => changeRate(rate)} style={styles.rateButton}>
-                            <Text style={styles.rateButtonText}>{rate}</Text>
+                    {speechRates.map(rate => (
+                        <TouchableOpacity key={rate.id} onPress={() => changeRate(rate.value)} style={styles.rateButton}>
+                            <Text style={styles.rateButtonText}>{rate.label}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -183,9 +192,9 @@ const ListentText = ({ navigation, route }: any) => {
             <View style={styles.voiceContainer}>
                 <Text style={styles.label}>Chọn giọng:</Text>
                 <View style={styles.voiceButtons}>
-                    {voices.slice(0, 3).map(voice => (
+                    {voices.current.slice(0, 3).map(voice => (
                         <TouchableOpacity key={voice.id} onPress={() => switchVoice(voice.id)} style={[styles.voiceButton, {
-                            backgroundColor: voice.id === currentVoice ? '#007bff' : '#e0e0e0',
+                            backgroundColor: voice.id === currentVoice.current ? '#007bff' : '#e0e0e0',
                         }]}>
                             <Text style={styles.voiceButtonText}>{voice.name}</Text>
                         </TouchableOpacity>
@@ -197,7 +206,13 @@ const ListentText = ({ navigation, route }: any) => {
                 ref={flatListRef}
                 data={sentences}
                 renderItem={renderItem}
+                contentContainerStyle={{ paddingBottom: 220 }}
                 keyExtractor={(item, index) => index.toString()}
+                getItemLayout={(data, index) => ({
+                    length: 30,
+                    offset: 30 * index,
+                    index,
+                })}
             />
         </View>
     );
@@ -205,12 +220,13 @@ const ListentText = ({ navigation, route }: any) => {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         padding: 15,
         paddingHorizontal: 30
     },
     sentence: {
         fontSize: 18,
-        marginVertical: 5,
+        marginTop:5
     },
     highlighted: {
         backgroundColor: 'yellow',
