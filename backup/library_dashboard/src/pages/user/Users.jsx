@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Search from "../Components/Search";
-import Pagination from "../Components/Pagination";
-import TableUsers from "../Components/TableUsers";
+import Search from "../../components/Search";
+import Pagination from "../../components/Pagination";
+import TableUsers from "../../components/TableUsers";
 import { useDispatch, useSelector } from "react-redux";
-import { banUser, fetchUser } from "../redux/userSlice";
+import { banUser, fetchUser } from "../../redux/userSlice";
 import axios from "axios";
 const Users = () => {
   const dispatch = useDispatch();

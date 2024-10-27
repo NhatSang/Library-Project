@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { LuBox, LuUser, LuBook, LuBarChart2 } from "react-icons/lu";
 import { Link } from "react-router-dom";
-const Slidebar = () => {
+
+const SideBar = () => {
   const [activeLink, setActiveLink] = useState(0);
   const handleLinkClick = (index) => {
     setActiveLink(index);
@@ -47,4 +48,4 @@ const Slidebar = () => {
   );
 };
 
-export default Slidebar;
+export default SideBar;

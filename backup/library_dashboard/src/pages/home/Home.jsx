@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TbUsersGroup, TbBooks } from "react-icons/tb";
-import Chart from "../Components/Chart";
-import axios from "axios";
+import { _getGenres, _getListNumUsers, _getSummary, _getTopRatings, _getTopViews } from "./apis";
+import { Chart } from "../../components";
 
 const Home = () => {
   const [top10Views, setTop10Views] = useState([]);
@@ -24,10 +24,8 @@ const Home = () => {
   }, []);
   const fetchData = async () => {
     try {
-      const resListGenres = await axios.get(
-        "http://localhost:3000/api/v1/get-genres"
-      );
-      setListGenres(resListGenres.data.data);
+      const resListGenres = await _getGenres();
+      setListGenres(resListGenres.data);
     } catch (error) {
       console.log(error);
     }
@@ -35,28 +33,19 @@ const Home = () => {
 
   const fetchDataChart = async () => {
     try {
-      const resTopViews = await axios.get(
-        `http://localhost:3000/api/v1/get-highest-views-books?startDate=${startDate}&endDate=${endDate}&genreId=${selectedGenre}`
-      );
-      setTop10Views(resTopViews.data.data);
-      const resTopRatings = await axios.get(
-        `http://localhost:3000/api/v1/get-highest-rating-books?startDate=${startDate}&endDate=${endDate}&genreId=${selectedGenre}`
-      );
-      setTop10Ratings(resTopRatings.data.data);
-      const resListNumUsers = await axios.get(
-        `http://localhost:3000/api/v1/get-num-users?startDate=${startDate}&endDate=${endDate}`
-      );
-      setListNumUsers(resListNumUsers.data.data);
-      const resSummary = await axios.get(
-        `http://localhost:3000/api/v1/get-summary?startDate=${startDate}&endDate=${endDate}&genreId=${selectedGenre}`
-      );
-      console.log(resSummary.data.data);
-
-      setSummary(resSummary.data.data);
+      const resTopViews = await _getTopViews(startDate, endDate, selectedGenre);
+      setTop10Views(resTopViews.data);
+      const resTopRatings = await _getTopRatings(startDate, endDate, selectedGenre);
+      setTop10Ratings(resTopRatings.data);
+      const resListNumUsers = await _getListNumUsers(startDate, endDate);
+      setListNumUsers(resListNumUsers.data);
+      const resSummary = await _getSummary(startDate, endDate, selectedGenre);
+      setSummary(resSummary.data);
     } catch (error) {
       console.log(error);
     }
   };
+
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
     if (new Date(e.target.value) > new Date(endDate)) {
@@ -73,6 +62,7 @@ const Home = () => {
 
     setSelectedGenre(e.target.value);
   };
+
   return (
     <div className="m-2 space-y-2">
       <form className="bg-white p-4 rounded-lg">
