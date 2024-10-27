@@ -37,28 +37,28 @@ const HistoryScreen = ({ navigation }: any) => {
     }
 
     const itemHistory = ({ item }: { item: iHistory }) => {
-        const updatedAt = formatDistanceToNow(parseISO(item.updatedAt.toString()), { addSuffix: true, locale: vi });
+        const updatedAt = formatDistanceToNow(parseISO(item?.updatedAt.toString()), { addSuffix: true, locale: vi });
         return (
             <View className='w-full flex-row items-center justify-between py-4 border-b border-gray-300'>
                 <View className='flex-row items-center'>
                     <Image
-                        source={{ uri: item.book.image }}
+                        source={{ uri: item?.book?.image }}
                         className='w-16 h-24 mr-4'
                         style={{ borderRadius: 8 }}
                     />
                     <View className='w-1/2'>
                         <AppText
-                            text={item.book.title}
+                            text={item?.book?.title}
                             font={fontFamilies.robotoBold}
                             size={18}
                         />
                         <AppText
-                            text={`Trang: ${item.page}`}
+                            text={`Trang: ${item?.page}`}
                             font={fontFamilies.robotoRegular}
                             size={16}
                         />
                         <AppText
-                            text={`Tác giả: ${item.book.author}`}
+                            text={`Tác giả: ${item?.book?.author}`}
                             font={fontFamilies.robotoRegular}
                             size={16}
                         />
@@ -71,6 +71,11 @@ const HistoryScreen = ({ navigation }: any) => {
                         size={12}
                     />
                     <View className='flex-1 justify-end'>
+                        <View className='pb-4'>
+                            <AppText onPress={
+                                () => navigation.navigate(ScreenName.BookDetail, { item })
+                            } text={'Xem chi tiết'} color={globalColor.primary} />
+                        </View>
                         <ButtobnCenter
                             label={'Đọc tiếp'}
                             colorLabel={globalColor.white}
@@ -78,7 +83,7 @@ const HistoryScreen = ({ navigation }: any) => {
                             onPress={() => navigation.navigate(ScreenName.ReadText,
                                 {
                                     id: item.book._id,
-                                    path: `${DocumentDir}/book_${item.book._id}.pdf`,
+                                    path: `${DocumentDir}/book_${item?.book?._id}.pdf`,
                                     book: item.book
                                 }
                             )}

@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./Components/Layout";
-import Home from "./pages/Home";
-import Users from "./pages/Users";
-import Books from "./pages/Books";
+import { Books, Home, Users } from "./pages";
+import { Layout } from "./components";
 function App() {
   return (
     <BrowserRouter>

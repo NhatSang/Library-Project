@@ -4,6 +4,7 @@ export interface iBook {
   author: string
   pdfLink: string
   genre: string
+  majors: string
   avgRating: number
   image: string
   contents:iBookContent[]

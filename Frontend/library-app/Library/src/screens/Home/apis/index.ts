@@ -114,6 +114,24 @@ const _getBookContentBypage = async (id: string, page: number) => {
     });
 };
 
+const _getSummaryByBookId = async (id: string) => {
+    const url = '/get-summary-by-book-id';
+    return api.get(url, {
+        params: {
+            bookId: id,
+        },
+    });
+};
+
+const _searchBook = async (stringName: any) => {
+    const url = '/search-book';
+    return api.get(url, {
+        params: {
+            searchString: stringName,
+        },
+    });
+};
+
 export {
     _createHistory,
     _createNote,
@@ -130,5 +148,7 @@ export {
     _getRecomendBoook,
     _getRecomendBoookByMajor,
     _getReviewNewest,
+    _getSummaryByBookId,
+    _searchBook,
     _updateModel,
 };

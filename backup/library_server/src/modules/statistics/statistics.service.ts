@@ -242,7 +242,7 @@ export class StatisticsService {
       {
         $match: genreId
           ? {
-              "$books.genre": new mongoose.Types.ObjectId(genreId), 
+              "books.genre": new mongoose.Types.ObjectId(genreId), 
             }
           : {},
       },

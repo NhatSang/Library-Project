@@ -1,7 +1,7 @@
 import React from 'react'
-import Search from '../Components/Search';
-import Pagination from '../Components/Pagination';
-import TableBook from '../Components/TableBook';
+import Search from '../../components/Search';
+import Pagination from '../../components/Pagination';
+import TableBook from '../../components/TableBook';
 
 const Books = () => {
   return (

@@ -10,6 +10,7 @@ type Props = {
     styles?: StyleProp<TextStyle>,
     onPress?: () => void,
     center?: boolean
+    className?: string
 }
 
 const AppText = (props: Props) => {
@@ -17,6 +18,7 @@ const AppText = (props: Props) => {
 
     const textComponent = (
         <Text
+        className={props.className}
             numberOfLines={numberOfLines}
             style={[
                 {

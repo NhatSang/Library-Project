@@ -5,6 +5,7 @@ import { setAuth, setMajorId, setUser, setUserId } from '@redux/authReducer'
 import { saveToken, saveUserLocalStorage } from '@utils/storage'
 import React, { useState } from 'react'
 import { ImageBackground } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import { _loginWithAccount } from './apis'
 
@@ -34,17 +35,19 @@ const LoginWithAccount = () => {
         }
     }
     return (
-        <ImageBackground className='flex-1' source={MAIN.BACKGROUND}>
-            <AppInput
-                value={email}
-                onChangeText={(text) => setEmail(text)}
-            />
-            <AppInput
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-            />
-            <AppButton loading={isLoading} onPress={handleLogin} title='Login' />
-        </ImageBackground>
+        <SafeAreaView className='flex-1'>
+            <ImageBackground className='flex-1' source={MAIN.BACKGROUND}>
+                <AppInput
+                    value={email}
+                    onChangeText={(text) => setEmail(text)}
+                />
+                <AppInput
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
+                />
+                <AppButton loading={isLoading} onPress={handleLogin} title='Login' />
+            </ImageBackground>
+        </SafeAreaView>
     )
 }
 

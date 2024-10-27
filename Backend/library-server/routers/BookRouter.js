@@ -13,6 +13,8 @@ import {
   getNewestBooks,
   getBookById,
   getBooksByMajors,
+  getSummaryByBookId,
+  searchBooksByName,
 } from "../controllers/book_controller/BookController.js";
 import { authenticateJWT } from "../middlewares/Auth.js";
 import { getAllBooks2, getrBookContentByPage } from "../controllers/book_controller/Book2Controller.js";
@@ -33,4 +35,6 @@ bookRouter.delete("/delete-book/:id", deleteBook);
 bookRouter.get("/get-newest-books", getNewestBooks);
 bookRouter.get("/get-book-by-id", getBookById);
 bookRouter.get("/get-book-by-majors",authenticateJWT, getBooksByMajors);
+bookRouter.get("/get-summary-by-book-id", getSummaryByBookId);
+bookRouter.get("/search-book", searchBooksByName);
 export default bookRouter;
