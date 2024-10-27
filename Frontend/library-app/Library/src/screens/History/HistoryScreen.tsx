@@ -71,6 +71,11 @@ const HistoryScreen = ({ navigation }: any) => {
                         size={12}
                     />
                     <View className='flex-1 justify-end'>
+                        <View className='pb-4'>
+                            <AppText onPress={
+                                () => navigation.navigate(ScreenName.BookDetail, { item })
+                            } text={'Xem chi tiết'} color={globalColor.primary} />
+                        </View>
                         <ButtobnCenter
                             label={'Đọc tiếp'}
                             colorLabel={globalColor.white}

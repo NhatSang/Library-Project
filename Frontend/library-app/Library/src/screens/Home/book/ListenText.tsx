@@ -3,13 +3,14 @@ import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
 import { isAndroid } from '@constants/index';
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, Pressable, SafeAreaView, Text, View } from 'react-native';
+import { FlatList, Pressable, Modal as RNModal, SafeAreaView, Text, View } from 'react-native';
 import { Modal } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import Tts, { Voice } from 'react-native-tts';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { _getBookContentBypage } from '../apis';
+import { IChapter } from 'src/types/iChapter';
+import { _getBookContentBypage, _getChapterByIdBook } from '../apis';
 
 function splitIntoSentences(content: string) {
     const contentWithoutFirstLine = content.split('\n').slice(1);
@@ -30,6 +31,7 @@ const ListentText = ({ navigation, route }: any) => {
     const [renderTrigger, setRenderTrigger] = useState(0);
     const flatListRef = useRef<FlatList>(null);
     const [isPlaying, setIsPlaying] = useState<boolean>(true);
+    const [chapter, setChapter] = useState<IChapter[]>([]);
     const speechRates = [
         { id: 0.1, label: 'x0.5', value: 0.1 },
         { id: 0.5, label: 'x1.0', value: 0.5 },
@@ -63,6 +65,7 @@ const ListentText = ({ navigation, route }: any) => {
     const [mode, setMode] = useState<'light' | 'dark'>('light');
     const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
 
     useEffect(() => {
         Tts.setDefaultRate(speechRate.current);
@@ -100,6 +103,7 @@ const ListentText = ({ navigation, route }: any) => {
         const finishListener = Tts.addListener('tts-finish', onTtsFinish);
         if (sentences.length > 0) {
             Tts.speak(sentences[0]);
+            startReading();
             scrollToIndex(1);
         }
 
@@ -111,6 +115,7 @@ const ListentText = ({ navigation, route }: any) => {
 
     useEffect(() => {
         getContent();
+        getChapterByIdBook();
     }, []);
 
     useEffect(() => {
@@ -169,6 +174,17 @@ const ListentText = ({ navigation, route }: any) => {
 
         await getContent();
 
+    }
+
+    const getChapterByIdBook = async () => {
+        try {
+            const response = await _getChapterByIdBook(bookId);
+            if (response.status) {
+                setChapter(response.data);
+            }
+        } catch (error) {
+            console.log('Error getChapterByIdBook: ', error);
+        }
     }
 
     const nextIndexSentence = () => {
@@ -260,6 +276,20 @@ const ListentText = ({ navigation, route }: any) => {
         setFontSize(size);
     }
 
+    const Item = ({ item }: { item: IChapter }) => (
+        <Pressable
+            className='flex-row justify-between items-center p-4 mb-2 border-b bg-slate-200 rounded-md'
+            onPress={() => {
+                currentPage.current = item.startPage + 1;
+                console.log('currentPage.current', currentPage.current);
+                getContent();
+                setModalVisible(false);
+            }}>
+            <AppText font={fontFamilies.robotoBold} text={item.title} />
+            <AppText text={item.startPage} />
+        </Pressable>
+    )
+
     return (
         <>
             <SafeAreaView className={`flex-1`}>
@@ -270,11 +300,18 @@ const ListentText = ({ navigation, route }: any) => {
                         <AntDesign name='left' size={30} color={globalColor.text_dark} />
                     </Pressable>
                     <AppText size={20} color={globalColor.text_dark} text='Sách nói' font={fontFamilies.robotoBold} />
-                    <Pressable onPress={() => {
-                        setIsModalVisible(true);
-                    }}>
-                        <AntDesign name='setting' size={30} color={globalColor.text_dark} />
-                    </Pressable>
+                    <View className='flex-row w-20 justify-between'>
+                        <Pressable onPress={() => {
+                            setModalVisible(true);
+                        }}>
+                            <AntDesign name='menu-unfold' size={30} color={globalColor.text_dark} />
+                        </Pressable>
+                        <Pressable onPress={() => {
+                            setIsModalVisible(true);
+                        }}>
+                            <AntDesign name='setting' size={30} color={globalColor.text_dark} />
+                        </Pressable>
+                    </View>
                 </View>
                 <View className={`flex-1 ${mode == 'light' ? 'bg-gray-300' : 'bg-slate-700'}`}>
                     <View className='flex-1 py-4 px-8'>
@@ -396,6 +433,32 @@ const ListentText = ({ navigation, route }: any) => {
                     </View>
                 </View>
             </Modal>
+            <RNModal animationType="slide" transparent={true} visible={modalVisible} onDismiss={() => setModalVisible(!modalVisible)}>
+                <View className={`flex-1 bg-gray-300 w-full h-5/6 absolute bottom-0 rounded-tl-3xl rounded-tr-3xl`}>
+                    <View className={`h-16 w-full justify-center items-center border-b`}>
+                        <Pressable className='absolute left-3' onPress={() => {
+                            setModalVisible(!modalVisible);
+                        }}>
+                            <MaterialIcons name='clear' size={28} color={globalColor.primary} />
+                        </Pressable>
+                        <View className='flex-row justify-center items-center w-4/6'>
+
+                            <AppText color={globalColor.primary} size={20} font={fontFamilies.robotoBold} text='Mục lục' />
+                        </View>
+                    </View>
+                    <View className=' flex-1 bg-white'>
+                        <FlatList
+                            showsVerticalScrollIndicator={false}
+                            data={chapter}
+                            contentContainerStyle={{ padding: 8 }}
+                            keyExtractor={(item) => item._id}
+                            renderItem={({ item }) => (
+                                <Item item={item} />
+                            )}
+                        />
+                    </View>
+                </View>
+            </RNModal>
         </>
     );
 };
