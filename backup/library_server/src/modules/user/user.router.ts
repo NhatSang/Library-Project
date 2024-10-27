@@ -8,11 +8,6 @@ const userRouter = Router();
 const userMiddleware = new UserMiddleware();
 const userController = Container.get(UserController);
 
-userRouter.post(
-  "/register",
-  userMiddleware.validateUser(UserRegisterDTO),
-  userController.register
-);
 
 userRouter.post("/ban-user", userController.banUser);
 

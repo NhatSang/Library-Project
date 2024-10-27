@@ -7,15 +7,7 @@ import { Pagination } from "../../helper/pagination";
 @Service()
 export class UserController {
   constructor(@Inject() private userService: UserService) {}
-  register = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const result = await this.userService.register(req.body);
-      res.send(new ResponseCustom(result));
-    } catch (error) {
-      console.log(error);
-      next(error);
-    }
-  };
+
   banUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.userService.banUser(req.body.userId);
