@@ -1,7 +1,32 @@
 import { Expose, plainToInstance, Transform } from "class-transformer";
-import { IsDate, IsEmail, IsOptional, IsString } from "class-validator";
+import {
+  IsDate,
+  IsEmail,
+  IsOptional,
+  IsString,
+  matches,
+} from "class-validator";
 
 export class UserRegisterDTO {
+  @IsString()
+  name: string;
+  @IsString()
+  gender: string;
+  @IsString()
+  dob: Date;
+  @IsEmail()
+  email: string;
+  @IsString()
+  password: string;
+  @IsString()
+  repassword: String;
+  @IsString()
+  majors: string;
+  @IsString()
+  code: string;
+}
+
+export class UserUpdateDTO {
   @IsOptional()
   @IsString()
   name: string;
@@ -11,18 +36,20 @@ export class UserRegisterDTO {
   @IsOptional()
   @IsDate()
   dob: Date;
-  @IsEmail()
-  email: string;
-  @IsString()
-  password: string;
-  @IsString()
-  repassword: String;
   @IsOptional()
   @IsString()
   majors: string;
   @IsOptional()
   @IsString()
   code: string;
+  @IsOptional()
+  @IsString()
+  image: string;
+}
+
+export class UserVerifyEmailDTO {
+  @IsEmail()
+  email: string;
 }
 
 export class UserResponseDTO {
@@ -42,9 +69,18 @@ export class UserResponseDTO {
   status: string;
   @Expose()
   code: string;
+  @Expose()
+  @Transform(({ obj }) => obj.majors?.name || null)
+  majors: string | null;
   static transformUser(params: any | any[]) {
     return plainToInstance(UserResponseDTO, params, {
       excludeExtraneousValues: true,
     });
   }
+}
+
+export class UserLoginDTO {
+  email: string;
+  @IsString()
+  password: string;
 }

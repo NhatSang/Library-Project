@@ -1,5 +1,7 @@
+import { Job } from 'bullmq';
+import { env } from './../index';
 import nodemailer from "nodemailer";
-import { env } from "../../helper";
+
 
 export class EmailProccessor {
   static transporter = nodemailer.createTransport({
@@ -24,5 +26,14 @@ export class EmailProccessor {
 
     await this.transporter.sendMail(mailOptions);
     console.log(`Email sent to ${email}`);
+  };
+  static emailProcessor = async (job: Job) => {
+    const { email, subject, content } = job.data;
+    try {
+      await EmailProccessor.sendEmail(email, subject, content);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   };
 }

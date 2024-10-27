@@ -3,8 +3,12 @@ import { Gender, Role, UserStatus } from "../types/user.type";
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String },
-    gender: { type: String, enum: [Gender.Male, Gender.Female] },
+    name: { type: String, index: true },
+    gender: {
+      type: String,
+      enum: [Gender.Male, Gender.Female],
+      default: Gender.Male,
+    },
     dob: { type: Date },
     email: { type: String, required: true },
     password: { type: String, required: true },
@@ -20,7 +24,7 @@ const userSchema = new mongoose.Schema(
       ],
       default: UserStatus.Pending,
     },
-    code: { type: String },
+    code: { type: String, index: true },
     image: {
       type: String,
       default:
@@ -29,6 +33,6 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+userSchema.index({ email: 1, status: 1 });
 const User = mongoose.model("User", userSchema);
 export default User;
