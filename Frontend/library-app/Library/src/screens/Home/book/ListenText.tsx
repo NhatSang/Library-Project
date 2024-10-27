@@ -1,6 +1,7 @@
 import AppText from '@components/AppText';
 import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
+import { isAndroid } from '@constants/index';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, SafeAreaView, Text, View } from 'react-native';
 import { Modal } from 'react-native-paper';
@@ -35,7 +36,7 @@ const ListentText = ({ navigation, route }: any) => {
         { id: 0.75, label: 'x1.5', value: 0.75 },
         { id: 0.99, label: 'x2.0', value: 0.99 },
     ]
-    const listVoices = [
+    const listVoices = isAndroid ? [
         {
             name: 'Nữ',
             id: 'vi-VN-language'
@@ -52,6 +53,12 @@ const ListentText = ({ navigation, route }: any) => {
             name: 'Nam truyền cảm',
             id: 'vi-vn-x-vif-network'
         },
+    ] : [
+        {
+            name: 'Nữ',
+            id: 'com.apple.voice.compact.vi-VN.Linh'
+        },
+
     ];
     const [mode, setMode] = useState<'light' | 'dark'>('light');
     const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
@@ -60,6 +67,7 @@ const ListentText = ({ navigation, route }: any) => {
     useEffect(() => {
         Tts.setDefaultRate(speechRate.current);
         Tts.setDefaultVoice(currentVoice.current);
+        Tts.setDefaultLanguage('vi-VN');
 
 
         const onTtsFinish = () => {
@@ -73,17 +81,21 @@ const ListentText = ({ navigation, route }: any) => {
             }
         };
 
-        // Tts.getInitStatus().then(() => {
-        //     Tts.voices().then(availableVoices => {
-        //         const vietnameseVoices = availableVoices.filter(voice => voice.language === 'vi-VN');
-        //         if (vietnameseVoices.length > 0) {
-        //             voices.current = vietnameseVoices;
-        //             // currentVoice.current = vietnameseVoices[0]?.id;
-        //         } else {
-        //             console.log('No Vietnamese voices available.');
-        //         }
-        //     });
-        // });
+        Tts.getInitStatus().then(() => {
+            Tts.voices().then(availableVoices => {
+                const vietnameseVoices = availableVoices.filter(voice => voice.language === 'vi-VN');
+                if (vietnameseVoices.length > 0) {
+                    voices.current = vietnameseVoices;
+                    currentVoice.current = vietnameseVoices[0]?.id;
+                } else {
+                    console.log('No Vietnamese voices available.');
+                }
+            });
+        }, (err: any) => {
+            if (err.code === 'no_engine') {
+                Tts.requestInstallEngine();
+            }
+        });
 
         const finishListener = Tts.addListener('tts-finish', onTtsFinish);
         if (sentences.length > 0) {

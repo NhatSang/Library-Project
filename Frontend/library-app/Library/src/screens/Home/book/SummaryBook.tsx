@@ -48,7 +48,7 @@ const SummaryBook = ({ navigation, route }: any) => {
                 } onPress={() => {
                     navigation.navigate(
                         stack == 'LISTEN' ? ScreenName.ListenText : ScreenName.ReadText
-                        , { book: book })
+                        , stack == 'LISTEN' ? { bookId: book._id } : { book })
                 }
                 } />
             </View>
