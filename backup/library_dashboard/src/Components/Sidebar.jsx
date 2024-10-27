@@ -23,13 +23,13 @@ const SideBar = () => {
         {SLIDEBAR_LINKS.map((link, index) => (
           <li
             key={index}
-            className={`font-medium rounded-md py-2 px-5 text-gray-500 hover:bg-slate-400 hover:text-slate-900 ${
+            className={`font-medium rounded-md  px-5 text-gray-500 hover:bg-slate-400 hover:text-slate-900 ${
               activeLink === index ? "bg-slate-400 text-slate-900" : ""
             }`}
           >
             <Link
               to={link.path}
-              className="flex justify-center md:justify-start items-center md:space-x-5"
+              className="flex justify-center md:justify-start items-center md:space-x-5 py-2"
               onClick={() => handleLinkClick(index)}
             >
               <span>{link.icon()}</span>

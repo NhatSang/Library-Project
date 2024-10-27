@@ -1,23 +1,33 @@
 import React, { useEffect, useState } from "react";
-import Search from "../../components/Search";
-import Pagination from "../../components/Pagination";
-import TableUsers from "../../components/TableUsers";
-import { useDispatch, useSelector } from "react-redux";
-import { banUser, fetchUser } from "../../redux/userSlice";
-import axios from "axios";
+import { _banUser, _getUsers } from "./apis";
+import { Pagination, Search, TableUsers } from "../../components";
+
 const Users = () => {
-  const dispatch = useDispatch();
-  const users = useSelector((state) => state.user.data);
+  const [users,setUsers] = useState([]);
+  const [pagination, setPagination] = useState({});
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
   
   useEffect(() => {
-    dispatch(fetchUser(page, 20, keyword));
+    fetchUser(page, 10, keyword);
   }, [page,keyword]);
 
+  const fetchUser = async (page, limit, keyword) => {
+    const response = await _getUsers(page, limit, keyword);
+    if(!response.error){
+      setUsers(response.data);
+      setPagination(response.pagination);
+    }
+  };
+
   const handleToggleStatus = async (userId, currentStatus) => {
-    await axios.post("http://localhost:3000/api/v1/ban-user", { userId });
-    dispatch(banUser({ userId, currentStatus }));
+    await _banUser(userId);
+    setUsers(users.map((u) => {
+      if (u._id === userId) {
+        return { ...u, status: currentStatus === "active" ? "banned" : "active" };
+      }
+      return u;
+    }));
   };
 
   const handleSearch = async (keyword) => {
@@ -32,9 +42,9 @@ const Users = () => {
         />
       </div>
       <div className="w-full">
-        <TableUsers data={users.data} handleToggleStatus={handleToggleStatus} />
+        <TableUsers data={users} handleToggleStatus={handleToggleStatus} />
       </div>
-      <Pagination pagination={users.pagination} setPage={setPage} />
+      <Pagination pagination={pagination} setPage={setPage} />
     </div>
   );
 };
