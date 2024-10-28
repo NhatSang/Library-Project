@@ -18,4 +18,7 @@ export const ScreenName = {
     AccountDetail: 'AccountDetail',
     Notification: 'Notification',
     NotificationDetail: 'NotificationDetail',
+    RegisterScreen: 'RegisterScreen',
+    ForgetScreen: 'ForgetScreen',
+    VerifyCodeScreen: 'VerifyCodeScreen',
 };

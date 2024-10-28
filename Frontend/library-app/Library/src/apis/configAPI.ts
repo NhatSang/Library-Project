@@ -9,7 +9,7 @@ export const api = axios.create({
     },
 });
 export const api2 = axios.create({
-    baseURL: 'http://10.0.2.2:5000',
+    baseURL: 'http://192.168.2.34:6000/api/v1',
     timeout: 6000,
     headers: {
         'Content-Type': 'application/json',

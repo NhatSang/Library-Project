@@ -9,6 +9,7 @@ export class MajorsConatroller {
 
   getListMajors = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log("Get list majors");
       const result = await this.majorsService.getListMajors();
       res.send(new ResponseCustom(result));
     } catch (error) {

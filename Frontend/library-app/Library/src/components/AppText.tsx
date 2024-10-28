@@ -11,14 +11,15 @@ type Props = {
     onPress?: () => void,
     center?: boolean
     className?: string
+    disabled?: boolean
 }
 
 const AppText = (props: Props) => {
-    const { text, center, size, font, numberOfLines, color, styles, onPress } = props;
+    const { text, center, size, font, numberOfLines, color, styles, onPress, disabled } = props;
 
     const textComponent = (
         <Text
-        className={props.className}
+            className={props.className}
             numberOfLines={numberOfLines}
             style={[
                 {
@@ -35,7 +36,7 @@ const AppText = (props: Props) => {
     );
 
     return onPress ? (
-        <Pressable onPress={onPress}>
+        <Pressable disabled={disabled} onPress={onPress}>
             {textComponent}
         </Pressable>
     ) : (

@@ -96,28 +96,29 @@ const LoginScreen = () => {
       <SafeAreaView className='flex-1 justify-between items-center py-5'>
         <Image resizeMode='stretch' source={MAIN.LOGOIUH} className='w-9/12 h-40' />
         <View className='justify-center items-center mb-40'>
-          <AppText text='Wellcome to Library IUH' color='white' size={24} font={fontFamilies.robotoBold} />
-          <AppText text='Please login to continue' color='white' size={16} />
+          <AppText text='Chào mừng đến với Thư viện IUH' color='white' size={24} font={fontFamilies.robotoBold} />
+          <AppText text='Vui lòng đăng nhập để tiếp tục' color='white' size={16} />
         </View>
         <View className='w-full items-center'>
           <AppButton
+            icon={<Image source={LOGIN.ICONMAIL} style={{ width: 24, height: 24 }} />}
             loading={isLoading}
             onPress={() => { handleLogin('iddentityserver') }}
-            title='Tiếp tục'
+            title='Tiếp tục với email Microsoft'
             type='primary'
             color={globalColor.primary}
             styles={{ width: '80%' }}
-            textStyleProps={{ color: globalColor.white, fontSize: 20, fontFamily: fontFamilies.robotoBold }}
+            textStyleProps={{ color: globalColor.white, fontSize: 18, fontFamily: fontFamilies.robotoBold }}
           />
           <AppButton
             onPress={() => {
               navigation.navigate(ScreenName.LoginWithAccount);
             }}
-            title='Login with Account'
+            title='Tiếp tục với tài khoản mật khẩu'
             type='primary'
             color={globalColor.primary_2}
             styles={{ width: '80%' }}
-            textStyleProps={{ color: globalColor.white, fontSize: 20, fontFamily: fontFamilies.robotoBold }}
+            textStyleProps={{ color: globalColor.white, fontSize: 18, fontFamily: fontFamilies.robotoBold }}
           />
         </View>
       </SafeAreaView>
