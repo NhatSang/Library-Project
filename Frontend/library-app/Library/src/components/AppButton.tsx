@@ -48,7 +48,7 @@ const AppButton = (props: Props) => {
         iconPosition,
         textLine,
         iconExtra,
-        disable,
+        disable = false,
         loading,
         radius,
     } = props;

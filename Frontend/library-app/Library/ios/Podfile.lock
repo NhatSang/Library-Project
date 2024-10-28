@@ -1292,6 +1292,15 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNImageCropPicker (0.41.4):
+    - React-Core
+    - React-RCTImage
+    - RNImageCropPicker/QBImagePickerController (= 0.41.4)
+    - TOCropViewController (~> 2.7.4)
+  - RNImageCropPicker/QBImagePickerController (0.41.4):
+    - React-Core
+    - React-RCTImage
+    - TOCropViewController (~> 2.7.4)
   - RNReanimated (3.16.1):
     - DoubleConversion
     - glog
@@ -1409,6 +1418,7 @@ PODS:
   - SwiftAudioEx (1.1.0)
   - TextToSpeech (4.1.1):
     - React-Core
+  - TOCropViewController (2.7.4)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1488,6 +1498,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSoundPlayer (from `../node_modules/react-native-sound-player`)
@@ -1500,6 +1511,7 @@ SPEC REPOS:
     - AppAuth
     - SocketRocket
     - SwiftAudioEx
+    - TOCropViewController
 
 EXTERNAL SOURCES:
   AzureAuth:
@@ -1651,6 +1663,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -1740,6 +1754,7 @@ SPEC CHECKSUMS:
   ReactCommon: eebffb37a90138c6db6eb8b2d952e7e5c6bc083c
   RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
   RNGestureHandler: a8e61b93b4c5c44e6cd797cdaba43126ec36acaa
+  RNImageCropPicker: 3d888d481c65776063556b72c19893a8b8344b1b
   RNReanimated: af4e059a8fd0fb7a9cdf5ad35ead4699598a9447
   RNScreens: aa943ad421c3ced3ef5a47ede02b0cbfc43a012e
   RNSoundPlayer: 490822518cc1d6d80495ca7e3223df5869c30851
@@ -1747,6 +1762,7 @@ SPEC CHECKSUMS:
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SwiftAudioEx: f6aa653770f3a0d3851edaf8d834a30aee4a7646
   TextToSpeech: 2b930ec3756afde499061f4f01ea895e1f75dccb
+  TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Yoga: 0efb3e1bd40ba59b009f01badea863281101de78
 
 PODFILE CHECKSUM: dca86538f11055b6022c6302b0bda244345fdb21

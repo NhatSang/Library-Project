@@ -2,6 +2,7 @@ export const SPLASH = {};
 
 export const LOGIN = {
     BACKGROUND: require('./Login/background.png'),
+    ICONMAIL: require('./Login/icon_mail.png'),
 };
 
 export const MAIN = {
