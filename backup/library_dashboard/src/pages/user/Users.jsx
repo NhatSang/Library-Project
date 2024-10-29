@@ -1,12 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { _banUser, _getUsers } from "./apis";
 import { Pagination, Search, TableUsers } from "../../components";
+import { Table } from 'antd';
+
+
 
 const Users = () => {
   const [users,setUsers] = useState([]);
   const [pagination, setPagination] = useState({});
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
+  const columns = [
+    {
+      title: 'Họ và Tên',
+      dataIndex: 'name',
+    },
+    {
+      title:'Mã sinh viên/giáo viên',
+      dataIndex: 'code',
+    },
+    {
+      title:'Ngày sinh',
+      dataIndex: 'dob',
+    },
+    {
+      title:'Giới tính',
+      dataIndex:'gender',
+    },
+    {
+      title:"Email",
+      dataIndex:'email',
+    }
+  ]
   
   useEffect(() => {
     fetchUser(page, 10, keyword);

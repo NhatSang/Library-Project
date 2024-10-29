@@ -43,7 +43,10 @@ export const sendNotification = async (
             notification: {
                 title: notification.title,
                 body: notification.content,
-                image: notification.image
+                image: notification.image,
+            },
+            data: {
+                notification_id: notification._id.toString(),
             },
             token: tokens[0],
         }

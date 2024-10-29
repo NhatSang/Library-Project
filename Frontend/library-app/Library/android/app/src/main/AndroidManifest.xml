@@ -22,13 +22,7 @@
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
-            <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
-            <data android:scheme="com.library" />
-            <data 
-              android:host="com.library"
-              android:pathPrefix="/android/callback"
-              android:scheme="com.library"
-             />
+            
         </intent-filter>
       </activity>
       <activity
