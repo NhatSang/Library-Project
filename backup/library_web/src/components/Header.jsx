@@ -1,23 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { IMAGES, localUser } from "../constants";
+import { IMAGES } from "../constants";
 import { IoHome } from "react-icons/io5";
 import { SlBookOpen } from "react-icons/sl";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button, Dropdown, Image, Input, Space } from "antd";
+import { useSelector } from "react-redux";
 const { Search } = Input;
 
 const Header = () => {
-  const [user, setUser] = useState();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user.data);
 
-  useEffect(() => {
-    // Lấy dữ liệu từ localStorage
-    const storedUser = localUser;
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
   const onSearch = (value, _e, info) => {
     if (value) navigate("/result", { state: { value } });
   };
@@ -54,7 +48,7 @@ const Header = () => {
   ];
   return (
     <div className="grid grid-cols-10 bg-blue-950 px-5 py-1 text-white gap-2">
-      <div className="col-span-5 flex items-center space-x-2 text-2xl">
+      <div className="col-span-5 flex items-center space-x-2 text-lg">
         <div className="bg-white rounded-lg">
           <img src={IMAGES.LOGO} width={100} />
         </div>
@@ -84,20 +78,6 @@ const Header = () => {
         />
       </div>
       <div className="col-span-2 flex items-center justify-end space-x-4">
-        <Space wrap>
-          <Dropdown
-            menu={{
-              items,
-            }}
-            placement="bottom"
-            arrow
-            trigger={["click"]}
-          >
-            <div className="flex space-x-2 items-center hover:bg-slate-500 rounded-full overflow-hidden">
-              <img src={user?.image} width={40} height={40} />
-            </div>
-          </Dropdown>
-        </Space>
         <div className="overflow-hidden">
           <p
             style={{
@@ -109,6 +89,20 @@ const Header = () => {
             {user?.name}
           </p>
         </div>
+        <Space wrap>
+          <Dropdown
+            menu={{
+              items,
+            }}
+            placement="bottom"
+
+            trigger={["click"]}
+          >
+            <div className="flex space-x-2 items-center hover:bg-slate-500 rounded-full overflow-hidden">
+              <img src={user?.image} width={40} height={40} />
+            </div>
+          </Dropdown>
+        </Space>
       </div>
     </div>
   );

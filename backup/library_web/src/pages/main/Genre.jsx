@@ -21,14 +21,14 @@ const Genre = () => {
   };
   return (
     <div className="px-5 py-2 space-y-3">
-      <div className="grid grid-cols-6 gap-2 bg-white p-3 rounded-md">
+      <div className="grid grid-cols-6 gap-2 bg-white p-3 rounded-md shadow-md">
         {genres?.map((g) => (
           <Button type="primary" onClick={() => handleChangeGenres(g._id)}>
             {g.name}
           </Button>
         ))}
       </div>
-      <div className="p-3 rounded-md bg-white grid grid-cols-4 gap-4">
+      <div className="p-3 rounded-md bg-white grid grid-cols-4 gap-4 shadow-md">
         <Button></Button>
         <Button></Button>
         <Button></Button>
