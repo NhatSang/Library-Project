@@ -4,6 +4,7 @@ import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
 import { WIDTH } from '@constants/index';
 import { ScreenName } from '@constants/ScreenName';
+import messaging from '@react-native-firebase/messaging';
 import { getUserLocalStorage } from '@utils/storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, BackHandler, FlatList, Image, ImageBackground, Pressable, ScrollView, useColorScheme, View } from 'react-native';
@@ -14,6 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { iBook } from 'src/types/iBook';
 import { _getAllBook2, _getBooksByMayjors, _getRecomendBoook, _getRecomendBoookByMajor } from './apis';
 
+
 const HomeScreen = ({ navigation }: any) => {
     const colorScheme = useColorScheme();
     const [listNewBook, setListNewBook] = useState<iBook[]>([]);
@@ -22,6 +24,18 @@ const HomeScreen = ({ navigation }: any) => {
     const [listBook2, setListBook2] = useState<iBook[]>([]);
     const [loadImage, setLoadImage] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        messaging().getInitialNotification().then(async (remoteMessage: any) => {
+            const data = remoteMessage.data
+            navigationToNotification(data.notification_id);
+        })
+    }, []);
+
+    const navigationToNotification = (notification_id: string) => {
+        console.log("next");
+        navigation.navigate(ScreenName.NotificationDetail, { notification_id });
+    };
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {

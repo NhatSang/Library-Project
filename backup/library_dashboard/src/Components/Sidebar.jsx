@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { LuBox, LuUser, LuBook, LuBarChart2 } from "react-icons/lu";
+import { IoMdNotifications } from "react-icons/io";
 import { Link } from "react-router-dom";
 
 const SideBar = () => {
@@ -11,6 +12,7 @@ const SideBar = () => {
     { id: 1, path: "/", name: "Dashboard", icon: LuBarChart2 },
     { id: 2, path: "/users", name: "Users", icon: LuUser },
     { id: 3, path: "/books", name: "Books", icon: LuBook },
+    { id: 4, path: "/notifications", name: "Notifications", icon: IoMdNotifications },
   ];
   return (
     <div className="w-16 md:w-56 fixed left-0 top-0 z-10 h-screen border-r pt-8 px-4 bg-slate-900">
