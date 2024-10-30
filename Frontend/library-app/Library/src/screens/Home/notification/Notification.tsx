@@ -3,13 +3,33 @@ import AppText from '@components/AppText';
 import Space from '@components/Space';
 import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
-import React from 'react';
-import { ImageBackground, Pressable, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, Image, ImageBackground, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { _getNotificationByUser } from '../apis';
+import { ScreenName } from '@constants/ScreenName';
 
 
 const Notification = ({ navigation }: any) => {
+    const [notifications, setNotifications] = useState<any[]>([]);
+
+    useEffect(() => {
+        getNotification();
+    }, []);
+
+    const getNotification = async () => {
+        try {
+            const response = await _getNotificationByUser();
+            if (response.data) {
+                setNotifications(response.data);
+                console.log('notification', response.data.length);
+            }
+        } catch (error) {
+            console.log('error', error);
+        }
+    }
+
     return (
         <ImageBackground className='flex-1' source={MAIN.BACKGROUND}>
             <SafeAreaView className='flex-1'>
@@ -22,9 +42,38 @@ const Notification = ({ navigation }: any) => {
                     <AppText size={20} color={globalColor.dark} text='Thông báo' font={fontFamilies.robotoBold} />
                     <Space width={30} />
                 </View>
-                <View className='flex-1 justify-center items-center'>
+                {
+                    notifications.length > 0 
+                    ? 
+                    <View className='flex-1'>
+                        <FlatList
+                            data={notifications}
+                            keyExtractor={(item, index) => index.toString()}
+                            contentContainerStyle={{ paddingBottom: 20 }}
+                            renderItem={({ item }) => {
+                                return (
+                                    <Pressable
+                                    onPress={() => {
+                                        navigation.navigate(ScreenName.NotificationDetail, { notification_id: item.notification })
+                                    }}
+                                     className='px-5'>
+                                    <View className={`px-8 py-2 h-20 flex-row border border-gray-300 mt-2 rounded-xl ${item.isRead == false ? 'bg-green-200':''}`}>
+                                        <Image source={MAIN.ICON_NOTIFICATION} className='w-14 h-14' />
+                                       <View className='px-4 justify-center flex-1'>
+                                       <AppText numberOfLines={2} size={16}  color={globalColor.dark} text={item.notification.title} font={fontFamilies.robotoBold} />
+                                        <AppText size={14} color={globalColor.dark} text={item.notification.content} font={fontFamilies.robotoRegular} />
+                                        </View>
+                                    </View>
+                                    </Pressable>
+                                )
+                            }}
+                        />
+                    </View>
+                    :
+                    <View className='flex-1 justify-center items-center'>
                     <AppText size={20} color={globalColor.dark} text='Chưa có thông báo mới' font={fontFamilies.robotoBold} />
                 </View>
+                }
             </SafeAreaView>
         </ImageBackground>
     )

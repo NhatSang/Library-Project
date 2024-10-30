@@ -114,6 +114,8 @@ const _getBookContentBypage = async (id: string, page: number) => {
     });
 };
 
+
+
 const _getSummaryByBookId = async (id: string) => {
     const url = '/get-summary-by-book-id';
     return api.get(url, {
@@ -128,6 +130,20 @@ const _searchBook = async (stringName: any) => {
     return api.get(url, {
         params: {
             searchString: stringName,
+        },
+    });
+};
+
+const _getNotificationByUser = async () => {
+    const url = '/get-notification-by-user';
+    return api.get(url);
+}
+
+const _getNotificationById = async (id: string) => {
+    const url = '/get-notification-by-id';
+    return api.get(url, {
+        params: {
+            id_notification: id,
         },
     });
 };
@@ -151,4 +167,6 @@ export {
     _getSummaryByBookId,
     _searchBook,
     _updateModel,
+    _getNotificationByUser,
+    _getNotificationById,
 };

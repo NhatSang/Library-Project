@@ -35,7 +35,7 @@ const _getChapters = async (bookId) => {
     });
 }
 
-const _getBook = async (bookId) => {
+const _getBook = async () => {
     const url = "/get-all-book2";
     return await api2.get(url);
 }

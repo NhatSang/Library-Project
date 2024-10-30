@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { _getUsers } from '../user/apis';
-import { _getMajors } from '../book/apis';
+import { _getBook, _getMajors } from '../book/apis';
 import { _createNotification, _updateNotification } from './apis';
 import { useLocation } from 'react-router-dom';
 
@@ -19,6 +19,7 @@ const AddNotification = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [users, setUsers] = useState([]);
   const [majors, setMajors] = useState([]);
+  const [books, setBooks] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -46,8 +47,10 @@ const AddNotification = () => {
   const fetchData = async () => {
     const resUser = await _getUsers();
     const resMajor = await _getMajors();
+    const resBook = await _getBook();
     setUsers(resUser.data);
     setMajors(resMajor.data);
+    setBooks(resBook.data.data);
   }
 
   const handleSelectData = (item) => {
@@ -96,7 +99,8 @@ const AddNotification = () => {
         };
       }
     formData.append('filterCondition', JSON.stringify(filterConditionObject));
-    formData.append('data', JSON.stringify(selectedData));
+    const selectedObject = JSON.stringify(selectedData.map((item) => item._id));
+    formData.append('data', selectedObject);
 
     if (previewImage) {
       formData.append('image', {
@@ -182,7 +186,7 @@ const AddNotification = () => {
               <p>Sách đã chọn:</p>
               <ul>
                 {selectedData.map((data, index) => (
-                  <li key={index} className="text-sm">{data}</li>
+                  <li key={index} className="text-sm">{data.title}</li>
                 ))}
               </ul>
             </div>
@@ -221,7 +225,7 @@ const AddNotification = () => {
 
         {/* Data Modal */}
         
-{isDataModalOpen && (
+{/* {isDataModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
               <h2 className="text-xl font-bold mb-4">Chọn Sách</h2>
@@ -233,18 +237,18 @@ const AddNotification = () => {
                 className="border border-gray-300 rounded-lg p-2 mb-4 w-full"
               />
               <ul>
-                {['Sách A', 'Sách B', 'Sách C']
-                  .filter((book) => book.toLowerCase().includes(searchQuery.toLowerCase()))
+                {books
+                  .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
                   .map((book, index) => (
                     <li key={index} className="mb-2 cursor-pointer" onClick={() => handleSelectData(book)}>
-                      {book}
+                      {book.title}
                     </li>
                 ))}
               </ul>
               <button onClick={() => setIsDataModalOpen(false)} className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Đóng</button>
             </div>
           </div>
-        )} 
+        )}  */}
 
 {isDataModalOpen && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -258,11 +262,11 @@ const AddNotification = () => {
         className="border border-gray-300 rounded-lg p-2 mb-4 w-full"
       />
       <ul className="max-h-[60vh] overflow-y-auto">
-        {['Sách A', 'Sách B', 'Sách C']
-          .filter((book) => book.toLowerCase().includes(searchQuery.toLowerCase()))
+        {books
+          .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
           .map((book, index) => (
             <li key={index} className="mb-2 cursor-pointer" onClick={() => handleSelectData(book)}>
-              {book}
+              {book.title}
             </li>
           ))}
       </ul>

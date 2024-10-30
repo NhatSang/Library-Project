@@ -82,6 +82,7 @@ const LoginWithAccount = ({ navigation }: any) => {
                 } catch (error) {
                     console.log(error);
                 }
+                console.log(res.data.accessToken);
                 dispatch(setUserId(res.data.user._id));
                 dispatch(setMajorId(res.data.user.majors));
                 dispatch(setUser(res.data.user));

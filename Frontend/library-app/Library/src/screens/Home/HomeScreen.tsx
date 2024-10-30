@@ -13,7 +13,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { iBook } from 'src/types/iBook';
-import { _getAllBook2, _getBooksByMayjors, _getRecomendBoook, _getRecomendBoookByMajor } from './apis';
+import { _getAllBook2, _getBooksByMayjors, _getNotificationByUser, _getRecomendBoook, _getRecomendBoookByMajor } from './apis';
 
 
 const HomeScreen = ({ navigation }: any) => {
@@ -24,12 +24,18 @@ const HomeScreen = ({ navigation }: any) => {
     const [listBook2, setListBook2] = useState<iBook[]>([]);
     const [loadImage, setLoadImage] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [notifications, setNotifications] = useState<any>(null);
 
     useEffect(() => {
         messaging().getInitialNotification().then(async (remoteMessage: any) => {
             const data = remoteMessage.data
             navigationToNotification(data.notification_id);
         })
+        messaging().onMessage(async (remoteMessage: any) => {
+            if (remoteMessage.data) {
+                getNotification();
+            }
+            });
     }, []);
 
     const navigationToNotification = (notification_id: string) => {
@@ -43,6 +49,7 @@ const HomeScreen = ({ navigation }: any) => {
             getRecommendBook();
             getRecommendBookByMajors();
             getBook2();
+            getNotification();
         });
         return unsubscribe;
     }, [navigation]);
@@ -86,6 +93,18 @@ const HomeScreen = ({ navigation }: any) => {
             const response = await _getAllBook2();
             if (response.status) {
                 setListBook2(response.data);
+            }
+        } catch (error) {
+            console.log('error', error);
+        }
+    }
+
+    const getNotification = async () => {
+        try {
+            const response = await _getNotificationByUser();
+            if (response.data) {
+                const data = response.data.filter((item: any) => item.isRead == false);
+                setNotifications(data);
             }
         } catch (error) {
             console.log('error', error);
@@ -150,7 +169,9 @@ const HomeScreen = ({ navigation }: any) => {
                         onPress={() => { navigation.navigate(ScreenName.Notification) }}
                     >
                         <Ionicons name='notifications-sharp' size={40} color={globalColor.primary} />
-                        <Badge className='absolute'>0</Badge>
+                        <Badge className='absolute'>
+                            {notifications?.length}
+                        </Badge>
                     </Pressable>
                     <Pressable
                         onPress={() => { navigation.navigate(ScreenName.SearchScreen) }}
