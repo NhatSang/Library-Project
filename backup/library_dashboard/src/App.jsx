@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./Components/Layout";
-import Home from "./pages/Home";
-import Users from "./pages/Users";
-import Books from "./pages/Books";
+import { Books, Home, Users ,Notifications} from "./pages";
+import { Layout } from "./components";
 function App() {
   return (
     <BrowserRouter>
@@ -11,6 +9,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="Users" element={<Users />} />
           <Route path="Books" element={<Books />} />
+          <Route path="Notifications" element={<Notifications />} />
         </Route>
       </Routes>
     </BrowserRouter>

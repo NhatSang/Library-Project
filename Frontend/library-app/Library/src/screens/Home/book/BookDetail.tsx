@@ -6,6 +6,7 @@ import { fontFamilies } from '@constants/fontFamilies'
 import { globalColor } from '@constants/globalColor'
 import { isAndroid } from '@constants/index'
 import { ScreenName } from '@constants/ScreenName'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getUserLocalStorage } from '@utils/storage'
 import React, { useEffect, useState } from 'react'
 import { FlatList, Image, Pressable, View } from 'react-native'
@@ -28,12 +29,14 @@ const BookDetail = ({ navigation, route }: any) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
     const [reviews, setReviews] = useState<IReview[]>([]);
+    const [show, setShow] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             await getImageColors();
             await getUserLocal();
+            await getShowSummary();
             setLoading(false);
         };
         fetchData();
@@ -45,6 +48,18 @@ const BookDetail = ({ navigation, route }: any) => {
         });
         return unsubscribe;
     }, [navigation]);
+
+    const getShowSummary = async () => {
+        try {
+            const show = await AsyncStorage.getItem(`SHOW_${book._id}`);
+            if (show == 'YES') {
+                console.log('show: ', show);
+                setShow(true);
+            }
+        } catch (error) {
+            console.log('Error get show summary: ', error);
+        }
+    }
 
     const getUserLocal = async () => {
         try {
@@ -100,11 +115,18 @@ const BookDetail = ({ navigation, route }: any) => {
         const isFileExist = await RNFetchBlob.fs.exists(filePath);
         if (isFileExist) {
             setLoadingBtn(false);
-            navigation.navigate(ScreenName.ReadText, {
-                id: book._id,
-                path: filePath,
-                book: book
-            });
+            if (show) {
+                navigation.navigate(ScreenName.ReadText, {
+                    id: book._id,
+                    path: filePath,
+                    book: book
+                });
+            } else {
+                navigation.navigate(ScreenName.SummaryBook, {
+                    book: book,
+                    stack: 'READ'
+                });
+            }
         } else {
             try {
                 const response = await _createHistory({ book: book._id });
@@ -168,7 +190,7 @@ const BookDetail = ({ navigation, route }: any) => {
                         </View>
                         <View className='flex-row justify-around'>
                             <View className='justify-center items-center'>
-                                <AppText text={300} font={fontFamilies.robotoBold} />
+                                <AppText text={item.pageNumber} font={fontFamilies.robotoBold} />
                                 <View className='flex-row items-center'>
                                     <Feather color={globalColor.bg_dark} size={16} name='book-open' />
                                     <AppText styles={{ paddingLeft: 4 }} text='trang' />
@@ -184,8 +206,8 @@ const BookDetail = ({ navigation, route }: any) => {
                             <View className='justify-center items-center'>
                                 <AppText text={999} font={fontFamilies.robotoBold} />
                                 <View className='flex-row items-center'>
-                                    <AntDesign name='heart' color={'red'} size={16} />
-                                    <AppText styles={{ paddingLeft: 4 }} text='yêu thích' />
+                                    <AntDesign name='star' color={'yellow'} size={16} />
+                                    <AppText styles={{ paddingLeft: 4 }} text='đánh giá' />
                                 </View>
                             </View>
                         </View>
@@ -245,7 +267,10 @@ const BookDetail = ({ navigation, route }: any) => {
                                 color={globalColor.primary_2}
                                 styles={{ width: '40%', height: '80%', borderRadius: 10 }}
                                 onPress={() => {
-                                    navigation.navigate(ScreenName.ListenText, { bookId: book._id })
+                                    if (show) {
+                                        navigation.navigate(ScreenName.ListenText, { bookId: book._id })
+                                    } else
+                                        navigation.navigate(ScreenName.SummaryBook, { book: book, stack: 'LISTEN' })
                                 }}
                                 title='Sách nói'
                             />

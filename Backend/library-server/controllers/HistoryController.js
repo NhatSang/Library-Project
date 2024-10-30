@@ -1,6 +1,7 @@
 import History from '../models/History.js';
+import { updateView } from './ViewController.js';
 
-export const createHistory = async (req, res) => {
+export const createHistoryAndView = async (req, res) => {
     const {book,chapter,page} = req.body;
     const _user = req.user;
     try {
@@ -22,6 +23,7 @@ export const createHistory = async (req, res) => {
             chapter,
             page,
         });
+        await updateView(book);
         return res.status(201).json({
             status: true,
             message: 'Create Success',

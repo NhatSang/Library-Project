@@ -1,0 +1,171 @@
+import { MAIN } from '@assets/images'
+import AppText from '@components/AppText'
+import Space from '@components/Space'
+import { fontFamilies } from '@constants/fontFamilies'
+import { globalColor } from '@constants/globalColor'
+import { Input } from '@rneui/themed'
+import React, { useEffect, useRef, useState } from 'react'
+import { ActivityIndicator, Image, ImageBackground, Keyboard, Pressable, View } from 'react-native'
+import ImagePicker from 'react-native-image-crop-picker'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import Entypo from 'react-native-vector-icons/Entypo'
+import { useDispatch } from 'react-redux'
+import { iUser } from 'src/types/iUser'
+import { _getProfile } from './apis'
+
+const AccountDetail = ({ navigation }: any) => {
+    const dispatch = useDispatch();
+    const [user, setUser] = useState<iUser>();
+    const [loadingName, setLoadingName] = useState<boolean>(false);
+    const [name, setName] = useState<string>('');
+    const [loadingEmail, setLoadingEmail] = useState<boolean>(false);
+    const [email, setEmail] = useState<string>('');
+    const inputName: any = useRef(null);
+    const inputEmail: any = useRef(null);
+
+    useEffect(() => {
+        const fetchDate = async () => {
+            await getUser();
+        }
+        fetchDate();
+    }, [])
+
+    const getUser = async () => {
+        try {
+            const response = await _getProfile();
+            if (response.status) {
+                setUser(response.data);
+            }
+        } catch (error) {
+            console.log('error', error);
+        }
+    }
+
+    const handleChangeName = async () => {
+        try {
+            setLoadingName(true);
+            Keyboard.dismiss();
+        } catch (error) {
+            console.log('error', error);
+
+        }
+    };
+    const handleChangeEmail = async () => {
+        try {
+            setLoadingEmail(true);
+            Keyboard.dismiss();
+        } catch (error) {
+            console.log('error', error);
+
+        }
+    };
+    const handleChangeImage = async () => {
+        ImagePicker.openPicker({
+            width: 300,
+            height: 300,
+            cropping: true,
+            cropperCircleOverlay: true,
+            compressImageQuality: 0.5
+        }).then(async (image) => {
+            console.log(image);
+        })
+    };
+
+    const btnEditAndSave = (
+        value: string,
+        onchange: () => void,
+        loading: boolean,
+        key: string
+    ) => {
+        if (loading) {
+            return (
+                <ActivityIndicator
+                    size={28}
+                    animating={loading}
+                    color="rgba(227, 86, 42, 0.5)"
+                />
+            );
+        }
+
+        return value ? (
+            <Pressable
+                onPress={async () => {
+                    onchange();
+                }}
+            >
+                <AppText
+                    text={'Lưu'}
+                    styles={[
+                        {
+                            color: globalColor.primary,
+                            fontWeight: "700",
+                            fontSize: 16,
+                        },
+                    ]}
+                />
+            </Pressable>
+        ) : (
+            <Entypo
+                onPress={() => {
+                    key === "name"
+                        ? inputName.current?.focus()
+                        : inputEmail.current?.focus()
+
+                }}
+                name="pencil"
+                size={20}
+                color="rgba(60, 58, 54, 0.8)"
+            />
+        );
+    };
+
+    return (
+        <ImageBackground className='flex-1' source={MAIN.BACKGROUND}>
+            <SafeAreaView className='flex-1'>
+                <View className='flex-row justify-between h-16 items-center px-3'>
+                    <Pressable onPress={() => {
+                        navigation.goBack()
+                    }}>
+                        <AntDesign name='left' size={30} color={globalColor.text_dark} />
+                    </Pressable>
+                    <AppText size={20} color={globalColor.dark} text='Thông tin cá nhân' font={fontFamilies.robotoBold} />
+                    <Space width={30} />
+                </View>
+                <View className='flex-1 justify-center items-center'>
+                    {user && (
+                        <View className=''>
+                            <Image source={{ uri: user.image }} resizeMode='contain' className='w-32 h-32 rounded-full' />
+                            <Pressable
+                                onPress={handleChangeImage}
+                                className='absolute bottom-1 right-1 w-10 h-10 bg-white justify-center items-center rounded-full'>
+                                <Entypo name='camera' size={24} color={globalColor.dark} />
+                            </Pressable>
+                        </View>
+
+                    )}
+                    <Input
+                        ref={inputName}
+                        label='Họ và tên'
+                        defaultValue={user && user.name}
+                        onChangeText={(text) => setName(text)}
+                        onSubmitEditing={handleChangeName}
+                        rightIcon={btnEditAndSave(name, handleChangeName, loadingName, 'name')}
+                        leftIcon={<AntDesign name='idcard' size={24} color={globalColor.dark} />}
+                    />
+                    <Input
+                        ref={inputEmail}
+                        label='Email'
+                        defaultValue={user && user.email}
+                        onChangeText={(text) => setEmail(text)}
+                        onSubmitEditing={handleChangeEmail}
+                        rightIcon={btnEditAndSave(name, handleChangeEmail, loadingName, 'email')}
+                        leftIcon={<AntDesign name='mail' size={24} color={globalColor.dark} />}
+                    />
+                </View>
+            </SafeAreaView>
+        </ImageBackground>
+    )
+}
+
+export default AccountDetail

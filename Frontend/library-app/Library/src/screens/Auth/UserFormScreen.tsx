@@ -1,311 +1,247 @@
-import { AppButton, AppInput, AppText } from '@components/index'
-import { fontFamilies } from '@constants/fontFamilies'
-import { globalColor } from '@constants/globalColor'
-import { saveToken, saveUserLocalStorage } from '@utils/storage'
-import React, { useEffect, useState } from 'react'
-import { Alert, FlatList, Modal, Pressable, ScrollView, TouchableHighlight, View } from 'react-native'
-import DatePicker from 'react-native-date-picker'
-import { RadioButton } from 'react-native-paper'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import Fontisto from 'react-native-vector-icons/Fontisto'
-import { useDispatch } from 'react-redux'
-import { iMajor, iUser } from 'src/types/iUser'
-import { setAuth, setUser, setUserId } from '../../redux/authReducer'
-import { eGender } from '../../types/iUser'
-import { _loginMS } from './apis'
-import { dataMajor } from './data'
+import { MAIN } from '@assets/images';
+import AppButton from '@components/AppButton';
+import AppText from '@components/AppText';
+import { fontFamilies } from '@constants/fontFamilies';
+import { globalColor } from '@constants/globalColor';
+import { Input } from '@rneui/themed';
+import React, { useEffect, useState } from 'react';
+import { ImageBackground, Pressable, ScrollView, View } from 'react-native';
+import DatePicker from 'react-native-date-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
+import { eGender, iMajor } from '../../types/iUser';
+import { _getMajors } from './apis';
 
-const UserFormScreen = ({ navigation, route }: any) => {
-    const { email, password } = route?.params;
-    const dispatch = useDispatch();
-    const [name, setName] = useState('');
-    const [code, setCode] = useState('');
-    const [studentYear, setStudentYear] = useState('');
-    const [major, setMajor] = useState('');
-    const yearNow = new Date().getFullYear();
-    const monthNow = new Date().getMonth();
-    const beforeYear = yearNow - 2010;
-    let afterYear;
-    monthNow > 10 ? afterYear = yearNow - 2005 + 1 : afterYear = yearNow - 2005;
-    const majorList: iMajor[] = dataMajor;
-    const [checked, setChecked] = useState('nam');
-    const [isLoading, setIsLoading] = useState(false);
-    const [open, setOpen] = useState(false);
+
+const UserFormScreen = ({ route }: any) => {
+    const { email } = route?.params;
+    const [majors, setMajors] = useState<iMajor[]>([]);
+    const [password, setPassword] = useState<string>('');
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [rePassword, setRePassword] = useState<string>('');
+    const [showRePassword, setShowRePassword] = useState<boolean>(false);
+    const [fullName, setFullName] = useState<string>('');
     const [date, setDate] = useState(new Date());
-    const [visible, setVisible] = useState(false);
-    const [error, setError] = useState('');
+    const [openPicker, setOpenPicker] = useState<boolean>(false)
+    const [code, setCode] = useState<string>("");
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [selectedGender, setSelectedGender] = useState<eGender>(eGender.nam);
 
     useEffect(() => {
-        validateForm();
-    }, [name, code, studentYear, major]);
+        getMajors();
+    }, [])
 
-    const onChangeName = (text: string) => {
-        setName(text);
-    }
-    const onChangeStudentCode = (text: string) => {
-        setCode(text);
-    }
-    const onChangeStudentYear = (text: string) => {
-        setStudentYear(text);
-    }
-
-    const validateForm = () => {
-        let valid = true;
-        const age = new Date().getFullYear() - date.getFullYear();
-        if (age < 18) {
-            setError('Bạn phải đủ 18 tuổi');
-            valid = false;
-        }
-        if (major === '') {
-            setError('Chuyên ngành là bắt buộc');
-            valid = false;
-        }
-        const year = parseInt(studentYear);
-        if (!studentYear || isNaN(year) || year < beforeYear || year > afterYear) {
-            setError('Khóa học không hợp lệ');
-            valid = false;
-        }
-        if (!code || code.length !== 8) {
-            setError('Mã số sinh viên không hợp lệ');
-            valid = false;
-        }
-        if (!name) {
-            setError('Họ và tên là bắt buộc');
-            valid = false;
-        }
-
-        return valid;
-    };
-
-    const handleSignUp = async () => {
-        const nameMajor = majorList.find(item => item.id === major)?.name;
-        const data: iUser = {
-            name: name,
-            gender: checked === 'nam' ? eGender.nam : eGender.nu,
-            majors: { id: '', name: nameMajor },
-            email: email,
-            password: password,
-            role: 'user',
-            active: true,
-            code: code,
-            studnetYear: parseInt(studentYear),
-            dob: date,
-        }
+    const getMajors = async () => {
         try {
-            const res = await _loginMS(data);
-            if (res.status) {
-                dispatch(setUserId(res.data.user._id));
-                dispatch(setUser(res.data.user));
-                dispatch(setAuth(res.data.accessToken));
-                await saveToken(res.data.accessToken);
-                await saveUserLocalStorage(res.data.user);
+            const res = await _getMajors();
+            if (res.data) {
+                setMajors(res.data.data);
             }
-        } catch (error) {
-            console.log('error', error);
+        } catch (error: any) {
+            console.log(error?.response?.data?.error?.message)
         }
-    };
+    }
 
-    const handleSubmit = () => {
-        setIsLoading(true);
-        if (validateForm()) {
-            handleSignUp();
-            setIsLoading(false);
+    const validate = () => {
+        if (password !== rePassword) {
+            Toast.show({
+                type: 'error',
+                text1: 'Lỗi',
+                text2: 'Mật khẩu không trùng khớp',
+                position: 'bottom',
+            });
+            return false;
+        }
+        if (!password || !rePassword || !fullName || !value || !selectedGender) {
+            Toast.show({
+                type: 'error',
+                text1: 'Lỗi',
+                text2: 'Vui lòng nhập đầy đủ thông tin',
+                position: 'bottom',
+            });
+            return false;
+        }
+        const now = new Date();
+        const age = now.getFullYear() - date.getFullYear();
+        if (age < 18) {
+            Toast.show({
+                type: 'error',
+                text1: 'Lỗi',
+                text2: 'Bạn chưa đủ 18 tuổi',
+                position: 'bottom',
+            });
+            return false;
+        }
+        if (code.length !== 8) {
+            Toast.show({
+                type: 'error',
+                text1: 'Lỗi',
+                text2: 'Mã số sinh viên không hợp lệ',
+                position: 'bottom',
+            });
+            return false;
+        }
+        return true;
+    }
 
-        } else {
-            Alert.alert('Thông báo', error);
-            setIsLoading(false);
+    const handleConfirm = async () => {
+        if (!validate()) return;
+        try {
+
+        } catch (error: any) {
+            console.log(error)
+
         }
     }
 
 
     return (
         <>
-            <SafeAreaView className='flex-1 z-10'>
-                <View className='w-full h-16 bg-primary-dark justify-center pl-4 '>
-                    <AppText color={globalColor.white} size={20} font={fontFamilies.robotoBold} text='Nhập thông tin cá nhân' />
-                </View>
-                <ScrollView className='p-4'>
-                    <AppText
-                        color={globalColor.text_dark}
-                        text='Bạn vui lòng cung cấp thông tin cá nhân để chúng tôi có thể gợi ý nhưng mục tiêu phù hợp cho bạn.' />
-                    <View className='pt-3'>
-                        <AppInput
-                            prefix={<AntDesign name="user" size={18} color={'gray'} />}
-                            placeholder='Họ và tên'
-                            value={name}
-                            onChangeText={onChangeName}
-                            onClear={() => setName('')}
-                            label='Họ và tên'
-                            required
-                            clear />
-                        <View className='flex-row items-start py-1 pb-3'>
-                            <TouchableHighlight
-                                className='h-8 w-32 bg-primary-dark rounded-lg justify-center items-center border'
-                                onPress={() => {
-                                    setVisible(true)
-                                }}>
-                                <AppText color={globalColor.text_light} font={fontFamilies.robotoBold} text='Chuyên ngành' />
-                            </TouchableHighlight>
-                            <View className='flex-1 items-center justify-center'>
-                                <AppText font={fontFamilies.robotoBold} size={16} text={majorList.find(item => item.id === major)?.name} />
-                            </View>
-
-                        </View>
-                        <AppInput
-                            prefix={<AntDesign name="idcard" size={18} color={'gray'} />}
-                            placeholder='Mã số sinh viên'
-                            keyboardType='number-pad'
-                            maxLength={8} value={code}
-                            onChangeText={onChangeStudentCode}
-                            onClear={() => setCode('')}
-                            label='Mã số sinh viên'
-                            required
-                            clear
-                            onEndEditing={() => {
-                                if (code.length !== 0) {
-                                    if (code.length !== 8) {
-                                        return 'Mã số sinh viên không hợp lệ'
-                                    }
-                                }
-                                return '';
-                            }}
-                        />
-                        <AppInput
-                            prefix={<Fontisto name="date" size={18} color={'gray'} />}
-                            placeholder={`Khóa học (${beforeYear} - ${afterYear})`}
-                            maxLength={2}
-                            keyboardType='number-pad'
-                            value={studentYear}
-                            onChangeText={onChangeStudentYear}
-                            onClear={() => setStudentYear('')}
-                            label={`Bạn là sinh viên khóa bao nhiêu? (${beforeYear} - ${afterYear})`}
-                            required
-                            clear
-                            onEndEditing={() => {
-                                if (studentYear.length !== 0) {
-                                    if (parseInt(studentYear) < beforeYear || parseInt(studentYear) > afterYear) {
-                                        return 'Khóa học không hợp lệ'
-                                    }
-                                }
-                                return ''
-                            }}
-                        />
-
-                        <View className='py-1'>
-                            <View className='flex-row'>
-                                <AppText styles={{ paddingRight: 5 }} text='*' color='red' />
-                                <AppText
-                                    size={16}
-                                    color={globalColor.text_dark}
-                                    text='Giới tính'
-                                    font={fontFamilies.robotoBold}
-                                />
-                            </View>
-                            <View className='flex-row items-center'>
-                                <RadioButton
-                                    value="nam"
-                                    status={checked === 'nam' ? 'checked' : 'unchecked'}
-                                    onPress={() => setChecked('nam')}
-                                    color={globalColor.primary}
-                                />
-                                <AppText
-                                    onPress={() => setChecked('nam')}
-                                    color={globalColor.text_dark}
-                                    text='Nam'
-                                    font={fontFamilies.robotoBold}
-                                />
-                            </View>
-                            <View className='flex-row items-center'>
-                                <RadioButton
-                                    value="nu"
-                                    status={checked === 'nu' ? 'checked' : 'unchecked'}
-                                    onPress={() => setChecked('nu')}
-                                    color={globalColor.primary}
-                                />
-                                <AppText
-                                    onPress={() => setChecked('nu')}
-                                    color={globalColor.text_dark}
-                                    text='Nữ'
-                                    font={fontFamilies.robotoBold}
-                                />
-                            </View>
+            <ImageBackground className='flex-1' source={MAIN.BACKGROUND}>
+                <SafeAreaView>
+                    <View className="flex-row justify-center items-center h-16 px-3 bg-primary-dark">
+                        <AppText color={globalColor.white} size={24} font={fontFamilies.robotoBold} text='Nhập thông tin cá nhân' />
+                    </View>
+                    <ScrollView className='px-2'>
+                        <View className='pt-4'>
+                            <Input
+                                leftIcon={<AntDesign name='lock' size={24} color={globalColor.dark} />}
+                                rightIcon={<Entypo onPress={
+                                    () => setShowPassword(!showPassword)
+                                } name={
+                                    showPassword ? 'eye' : 'eye-with-line'
+                                } size={24} color={globalColor.dark} />}
+                                label='Mật khẩu'
+                                value={password}
+                                onChangeText={setPassword}
+                                placeholder='Nhập mật khẩu'
+                                secureTextEntry={showPassword}
+                            />
                         </View>
                         <View>
-                            <View className='flex-row pb-2'>
-                                <AppText styles={{ paddingRight: 5 }} text='*' color='red' />
-                                <AppText
-                                    size={16}
-                                    color={globalColor.text_dark}
-                                    text='Ngày sinh'
-                                    font={fontFamilies.robotoBold}
-                                />
-                            </View>
-                            <AppButton
-                                onPress={() => {
-                                    setOpen(true);
-                                }}
-                                title={date.toLocaleDateString()}
-                                textStyleProps={{ color: globalColor.text_dark, fontSize: 16, fontFamily: fontFamilies.robotoBold }}
-                                styles={{ width: 150, borderRadius: 10, padding: 0 }}
+                            <Input
+                                leftIcon={<AntDesign name='lock' size={24} color={globalColor.dark} />}
+                                rightIcon={<Entypo onPress={
+                                    () => setShowRePassword(!showRePassword)
+                                } name={
+                                    showRePassword ? 'eye' : 'eye-with-line'
+                                } size={24} color={globalColor.dark} />}
+                                label='Nhập lại mật khẩu'
+                                value={rePassword}
+                                onChangeText={setRePassword}
+                                placeholder='Nhập lại mật khẩu'
+                                secureTextEntry={showRePassword}
                             />
+                        </View>
+                        <View>
+                            <Input
+                                leftIcon={<AntDesign name='user' size={24} color={globalColor.dark} />}
+                                label='Họ và tên'
+                                placeholder='Nhập họ và tên'
+                                value={fullName}
+                                onChangeText={setFullName}
+                            />
+                        </View>
+                        <View>
+                            <Input
+                                leftIcon={<AntDesign name='idcard' size={24} color={globalColor.dark} />}
+                                label='Mã số sinh viên / giảng viên'
+                                placeholder='Nhập mã'
+                                value={code}
+                                keyboardType='number-pad'
+                                onChangeText={setCode}
+                            />
+                        </View>
+                        <View className='px-2'>
+                            <Pressable
+                                onPress={() => setOpenPicker(true)}
+                                className='h-[50px] rounded-lg border border-primary-dark justify-center px-2'>
+                                <AppText
+                                    text={date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                    size={16}
+                                    color={globalColor.dark}
+                                />
+                            </Pressable>
                             <DatePicker
                                 locale='vi'
-                                mode='date'
                                 modal
-                                open={open}
+                                mode='date'
+                                open={openPicker}
                                 date={date}
                                 onConfirm={(date) => {
-                                    setOpen(false)
+                                    setOpenPicker(false)
                                     setDate(date)
-                                    console.log('date', date);
                                 }}
                                 onCancel={() => {
-                                    setOpen(false)
+                                    setOpenPicker(false)
                                 }}
                             />
                         </View>
-                    </View>
+                        <View>
 
-                    <View className='flex-1 justify-end pb-6 px-5'>
-                        <AppButton
-                            loading={isLoading}
-                            onPress={handleSubmit}
-                            title='Tiếp tục'
-                            type='primary'
-                            color={globalColor.primary}
-                            textStyleProps={{ color: globalColor.white, fontSize: 20, fontFamily: fontFamilies.robotoBold }}
-                        />
-                    </View>
-                </ScrollView>
-            </SafeAreaView >
-            <Modal visible={visible} transparent>
-                <View className='flex-1 justify-center items-center bg-opacity-80 '>
-                    <View className='bg-white w- h-4/5 rounded-xl border'>
-                        <View className='flex-row justify-between items-center px-4 py-2 border-b'>
-                            <AppText text='Chọn chuyên ngành' font={fontFamilies.robotoBold} size={20} />
-                            <AppButton
-                                onPress={() => { setVisible(false) }}
-                                icon={<AntDesign name="close" size={20} />}
-                                textStyleProps={{ color: globalColor.primary, fontSize: 16, fontFamily: fontFamilies.robotoBold }}
-                            />
                         </View>
-                        <FlatList
-                            showsVerticalScrollIndicator={false}
-                            data={majorList}
-                            keyExtractor={(item) => item.id}
-                            renderItem={({ item }) => (
-                                <Pressable onPress={() => {
-                                    setMajor(item.id)
-                                    setVisible(false)
-                                }} className='flex-row justify-between px-4 py-4 border-b border-primary-light '>
-                                    <AppText text={item.name} font={fontFamilies.robotoRegular} size={16} />
-                                </Pressable>
-                            )}
+
+                    </ScrollView>
+                    <View className='p-4 pt-6'>
+                        <DropDownPicker
+                            listMode='MODAL'
+                            open={open}
+                            value={value}
+                            items={majors ? majors.map((major, index) => ({
+                                label: major.name,
+                                value: major._id ?? `major-${index}`
+                            })) : []}
+                            setOpen={setOpen}
+                            setValue={setValue}
+                            setItems={setMajors}
+                            placeholder={'Chuyên ngành'}
+                            modalAnimationType='slide'
+                            modalTitle='Chọn chuyên ngành'
+                            modalTitleStyle={{ color: globalColor.primary_2, fontFamily: fontFamilies.robotoBold }}
+                            modalContentContainerStyle={{ padding: 10 }}
+                            modalProps={{ animationType: 'slide' }}
+                            style={{ borderColor: globalColor.primary_2, backgroundColor: 'transparent' }}
                         />
                     </View>
-                </View>
-            </Modal>
+                    <View className="px-4 justify-center">
+                        <AppText text="Giới tính" />
+                        <View className="flex-row justify-around mt-2">
+                            <Pressable
+                                onPress={() => setSelectedGender(eGender.nam)}
+                                className="flex-row w-14 justify-between items-center"
+                            >
+                                <View
+                                    className={`h-4 w-4 rounded-full ${selectedGender === 'Male' ? 'bg-blue-500' : 'bg-transparent border border-gray-400'}`}
+                                />
+                                <AppText text="Nam" />
+                            </Pressable>
+                            <Pressable
+                                onPress={() => setSelectedGender(eGender.nu)}
+                                className="flex-row w-14 justify-between items-center"
+                            >
+                                <View
+                                    className={`h-4 w-4 rounded-full ${selectedGender === 'Female' ? 'bg-blue-500' : 'bg-transparent border border-gray-400'}`}
+                                />
+                                <AppText text="Nữ" />
+                            </Pressable>
+                        </View>
+                    </View>
+                    <View className='px-4 pt-6'>
+                        <AppButton
+                            title='Xác nhận'
+                            color={globalColor.primary_2}
+                            onPress={() => {
+                                handleConfirm()
+                            }}
+                            textStyleProps={{ color: globalColor.white, fontFamily: fontFamilies.robotoBold, fontSize: 22 }}
+                        />
+                    </View>
+                </SafeAreaView>
+            </ImageBackground>
         </>
     )
 }

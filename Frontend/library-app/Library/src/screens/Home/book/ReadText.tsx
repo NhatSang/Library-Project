@@ -281,7 +281,7 @@ const ReadText = ({ navigation, route }: any) => {
                             icon={<FontAwesome name='file-audio-o' size={25} color={globalColor.white} />}
                             label='Sách nói'
                             onPress={() => {
-                                navigation.navigate(ScreenName.ChapterAudio, { bookDetail: book })
+                                navigation.navigate(ScreenName.ListenText, { bookId: book._id });
                             }}
                             sizeLabel={16}
                             fontLabel='bold'

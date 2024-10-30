@@ -147,6 +147,7 @@ export class AuthService {
 
   login = async (params: UserLoginDTO) => {
     const { email, password } = params;
+    console.log(email);
 
     const existedUser = await this.userService.checkExistedEmail(email);
 

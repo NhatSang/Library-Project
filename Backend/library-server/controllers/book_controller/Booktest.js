@@ -1,22 +1,23 @@
-import fs from 'fs';
+
 import pdf from "pdf-parse";
+import axios from 'axios';
 
 // Hàm xử lý PDF
-export const processPdfPages = async (PdfFile) => {
+export const processPdfPages = async (pathFile) => {
   try {
-    const fileBuffer = fs.readFileSync(PdfFile);
-    const data = await pdf(fileBuffer); // Trích xuất toàn bộ văn bản từ file PDF
+    const response = await axios.get(pathFile, { responseType: 'arraybuffer' });
+    const data = await pdf(response.data.buffer); 
 
-    // Chia văn bản theo các trang, sử dụng ký tự ngắt trang giả định ('\f' hoặc '\n\n')
-    const textByPage = data.text.split(/\f|\n\n/); // Bạn có thể điều chỉnh dấu ngắt trang phù hợp với file PDF của mình.
 
-    // Tạo mảng chứa nội dung từng trang
+    const textByPage = data.text.split(/\f|\n\n/); 
+
+
     const contents = textByPage.map((content, index) => ({
       page: index + 1,
-      content: content.trim() // Loại bỏ khoảng trắng thừa
+      content: content.trim()
     }));
 
-    return contents; // Trả về mảng kết quả
+    return contents;
 
   } catch (error) {
     console.error("Error processing PDF:", error);
@@ -24,9 +25,5 @@ export const processPdfPages = async (PdfFile) => {
   }
 };
 
-const pdfFile = './sample.pdf';
 
-// Gọi hàm và in kết quả ra
-processPdfPages(pdfFile).then((contents) => {
-  console.log(contents);
-});
+

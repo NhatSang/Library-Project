@@ -39,7 +39,10 @@ export const getrBookContentByPage = async (req, res) => {
         return res.status(200).json({
             status: true,
             message: "Success",
-            data: content,
+            data: {
+                content,
+                pages: book.contents.length,
+            },
         });
     } catch (error) {
         console.error(error); // Log the error for debugging

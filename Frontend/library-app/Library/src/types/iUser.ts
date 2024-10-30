@@ -21,7 +21,7 @@ export interface iUserReview {
 }
 
 export interface iMajor {
-    id: string;
+    _id: string;
     name: string | undefined;
 }
 

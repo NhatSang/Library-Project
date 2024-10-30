@@ -1271,6 +1271,123 @@ PODS:
     - React-utils (= 0.74.4)
   - RNCAsyncStorage (1.24.0):
     - React-Core
+  - RNGestureHandler (2.20.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - RNImageCropPicker (0.41.4):
+    - React-Core
+    - React-RCTImage
+    - RNImageCropPicker/QBImagePickerController (= 0.41.4)
+    - TOCropViewController (~> 2.7.4)
+  - RNImageCropPicker/QBImagePickerController (0.41.4):
+    - React-Core
+    - React-RCTImage
+    - TOCropViewController (~> 2.7.4)
+  - RNReanimated (3.16.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNReanimated/reanimated (= 3.16.1)
+    - RNReanimated/worklets (= 3.16.1)
+    - Yoga
+  - RNReanimated/reanimated (3.16.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNReanimated/reanimated/apple (= 3.16.1)
+    - Yoga
+  - RNReanimated/reanimated/apple (3.16.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - RNReanimated/worklets (3.16.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNScreens (3.34.0):
     - DoubleConversion
     - glog
@@ -1299,6 +1416,9 @@ PODS:
     - React-Core
   - SocketRocket (0.7.0)
   - SwiftAudioEx (1.1.0)
+  - TextToSpeech (4.1.1):
+    - React-Core
+  - TOCropViewController (2.7.4)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1377,9 +1497,13 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSoundPlayer (from `../node_modules/react-native-sound-player`)
   - RNSVG (from `../node_modules/react-native-svg`)
+  - TextToSpeech (from `../node_modules/react-native-tts`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1387,6 +1511,7 @@ SPEC REPOS:
     - AppAuth
     - SocketRocket
     - SwiftAudioEx
+    - TOCropViewController
 
 EXTERNAL SOURCES:
   AzureAuth:
@@ -1536,12 +1661,20 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSoundPlayer:
     :path: "../node_modules/react-native-sound-player"
   RNSVG:
     :path: "../node_modules/react-native-svg"
+  TextToSpeech:
+    :path: "../node_modules/react-native-tts"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1620,11 +1753,16 @@ SPEC CHECKSUMS:
   React-utils: e8b0eac797c81c574b24f6515fec4015599b643c
   ReactCommon: eebffb37a90138c6db6eb8b2d952e7e5c6bc083c
   RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
+  RNGestureHandler: a8e61b93b4c5c44e6cd797cdaba43126ec36acaa
+  RNImageCropPicker: 3d888d481c65776063556b72c19893a8b8344b1b
+  RNReanimated: af4e059a8fd0fb7a9cdf5ad35ead4699598a9447
   RNScreens: aa943ad421c3ced3ef5a47ede02b0cbfc43a012e
   RNSoundPlayer: 490822518cc1d6d80495ca7e3223df5869c30851
   RNSVG: b986585e367f4a49d8aa43065066cc9c290b3d9b
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SwiftAudioEx: f6aa653770f3a0d3851edaf8d834a30aee4a7646
+  TextToSpeech: 2b930ec3756afde499061f4f01ea895e1f75dccb
+  TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Yoga: 0efb3e1bd40ba59b009f01badea863281101de78
 
 PODFILE CHECKSUM: dca86538f11055b6022c6302b0bda244345fdb21

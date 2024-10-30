@@ -1,5 +1,5 @@
 import { iUser } from 'src/types/iUser';
-import { api } from '../../../apis/configAPI';
+import { api, api2 } from '../../../apis/configAPI';
 
 const _loginMS = (userInfo: iUser) => {
     const url = '/loginms';
@@ -19,4 +19,35 @@ const _loginWithAccount = (user: iUser) => {
     });
 };
 
-export { _login, _loginMS, _loginWithAccount };
+const _loginAccount = (user: iUser) => {
+    const url = '/auth/login';
+    return api2.post(url, {
+        email: user.email,
+        password: user.password,
+    });
+};
+
+const _sendVerifyCode = (email: string) => {
+    const url = '/auth/send-code';
+    return api2.post(url, { email });
+};
+
+const _getMajors = () => {
+    const url = '/majors';
+    return api2.get(url);
+};
+
+const _postFcmToken = (data: any) => {
+    const url = '/post-fcm-token';
+    return api.post(url, data);
+};
+
+export {
+    _getMajors,
+    _login,
+    _loginAccount,
+    _loginMS,
+    _loginWithAccount,
+    _postFcmToken,
+    _sendVerifyCode,
+};

@@ -1,8 +1,11 @@
-import { Platform } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 
 export const isiOS = Platform.OS === 'ios';
 
 export const isAndroid = Platform.OS === 'android';
+
+export const  WIDTH = Dimensions.get('window').width;
+export const HEIGHT = Dimensions.get('window').height;
 
 export const listColorNote = [
     '#FFEBEE', // Light Red
