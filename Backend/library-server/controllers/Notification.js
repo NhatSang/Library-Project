@@ -13,12 +13,15 @@ admin.initializeApp({
 
 export const createNotification = async (req, res) => {
     try {
-        const { title, content,status,filterCondition } = req.body;
+        const { title, content,status,filterCondition,data } = req.body;
+        const filterConditionObject = JSON.parse(filterCondition);
+        const dataObject = JSON.parse(data);
         const notification = new Notification({
             title,
             content,
             status,
-            filterCondition
+            filterCondition: filterConditionObject,
+            data: dataObject,
         });
         await notification.save();
         res.status(200).json({ message: 'Notification created' });
@@ -27,6 +30,19 @@ export const createNotification = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 }
+
+export const changeNotificationStatus = async (req, res) => {
+    try {
+        const { id_notification} = req.body;
+        const notification = await Notification.findOne({ _id: id_notification });
+        notification.status = "sending";
+        await notification.save();
+        console.log(notification);
+        res.status(200).json({ message: 'Notification status changed' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 
 export const sendNotification = async (
@@ -61,6 +77,28 @@ export const sendNotification = async (
         console.log('Send notification success');
     } catch (error) {
        console.log(error);
+    }
+}
+
+export const getNotifications = async (req, res) => {
+    try {
+        const notifications = await Notification.find();
+        res.status(200).json(notifications);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+export const deleteNotification = async (req, res) => {
+    try {
+        const { id_notification} = req.body;
+        await Notification.deleteOne({
+            _id: id_notification,
+        });
+        res.status(200).json({ message: 'Notification deleted' });
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
     }
 }
 

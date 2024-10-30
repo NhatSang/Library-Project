@@ -61,6 +61,7 @@ cron.schedule('*/1 * * * * ', async () => {
       const notifications = await Notification.find({status: 'sending'});
       for (const notification of notifications) {
           const users = await getUserByFilter(notification.filterCondition);
+          console.log('Users:', users);
           for(const user of users){
             console.log('Send notification to user:', user.name);
               await sendNotification(notification._id, user._id);

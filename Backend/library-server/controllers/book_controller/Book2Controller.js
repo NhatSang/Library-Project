@@ -3,7 +3,9 @@ import mongoose from "mongoose";
 
 export const getAllBooks2 = async (req, res) => {
     try {
-        const books = await Book2.find();
+        const books = await Book2.find()
+        .populate("genre", "name")
+        .populate("majors", "name");
         res.status(200).json({
             status: true,
             message: "Success",

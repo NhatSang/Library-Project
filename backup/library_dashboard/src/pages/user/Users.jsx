@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { _banUser, _getUsers } from "./apis";
 import { Pagination, Search, TableUsers } from "../../components";
-import { Table } from 'antd';
+import { Button, Space, Table } from 'antd';
 
 
 
@@ -12,24 +12,53 @@ const Users = () => {
   const [keyword, setKeyword] = useState("");
   const columns = [
     {
+      key: "stt",
+      title: "STT",
+      dataIndex: "",
+      render: (_, __, index) => index + 1,
+    },
+    {
       title: 'Họ và Tên',
       dataIndex: 'name',
+      key: 'name',
     },
     {
       title:'Mã sinh viên/giáo viên',
       dataIndex: 'code',
+      key: 'code',
     },
     {
       title:'Ngày sinh',
       dataIndex: 'dob',
+      key: 'dob',
+      render: (value) => new Date(value).toLocaleString(),
     },
     {
       title:'Giới tính',
       dataIndex:'gender',
+      key:'gender',
     },
     {
       title:"Email",
       dataIndex:'email',
+      key:'email',
+    },
+    {
+      title:"Action",
+      render: (value, item) => (
+        <Space>
+          {item.status === "active" ? (
+            <Button onClick={()=>{handleToggleStatus(item._id,item.status)}} type="primary" danger>
+              Khóa
+            </Button>
+          ) : (
+            <Button onClick={()=>{handleToggleStatus(item._id,item.status)}} type="primary">
+              Mở khóa
+            </Button>
+          )}
+        </Space>
+      ),
+
     }
   ]
   
@@ -41,6 +70,7 @@ const Users = () => {
     const response = await _getUsers(page, limit, keyword);
     if(!response.error){
       setUsers(response.data);
+      console.log(response.data[0]);
       setPagination(response.pagination);
     }
   };
@@ -67,7 +97,7 @@ const Users = () => {
         />
       </div>
       <div className="w-full">
-        <TableUsers data={users} handleToggleStatus={handleToggleStatus} />
+      <Table dataSource={users} columns={columns} pagination={false}  bordered/>
       </div>
       <Pagination pagination={pagination} setPage={setPage} />
     </div>

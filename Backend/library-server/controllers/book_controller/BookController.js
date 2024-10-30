@@ -24,6 +24,8 @@ export const addBook = async (req, res) => {
   
   try {
     const { title, author, genre ,majors } = req.body;
+    console.log(req.files);
+    console.log(req.body);
     const imageFile = req.files["image"][0];
     const pdfFile = req.files["pdf"][0];
     const pdfLink = await saveFile(pdfFile);
@@ -74,6 +76,7 @@ export const addBook = async (req, res) => {
       newBook.summary = summary;
       await newBook.save();
     } else {
+      console.log("Thêm thành công", newBook._id);
       return res.status(201).json({
         status: true,
         message: "add_chapter",
@@ -94,16 +97,18 @@ export const addBook = async (req, res) => {
 
 export const addChapter = async (req, res) => {
   try {
-    const { bookId, title, startPage, endPage, bookLink } = req.body;
+    const { bookId, title, startPage,bookLink ,endPage} = req.body;
+    console.log(req.body);
     const tempArray = bookLink.split("/");
     const keyName = tempArray[tempArray.length - 1];
     const pdfFile = await readPdfFromS3(keyName);
 
     const pdfSublink = await splitPDF(pdfFile, title, startPage, endPage, bookId);
     const newChapter = new Chapter({
-      book: bookId,
+      book: new mongoose.Types.ObjectId(bookId),
       title: title,
       startPage: startPage,
+      endPage: endPage,
       pdfLink: pdfSublink,
     });
     await newChapter.save();
@@ -123,8 +128,8 @@ export const addChapter = async (req, res) => {
 
 export const addSummary = async (req, res) => {
   try {
-    const bookId = req.query.bookId;
-    const title = req.query.title;
+    const {bookId,title} = req.body;
+    console.log(bookId + " " + title);
     const chapters = await Chapter.find({ book: bookId });
     const summary = await generateSummaryByOpenAI(title, chapters);
     const book = await Book2.findById(bookId);
@@ -185,8 +190,9 @@ export const getBooks = async (req, res) => {
 
 export const getChapters = async (req, res) => {
   try {
-    const bookId = req.params.id;
-    const data = await Chapter.find({ book: bookId });
+    const bookId = req.query.bookId;
+    const data = await Chapter.find({ book : bookId });
+    console.log('cc',data);
     res.status(200).json({
       success: true,
       data,
@@ -195,6 +201,7 @@ export const getChapters = async (req, res) => {
     console.log(err);
     return res.status(500).json({ message: err.message });
   }
+
 };
 
 export const deleteChapter = async (req, res) => {

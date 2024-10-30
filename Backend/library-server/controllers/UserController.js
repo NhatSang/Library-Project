@@ -131,12 +131,12 @@ export const updateFCMToken = async (req, res) => {
 
 export const getUserByFilter = async (filter) => {
   try {
-    if (filter.userId) {
-        const user = await User.findById(filter.userId).populate('majors notifications.notification');
-        return user ? [user] : []; 
+    if (filter.type ==='USER') {
+        const users = await User.find({ _id: { $in: filter.userId } }).populate('majors notifications.notification');
+        return users;
     } 
     
-    if (filter.major) {
+    if (filter.major === "MAJOR") {
         const usersByMajor = await User.find({ majors: filter.major }).populate('majors notifications.notification');
         return usersByMajor;
     }
