@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { HistoryStatus } from "../types/history.type";
 
 const historySchema = new mongoose.Schema(
   {
@@ -6,6 +7,11 @@ const historySchema = new mongoose.Schema(
     book: { type: mongoose.Schema.Types.ObjectId, ref: "Books" },
     page: { type: Number },
     chapter: { type: mongoose.Schema.Types.ObjectId, ref: "Chapter" },
+    status: {
+      type: Number,
+      enum: [HistoryStatus.Deleted, HistoryStatus.Saved],
+      default: HistoryStatus.Saved,
+    },
   },
   { timestamps: true }
 );

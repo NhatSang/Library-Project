@@ -40,7 +40,7 @@ export class AuthService {
   sendVerificationCode = async (params: UserVerifyEmailDTO) => {
     const { email } = params;
     console.log(email);
-    
+
     const existedUser = await this.userService.getUserByEmail(email);
     if (existedUser) throw Errors.userExists;
 
@@ -88,16 +88,20 @@ export class AuthService {
     const hashpass = await hashPassword(password);
     const userPending = await this.userService.getUserPending(email);
     if (!userPending) throw Errors.userExists;
-    await userPending.updateOne({
-      password: hashpass,
-      dob: dob,
-      gender: gender,
-      code: code,
-      majors: new mongoose.Types.ObjectId(majors),
-      name: name,
-      status: UserStatus.Active,
-    });
-    return true;
+    const user = await User.findOneAndUpdate(
+      { _id: userPending._id },
+      {
+        password: hashpass,
+        dob: dob,
+        gender: gender,
+        code: code,
+        majors: new mongoose.Types.ObjectId(majors),
+        name: name,
+        status: UserStatus.Active,
+      },
+      { new: true }
+    );
+    return user;
   };
   async getVerificationCode(email: string, code: string) {
     return await Verification.findOne({
@@ -154,13 +158,13 @@ export class AuthService {
     const payload = { id: existedUser._id.toString(), role: existedUser.role };
 
     console.log(payload);
-    
+
     const { accessToken, refreshToken } = await generateToken(
       existedUser._id.toString(),
       payload
     );
     return {
-      ...UserResponseDTO.transformUser(existedUser),
+      user: UserResponseDTO.transformUser(existedUser),
       accessToken: accessToken,
       refreshToken: refreshToken,
     };

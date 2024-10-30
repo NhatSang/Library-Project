@@ -22,22 +22,30 @@ export const Errors = {
   unAuthorized: new ErrorCustom("Unauthorized", "unAuthorized", 401),
   forbidden: new ErrorCustom("Forbidden", "forbidden", 403),
   conflict: new ErrorCustom("Conflict", "conflict", 409),
-  userExists: new ErrorCustom("User already exists", "userExists", 409),
-  userNotExists: new ErrorCustom("User does not exist", "userNotExists", 400),
+  userExists: new ErrorCustom("Người dùng đã tồn tại", "userExists", 409),
+  userNotExists: new ErrorCustom(
+    "Người dùng không tồn tại",
+    "userNotExists",
+    400
+  ),
   tooManyRequest: new ErrorCustom(
-    "You have exceeded the number of confirmation code submissions for the day",
+    "Bạn đã đạt giới hạn gữi 3 lần mỗi ngày",
     "tooManyRequest",
     429
   ),
-  wrongPassword: new ErrorCustom("Wrong password", "wrongPassword", 401),
+  wrongPassword: new ErrorCustom("Sai mật khẩu", "wrongPassword", 401),
   isNotEmpty: new ErrorCustom("Values should not be empty", "isNotEmpty", 400),
   invalidRepassword: new ErrorCustom(
     "Invalid Repassword",
     "invalidRepassword",
     400
   ),
-  invalidCode: new ErrorCustom("Invalid Code", "invalidCode", 400),
-  expiredCode: new ErrorCustom("Expired Code", "expiredCode", 410),
+  invalidCode: new ErrorCustom(
+    "Mã xác nhận không chính xác",
+    "invalidCode",
+    400
+  ),
+  expiredCode: new ErrorCustom("Mã xác nhận hết hạn", "expiredCode", 410),
 };
 export const handleErrors = (
   error: any,

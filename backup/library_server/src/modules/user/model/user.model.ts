@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema(
       ],
       default: UserStatus.Pending,
     },
+    emailId:{type:String},
     code: { type: String, index: true },
     image: {
       type: String,
