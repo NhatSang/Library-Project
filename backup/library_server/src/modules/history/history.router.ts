@@ -24,5 +24,9 @@ historyRouter.get(
   historyController.getHistoriesByUserId
 );
 
-
+historyRouter.get(
+  "/history",
+  authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
+  historyController.getOneHistory
+);
 export default historyRouter;

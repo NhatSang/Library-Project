@@ -31,7 +31,7 @@ export class HistoryController {
     }
   };
 
-  getOneHistoryasync = async (
+  getOneHistory = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -39,7 +39,7 @@ export class HistoryController {
     try {
       const result = await this.historyService.getOneHistory(
         req.body.userId,
-        req.body.book
+        req.query.bookId as string
       );
       res.send(new ResponseCustom(result));
     } catch (error) {

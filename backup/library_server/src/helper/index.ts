@@ -36,7 +36,7 @@ export const generateToken = async (id: string, payload: any) => {
   const accessToken = generateAccessToken(payload);
   const refreshToken = generateRefreshToken(
     payload,
-    convertTime(5, TimeType.m)
+    convertTime(1, TimeType.d)
   );
 
   //Lưu vào hset
