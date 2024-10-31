@@ -31,6 +31,19 @@ const userSchema = new mongoose.Schema(
       default:
         "https://pdf8888.s3.ap-southeast-1.amazonaws.com/avata_default.jpg",
     },
+    notifications: [
+      {
+        notification: {type:mongoose.Schema.Types.ObjectId, ref: "Notification"},
+        isRead: {type: Boolean, default: false}
+      }
+    ],
+    devices:[
+      {
+        device_id: {type: String},
+        fcm_token: {type: String},
+        platform: {type: String}
+      }
+    ]
   },
   { timestamps: true }
 );

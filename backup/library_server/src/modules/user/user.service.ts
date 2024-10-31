@@ -85,4 +85,41 @@ export class UserService {
     const transformedList = UserResponseDTO.transformUser(users);
     return { users: transformedList, pagination };
   }
+
+  async postFcmToken(params: any) {
+    const { userId, deviceId, fcmToken, platform } = params;
+    const user = await this.checkExistedUser(userId);
+    const device = user.devices.find((item) => item.device_id == deviceId);
+    if (device) {
+      device.fcm_token = fcmToken;
+      device.platform = platform;
+    } else {
+      user.devices.push({ device_id: deviceId, fcm_token: fcmToken, platform });
+    }
+    await user.save();
+    return user;
+  }
+
+  async getUserByFilter(filter: any) {
+    if(filter.type == 'USER'){
+      const users = await User.find({
+        _id: {$in: filter.userId},
+      }).populate('majors', 'notifications.notification');
+      return users;
+    }
+    if(filter.type == 'MAJORS'){
+      const majors = await Majors.find({
+        _id: {$in: filter.majorsId},
+      });
+      const users = await User.find({
+        majors: {$in: majors},
+      }).populate('majors', 'notifications.notification');
+      return users;
+    }
+
+    if(filter.type == 'ALL'){
+      const users = await User.find().populate('majors', 'notifications.notification');
+      return users;
+    }
+  }
 }

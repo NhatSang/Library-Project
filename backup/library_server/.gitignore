@@ -13,6 +13,7 @@ node_modules/
 .vscode/
 
 # Loại bỏ các tệp bí mật
+json-key/
 .env
 .secret
 

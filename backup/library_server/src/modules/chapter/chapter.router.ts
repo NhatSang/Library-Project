@@ -8,14 +8,23 @@ const chapterRouter = Router();
 const authMiddleware = Container.get(AuthMiddleware);
 const chapterController = Container.get(ChapterController);
 
+//query : bookId
 chapterRouter.get(
-  "/book/chapters/:bookId",
+  "/book/chapters",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
-  chapterController.getChapters
+  chapterController._getChapters
 );
+//query : chapterId
 chapterRouter.get(
-  "/book/chapter/:chapterId",
+  "/book/chapter",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
-  chapterController.getChapterById
+  chapterController._getChapterById
 );
+
+chapterRouter.post(
+  "/book/chapter",
+  authMiddleware.authenticateAccessToken([Role.Admin]),
+  chapterController._addChapter
+);
+
 export default chapterRouter;
