@@ -4,16 +4,17 @@ import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
 import { WIDTH } from '@constants/index';
 import { ScreenName } from '@constants/ScreenName';
+import notifee from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import { getUserLocalStorage } from '@utils/storage';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, BackHandler, FlatList, Image, ImageBackground, Pressable, ScrollView, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, Alert, BackHandler, Button, FlatList, Image, ImageBackground, Pressable, ScrollView, useColorScheme, View } from 'react-native';
 import { Badge } from 'react-native-paper';
 import Carousel from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { iBook } from 'src/types/iBook';
-import { _getAllBook2, _getBooksByMayjors, _getRecomendBoook, _getRecomendBoookByMajor } from './apis';
+import { _getAllBook2, _getBooksByMayjors, _getNotificationByUser, _getRecomendBoook, _getRecomendBoookByMajor } from './apis';
 
 
 const HomeScreen = ({ navigation }: any) => {
@@ -24,12 +25,18 @@ const HomeScreen = ({ navigation }: any) => {
     const [listBook2, setListBook2] = useState<iBook[]>([]);
     const [loadImage, setLoadImage] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [notifications, setNotifications] = useState<any>(null);
 
     useEffect(() => {
         messaging().getInitialNotification().then(async (remoteMessage: any) => {
             const data = remoteMessage.data
             navigationToNotification(data.notification_id);
         })
+        messaging().onMessage(async (remoteMessage: any) => {
+            if (remoteMessage.data) {
+                getNotification();
+            }
+        });
     }, []);
 
     const navigationToNotification = (notification_id: string) => {
@@ -43,6 +50,7 @@ const HomeScreen = ({ navigation }: any) => {
             getRecommendBook();
             getRecommendBookByMajors();
             getBook2();
+            getNotification();
         });
         return unsubscribe;
     }, [navigation]);
@@ -86,6 +94,18 @@ const HomeScreen = ({ navigation }: any) => {
             const response = await _getAllBook2();
             if (response.status) {
                 setListBook2(response.data);
+            }
+        } catch (error) {
+            console.log('error', error);
+        }
+    }
+
+    const getNotification = async () => {
+        try {
+            const response = await _getNotificationByUser();
+            if (response.data) {
+                const data = response.data.filter((item: any) => item.isRead == false);
+                setNotifications(data);
             }
         } catch (error) {
             console.log('error', error);
@@ -136,6 +156,36 @@ const HomeScreen = ({ navigation }: any) => {
             console.log('error', error);
         }
     }
+    async function localDisplayNotification() {
+        // Create a channel
+        const channelId = await notifee.createChannel({
+            id: 'default',
+            name: 'Default Channel',
+            // importance: AndroidImportance.HIGH,
+        });
+
+        // Display a notification
+        notifee.displayNotification({
+            title:
+                '<p style="color: #4caf50;"><b>Styled HTMLTitle</span></p></b></p> &#128576;',
+            subtitle: '&#129395;',
+            body: 'The <p style="text-decoration: line-through">body can</p> also be <p style="color: #ffffff; background-color: #9c27b0"><i>styled too</i></p> &#127881;!',
+            android: {
+                channelId,
+                // color: '#4caf50',
+                // actions: [
+                //     {
+                //         title: '<b>Dance</b> &#128111;',
+                //         pressAction: { id: 'dance' },
+                //     },
+                //     {
+                //         title: '<p style="color: #f44336;"><b>Cry</b> &#128557;</p>',
+                //         pressAction: { id: 'cry' },
+                //     },
+                // ],
+            },
+        });
+    }
 
     return (
         <ImageBackground source={MAIN.BACKGROUND} style={{ flex: 1 }}>
@@ -150,7 +200,9 @@ const HomeScreen = ({ navigation }: any) => {
                         onPress={() => { navigation.navigate(ScreenName.Notification) }}
                     >
                         <Ionicons name='notifications-sharp' size={40} color={globalColor.primary} />
-                        <Badge className='absolute'>0</Badge>
+                        <Badge className='absolute'>
+                            {notifications?.length}
+                        </Badge>
                     </Pressable>
                     <Pressable
                         onPress={() => { navigation.navigate(ScreenName.SearchScreen) }}

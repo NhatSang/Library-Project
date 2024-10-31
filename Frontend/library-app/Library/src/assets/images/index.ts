@@ -10,6 +10,7 @@ export const MAIN = {
     LOGOIUH: require('./Main/logo_iuh.png'),
     DIANHAC: require('./Main/dianhac.webp'),
     BACKGROUND: require('./Main/image_background.png'),
+    ICON_NOTIFICATION: require('./Main/ic_notification.png'),
 };
 
 export const HOME = {

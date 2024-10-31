@@ -14,7 +14,7 @@ import majorsRouter from "./modules/majors/majors.router";
 
 (async () => {
   const app = express();
-  const port = 6000;
+  const port = 6001;
   app.use(cors());
   app.use(express.json());
   await ConnectDB();

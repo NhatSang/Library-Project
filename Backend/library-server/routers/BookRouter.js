@@ -15,6 +15,7 @@ import {
   getBooksByMajors,
   getSummaryByBookId,
   searchBooksByName,
+  addSummary,
 } from "../controllers/book_controller/BookController.js";
 import { authenticateJWT } from "../middlewares/Auth.js";
 import { getAllBooks2, getrBookContentByPage } from "../controllers/book_controller/Book2Controller.js";
@@ -29,7 +30,7 @@ bookRouter.post(
 bookRouter.get("/get-all-book2",getAllBooks2);
 bookRouter.get("/get-book-content-by-page", getrBookContentByPage);
 bookRouter.post("/add-chapter", upload.none(), addChapter);
-bookRouter.get("/get-chapters/:id", getChapters);
+bookRouter.get("/get-chapters/", getChapters);
 bookRouter.delete("/delete-chapter/:id", deleteChapter);
 bookRouter.delete("/delete-book/:id", deleteBook);
 bookRouter.get("/get-newest-books", getNewestBooks);
@@ -37,4 +38,5 @@ bookRouter.get("/get-book-by-id", getBookById);
 bookRouter.get("/get-book-by-majors",authenticateJWT, getBooksByMajors);
 bookRouter.get("/get-summary-by-book-id", getSummaryByBookId);
 bookRouter.get("/search-book", searchBooksByName);
+bookRouter.post("/add-summary", addSummary);
 export default bookRouter;
