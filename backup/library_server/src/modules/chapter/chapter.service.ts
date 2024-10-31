@@ -25,4 +25,24 @@ export class ChapterService {
     await this.bookService.checkPublishedBook(bookId);
     return chapter;
   }
+
+  async addChapter(params: any) {
+    const {
+      bookId,
+      title,
+      startPage,
+      endPage,
+      pdfLink
+    } = params;
+    await this.bookService.checkPublishedBook(bookId);
+    const chapter = new Chapter({
+      book: new mongoose.Types.ObjectId(bookId),
+      title,
+      startPage,
+      endPage,
+      pdfLink
+    });
+    await chapter.save();
+    return chapter;
+  }
 }

@@ -8,7 +8,7 @@ import { Pagination } from "../../helper/pagination";
 export class UserController {
   constructor(@Inject() private userService: UserService) {}
 
-  banUser = async (req: Request, res: Response, next: NextFunction) => {
+  _banUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.userService.banUser(req.body.userId);
       res.send(new ResponseCustom(result));
@@ -18,7 +18,7 @@ export class UserController {
     }
   };
 
-  findUserByKeyword = async (
+  _findUserByKeyword = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -34,4 +34,14 @@ export class UserController {
       next(error);
     }
   };
+
+  _postFcmtoken = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.userService.postFcmToken(req.body);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
 }

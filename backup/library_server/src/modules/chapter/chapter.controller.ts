@@ -7,21 +7,31 @@ import { ResponseCustom } from "../../helper/response";
 export class ChapterController {
   constructor(@Inject() private chapterService: ChapterService) {}
 
-  getChapters = async (req: Request, res: Response, next: NextFunction) => {
+  _getChapters = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.chapterService.getChapters(req.params.bookId);
+      const result = await this.chapterService.getChapters(req.params.bookId as string);
       res.send(new ResponseCustom(result));
     } catch (error) {
       next(error);
     }
   };
 
-  getChapterById = async (req: Request, res: Response, next: NextFunction) => {
+  _getChapterById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.chapterService.getChapterById(req.params.chapterId);
+      const result = await this.chapterService.getChapterById(req.query.chapterId as string);
       res.send(new ResponseCustom(result));
     } catch (error) {
       next(error);
+    }
+  };
+
+  _addChapter = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.chapterService.addChapter(req.body);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+      
     }
   };
 }
