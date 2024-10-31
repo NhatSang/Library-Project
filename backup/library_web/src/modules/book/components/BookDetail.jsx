@@ -1,17 +1,27 @@
-import { Image } from "antd";
+import { Button, Image } from "antd";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FaRegEye } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
+import { useSelector } from "react-redux";
+
 const BookDetail = () => {
   const location = useLocation();
-  const book = location?.state.book;
+  const book = location.state.book;
+  const navigate = useNavigate();
+  const handleReadBook = () => {
+    navigate("/book-content", { state: { book: book, page: 0 } });
+    localStorage.setItem("book", JSON.stringify(book));
+  };
+  const handleContinuteRead = () => {
+    navigate("/book-content");
+  };
   return (
     <div className="p-4 bg-white rounded-lg shadow-md flex space-x-4">
-      <div className="w-1/4">
+      <div className="w-1/5">
         <Image
           src={book?.image}
-          className="rounded-md object-cover w-full h-full"
+          className="rounded-md object-cover"
           alt={book?.title}
         />
         <div className="flex items-center justify-around">
@@ -19,8 +29,24 @@ const BookDetail = () => {
             <span>4000</span> <FaRegEye />
           </div>
           <div className="flex items-center space-x-2">
-            <span>4.5</span> <FaStar color="yellow"/>
+            <span>4.5</span> <FaStar color="yellow" />
           </div>
+        </div>
+        <div className="flex justify-center items-center space-x-4">
+          <Button
+            onClick={handleReadBook}
+            className="bg-green-600 text-white font-medium text-lg"
+          >
+            Xem
+          </Button>
+          {history ? (
+            <Button
+              onClick={handleContinuteRead}
+              className="bg-green-600 text-white font-medium text-lg"
+            >
+              Đọc tiếp
+            </Button>
+          ) : null}
         </div>
       </div>
       <div className="flex-1 space-y-1">

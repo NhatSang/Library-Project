@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsOptional,
   IsString,
+  Matches,
   matches,
 } from "class-validator";
 
@@ -14,7 +15,12 @@ export class UserRegisterDTO {
   gender: string;
   @IsString()
   dob: Date;
-  @IsEmail()
+  @Matches(
+    /^[a-zA-Z0-9._%+-]+@student\.iuh\.edu\.vn$|^[a-zA-Z0-9._%+-]+@iuh\.edu\.vn$/,
+    {
+      message: "Email phải có định dạng @student.iuh.edu.vn hoặc @iuh.edu.vn",
+    }
+  )
   email: string;
   @IsString()
   password: string;
@@ -48,7 +54,12 @@ export class UserUpdateDTO {
 }
 
 export class UserVerifyEmailDTO {
-  @IsEmail()
+  @Matches(
+    /^[a-zA-Z0-9._%+-]+@student\.iuh\.edu\.vn$|^[a-zA-Z0-9._%+-]+@iuh\.edu\.vn$/,
+    {
+      message: "Email phải có định dạng @student.iuh.edu.vn hoặc @iuh.edu.vn",
+    }
+  )
   email: string;
 }
 
@@ -72,6 +83,8 @@ export class UserResponseDTO {
   @Expose()
   @Transform(({ obj }) => obj.majors?.name || null)
   majors: string | null;
+  @Expose()
+  image: string;
   static transformUser(params: any | any[]) {
     return plainToInstance(UserResponseDTO, params, {
       excludeExtraneousValues: true,

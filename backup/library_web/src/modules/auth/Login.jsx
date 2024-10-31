@@ -26,7 +26,7 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify(response.data.user));
       localStorage.setItem(
         "accessToken",
-        JSON.stringify(response.data.accessToken)
+        response.data.accessToken
       );
 
       navigate("/home");

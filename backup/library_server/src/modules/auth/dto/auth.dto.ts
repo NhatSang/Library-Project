@@ -1,7 +1,12 @@
-import { IsEmail, IsString } from "class-validator";
+import { IsEmail, IsString, Matches } from "class-validator";
 
 export class AuthVerifyEmailDTO {
-  @IsEmail()
+  @Matches(
+    /^[a-zA-Z0-9._%+-]+@student\.iuh\.edu\.vn$|^[a-zA-Z0-9._%+-]+@iuh\.edu\.vn$/,
+    {
+      message: "Email phải có định dạng @student.iuh.edu.vn hoặc @iuh.edu.vn",
+    }
+  )
   email: string;
   @IsString()
   verificationCode: string;

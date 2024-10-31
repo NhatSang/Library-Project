@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ReviewStatus } from "../types/review.type";
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -6,6 +7,11 @@ const reviewSchema = new mongoose.Schema(
     book: { type: mongoose.Schema.Types.ObjectId, ref: "Books" },
     content: { type: String },
     rating: { type: Number },
+    status: {
+      type: Number,
+      enum: [ReviewStatus.Deleted, ReviewStatus.Posted],
+      default: ReviewStatus.Posted,
+    },
   },
   { timestamps: true }
 );

@@ -1,19 +1,20 @@
-import Login from "./pages/auth/Login";
+import Login from "./modules/auth/Login";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import PrivateRoute from "./route/PrivateRoute";
-import Home from "./pages/main/Home";
-import Register from "./pages/auth/register";
-import AuthLayout from "./pages/auth/AuthLayout";
+import Home from "./modules/main/Home";
+import Register from "./modules/auth/register";
+import AuthLayout from "./modules/auth/AuthLayout";
 import Layout from "./components/Layout";
-import Genre from "./pages/main/Genre";
-import Result from "./pages/main/Result";
-import BookLayout from "./pages/book/BookLayout";
+import Genre from "./modules/main/Genre";
+import Result from "./modules/main/Result";
+import BookLayout from "./modules/book/BookLayout";
 import { msalInstance } from "./config/msalConfig";
 import { MsalProvider } from "@azure/msal-react";
-import BookContent from "./pages/book/BookContent";
+import BookContent from "./modules/book/BookContent";
+import AudioViewer from "./modules/book/components/AudioViewer";
+import PdfViewer from "./modules/book/components/PDFViewer";
 
 function App() {
-
   return (
     <MsalProvider instance={msalInstance}>
       <BrowserRouter>
@@ -29,7 +30,10 @@ function App() {
               <Route path="/genre" element={<Genre />} />
               <Route path="/result" element={<Result />} />
               <Route path="/book" element={<BookLayout />} />
-              <Route path="/book-content" element={<BookContent />} />
+              <Route element={<BookContent />}>
+                <Route path="/book-audio" element={<AudioViewer />} />
+                <Route path="/book-content" element={<PdfViewer />} />
+              </Route>
             </Route>
           </Route>
         </Routes>

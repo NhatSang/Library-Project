@@ -3,7 +3,7 @@ export const IMAGES = {
 };
 
 export const sampleBook = {
-  _id: "6708a62ab1d6e9e589c26735",
+  _id: "671c890ff5485d1dee966ffd",
   title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
   author: "Nguyễn Minh Đức",
   pdfLink:
@@ -20,7 +20,7 @@ export const sampleBook = {
 };
 export const sampleData = [
   {
-    _id: "6708a62ab1d6e9e589c26735",
+    _id: "671c890ff5485d1dee966ffd",
     title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
     author: "Nguyễn Minh Đức",
     pdfLink:
@@ -36,7 +36,7 @@ export const sampleData = [
     updatedAt: "2024-10-11T04:14:34.672+00:00",
   },
   {
-    _id: "6708a62ab1d6e9e589c26735",
+    _id: "671c890ff5485d1dee966ffd",
     title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
     author: "Nguyễn Minh Đức",
     pdfLink:
@@ -52,7 +52,7 @@ export const sampleData = [
     updatedAt: "2024-10-11T04:14:34.672+00:00",
   },
   {
-    _id: "6708a62ab1d6e9e589c26735",
+    _id: "671c890ff5485d1dee966ffd",
     title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
     author: "Nguyễn Minh Đức",
     pdfLink:
@@ -68,7 +68,7 @@ export const sampleData = [
     updatedAt: "2024-10-11T04:14:34.672+00:00",
   },
   {
-    _id: "6708a62ab1d6e9e589c26735",
+    _id: "671c890ff5485d1dee966ffd",
     title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
     author: "Nguyễn Minh Đức",
     pdfLink:
@@ -84,7 +84,7 @@ export const sampleData = [
     updatedAt: "2024-10-11T04:14:34.672+00:00",
   },
   {
-    _id: "6708a62ab1d6e9e589c26735",
+    _id: "671c890ff5485d1dee966ffd",
     title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
     author: "Nguyễn Minh Đức",
     pdfLink:
@@ -100,7 +100,7 @@ export const sampleData = [
     updatedAt: "2024-10-11T04:14:34.672+00:00",
   },
   {
-    _id: "6708a62ab1d6e9e589c26735",
+    _id: "671c890ff5485d1dee966ffd",
     title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
     author: "Nguyễn Minh Đức",
     pdfLink:
@@ -135,6 +135,14 @@ export const sampleChapters = [
     startPage: 7,
     pdfLink:
       "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1729517250087_B%C3%A0n%20c%E1%BB%9D.pdf",
+  },
+  {
+    _id: "671656c5c633ab69bae26aed",
+    book: "671656c1c633ab69bae26a88",
+    title: "Quân cờ",
+    startPage: 11,
+    pdfLink:
+      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1729517252037_Qu%C3%A2n%20c%E1%BB%9D.pdf",
   },
 ];
 

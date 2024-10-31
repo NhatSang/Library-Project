@@ -7,11 +7,8 @@ import { useLocation } from "react-router-dom";
 const BookLayout = () => {
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-4 px-5 py-2 gap-3">
-        <div className="col-span-1 md:col-span-3">
-          <BookDetail />
-        </div>
-        <Chapters className="col-span-1" />
+      <div className="px-5 py-2">
+        <BookDetail />
       </div>
       <div className="px-5 py-2">
         <Reviews />
