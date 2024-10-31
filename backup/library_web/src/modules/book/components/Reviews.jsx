@@ -7,8 +7,7 @@ import Rating from "./Rating";
 import { useSelector } from "react-redux";
 import { Rate } from "antd";
 const Reviews = () => {
-  const location = useLocation();
-  const book = location.state.book;
+  const book = useSelector((state) => state.book.data);
   const user = useSelector((state) => state.user.data);
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(0);

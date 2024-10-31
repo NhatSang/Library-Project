@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Carousel } from "antd";
 import { Avatar, Card } from "antd";
 import { sampleData } from "../../constants";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import ListBooks from "./components/ListBooks";
+import { getHistories } from "./api";
 const { Meta } = Card;
 
 const contentStyle = {
@@ -16,9 +18,26 @@ const contentStyle = {
 
 const Home = () => {
   const [top10, setTop10] = useState(sampleData);
-  const dispatch = useDispatch()
+  const user = useSelector((state) => state.user.data);
+  const [histories, setHistories] = useState([]);
+
+  useEffect(() => {
+    fetchHistories();
+  }, []);
+
+  const fetchHistories = async () => {
+    try {
+      const response = await getHistories();
+      setHistories(response.data);
+      console.log(response.data);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <div className="w-full px-5 py-2 space-y-3 h-screen">
+    <div className="w-full px-5 py-2 space-y-3">
       <div className="w-full ">
         <Carousel autoplay>
           {top10.map((b, index) => (
@@ -28,8 +47,9 @@ const Home = () => {
               state={{ book: b }}
               type="text"
               className="w-full bg-sky-900 rounded-lg p-3 shadow-md hover:text-white text-white font-medium text-base"
+              
             >
-              <div className="flex  justify-center space-x-4">
+              <div className="flex justify-center space-x-4">
                 <div>
                   <img src={b.image} width={150} />
                 </div>
@@ -52,22 +72,10 @@ const Home = () => {
           ))}
         </Carousel>
       </div>
-      <div className="bg-white rounded-md p-3 shadow-md">
-        <p>Lịch sử</p>
-        <div className="flex whitespace-nowrap overflow-auto space-x-3"></div>
-      </div>
-      <div className="bg-white rounded-md p-3 shadow-md">
-        <p>Đề xuất từ người dùng tương tự</p>
-        <div className="flex whitespace-nowrap overflow-auto space-x-3"></div>
-      </div>
-      <div className="bg-white rounded-md p-3 shadow-md">
-        <p>Có thể bạn sẽ thích</p>
-        <div className="flex whitespace-nowrap overflow-auto space-x-3"></div>
-      </div>
-      <div className="bg-white rounded-md p-3 shadow-md">
-        <p>Những sách tương tự bạn đã xem</p>
-        <div className="flex whitespace-nowrap overflow-auto space-x-3"></div>
-      </div>
+      <ListBooks title={"Lịch sử"} data={histories} />
+      <ListBooks title={"Đề xuất từ người dùng tương tự"} data={[]} />
+      <ListBooks title={"Có thể bạn sẽ thích"} data={[]} />
+      <ListBooks title={"Những sách tương tự bạn đã xem"} data={[]} />
     </div>
   );
 };

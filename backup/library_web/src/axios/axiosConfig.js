@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api/v1", // Đặt URL gốc của API
+  baseURL: "http://localhost:6001/api/v1", // Đặt URL gốc của API
   timeout: 10000, // Thời gian timeout
   headers: {
     "Content-Type": "application/json",
@@ -13,9 +13,11 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     // Thêm token vào headers nếu có
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
+    console.log(token);
+    
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers['authorization'] = `Bearer ${token}`;
     }
     config.params = { ...config.params };
     return config;

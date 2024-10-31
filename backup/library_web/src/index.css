@@ -12,3 +12,8 @@
   display: none; /* Chrome, Safari và các trình duyệt dựa trên WebKit */
 }
 
+.custom-background {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
