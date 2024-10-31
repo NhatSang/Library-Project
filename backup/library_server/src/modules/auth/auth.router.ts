@@ -48,4 +48,8 @@ authRouter.post(
   authController.refreshToken
 );
 
+authRouter.post("/auth/login-temp",
+  authController.loginTemp
+);
+
 export default authRouter;

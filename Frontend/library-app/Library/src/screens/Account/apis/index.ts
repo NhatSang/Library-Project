@@ -1,7 +1,7 @@
 import { api } from '../../../apis/configAPI';
 
 const _getProfile = async () => {
-    const url = '/get-user-by-id';
+    const url = '/me';
     return api.get(url);
 };
 

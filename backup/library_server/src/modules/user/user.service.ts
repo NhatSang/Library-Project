@@ -122,4 +122,12 @@ export class UserService {
       return users;
     }
   }
+
+  async getMe(userId: string) {
+    const user = await User.findOne({
+      _id: new mongoose.Types.ObjectId(userId),
+    }).populate("majors", "name");
+    const userTransformed = UserResponseDTO.transformUser(user);
+    return userTransformed;
+  }
 }

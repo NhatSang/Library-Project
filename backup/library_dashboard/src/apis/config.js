@@ -2,14 +2,14 @@ import axios from "axios";
 
 export const api = axios.create({
     baseURL: 'http://localhost:6001/api/v1',
-    timeout: 6000,
+    timeout: 30000,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 export const api2 = axios.create({
     baseURL: 'http://localhost:5001/api/v1',
-    timeout: 6000,
+    timeout: 30000,
     headers: {
         'Content-Type': 'application/json',
     },

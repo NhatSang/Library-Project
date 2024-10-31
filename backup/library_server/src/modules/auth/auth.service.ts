@@ -171,6 +171,28 @@ export class AuthService {
     };
   };
 
+  loginTemp = async (params: UserLoginDTO) => {
+    const { email, password } = params;
+    console.log(email);
+
+    const existedUser = await this.userService.getUserByEmail(email);
+    console.log(existedUser.password);
+
+    if (existedUser.password != password) {
+      throw Errors.wrongPassword;
+    }
+    const payload = { id: existedUser._id.toString(), role: existedUser.role }
+    const { accessToken, refreshToken } = await generateToken(
+      existedUser._id.toString(),
+      payload
+    );
+    return {
+      user: UserResponseDTO.transformUser(existedUser),
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    };
+  }
+
   logout = async (params: any) => {
     const { userId, accessToken, refreshToken } = params;
     await this.userService.checkExistedUser(userId);

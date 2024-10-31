@@ -17,7 +17,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
 import { useDispatch } from 'react-redux'
 import { api } from '../../apis/configAPI'
-import { _loginWithAccount, _postFcmToken } from './apis'
+import { _login, _postFCMToken, iLogin, iPostFCMToken } from './apis'
 
 
 const LoginWithAccount = ({ navigation }: any) => {
@@ -64,9 +64,9 @@ const LoginWithAccount = ({ navigation }: any) => {
 
     const handleLogin = async () => {
         if (!validate()) return;
-        const user: any = { email, password };
+        const user: iLogin = { email, password };
         try {
-            const res = await _loginWithAccount(user);
+            const res = await _login(user);
             if (res.data) {
                 api.defaults.headers.common.Authorization = `Bearer ${res.data.accessToken}`;
                 try {
@@ -74,11 +74,13 @@ const LoginWithAccount = ({ navigation }: any) => {
                         .registerDeviceForRemoteMessages()
                         .then(() => messaging().getToken());
                     console.log(token);
-                    await _postFcmToken({
-                        device_id: deviceId,
-                        fcm_token: token,
+                    const data: iPostFCMToken = {
+                        deviceId: deviceId,
+                        fcmToken: token,
                         platform: Platform.OS,
-                    })
+                        userId: res.data.user._id,
+                    }
+                    await _postFCMToken(data);
                 } catch (error) {
                     console.log(error);
                 }

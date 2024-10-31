@@ -24,4 +24,17 @@ export class BookController {
       next(error);
     }
   };
+  getBookByMajorsUserId = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userId = req.body.userId;
+      const result = await this.bookservice.getBookByMajorsUserId(userId);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  }
 }

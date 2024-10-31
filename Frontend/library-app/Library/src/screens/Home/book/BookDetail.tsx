@@ -92,7 +92,7 @@ const BookDetail = ({ navigation, route }: any) => {
     const getReviewNewest = async () => {
         try {
             const response = await _getReviewNewest(book._id);
-            if (response.status) {
+            if (response.data) {
                 setReviews(response.data);
             }
         } catch (error) {

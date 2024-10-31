@@ -15,7 +15,7 @@ const _getChapterByIdBook = async (id: string) => {
 };
 
 const _getReviewNewest = async (id: string) => {
-    const url = '/get-review-newest-by-book-id';
+    const url = '/review-newest';
     return api.get(url, {
         params: {
             bookId: id,
@@ -24,7 +24,7 @@ const _getReviewNewest = async (id: string) => {
 };
 
 const _getAllReviewByBookId = async (id: string) => {
-    const url = '/get-review-by-book-id';
+    const url = '/review';
     return api.get(url, {
         params: {
             bookId: id,
@@ -33,7 +33,7 @@ const _getAllReviewByBookId = async (id: string) => {
 };
 
 const _createReview = async (data: any) => {
-    const url = '/create-review';
+    const url = '/review';
     return api.post(url, data);
 };
 
@@ -101,7 +101,7 @@ const _updateModel = async (id: string) => {
 
 const _getAllBook2 = async () => {
     const url = '/get-all-book2';
-    return api.get(url);
+    return api2.get(url);
 };
 
 const _getBookContentBypage = async (id: string, page: number) => {
@@ -113,8 +113,6 @@ const _getBookContentBypage = async (id: string, page: number) => {
         },
     });
 };
-
-
 
 const _getSummaryByBookId = async (id: string) => {
     const url = '/get-summary-by-book-id';
@@ -135,16 +133,28 @@ const _searchBook = async (stringName: any) => {
 };
 
 const _getNotificationByUser = async () => {
-    const url = '/get-notification-by-user';
+    const url = '/user/notifications';
     return api.get(url);
-}
+};
 
 const _getNotificationById = async (id: string) => {
-    const url = '/get-notification-by-id';
+    const url = '/notification';
     return api.get(url, {
         params: {
-            id_notification: id,
+            id,
         },
+    });
+};
+//
+const _getBooksByMajorsUser = () => {
+    const url = '/book/get-by-majors-user';
+    return api.get(url);
+};
+
+const _markAsRead = async (id: string) => {
+    const url = '/notification/mark-as-read';
+    return api.post(url, {
+        id,
     });
 };
 
@@ -156,17 +166,19 @@ export {
     _getAllBook2,
     _getAllReviewByBookId,
     _getBookContentBypage,
+    _getBooksByMajorsUser,
     _getBooksByMayjors,
     _getChapterByIdBook,
     _getHistoryByBookIdAndUser,
     _getNewestBooks,
     _getNoteByBookId,
+    _getNotificationById,
+    _getNotificationByUser,
     _getRecomendBoook,
     _getRecomendBoookByMajor,
     _getReviewNewest,
     _getSummaryByBookId,
+    _markAsRead,
     _searchBook,
     _updateModel,
-    _getNotificationByUser,
-    _getNotificationById,
 };

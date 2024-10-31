@@ -3,8 +3,8 @@ import { ReviewStatus } from "../types/review.type";
 
 const reviewSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
-    book: { type: mongoose.Schema.Types.ObjectId, ref: "Books" },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    book: { type: mongoose.Schema.Types.ObjectId, ref: "Book" },
     content: { type: String },
     rating: { type: Number },
     status: {
@@ -16,5 +16,5 @@ const reviewSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Reviews = mongoose.model("Reivews");
+const Reviews = mongoose.model("Reivews", reviewSchema);
 export default Reviews;

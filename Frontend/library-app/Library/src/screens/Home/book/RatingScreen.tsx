@@ -37,7 +37,7 @@ const RatingScreen = ({ navigation, route }: any) => {
         try {
             setLoading(true);
             const response = await _getAllReviewByBookId(id);
-            if (response.status) {
+            if (response.data) {
                 setReviews(response.data);
                 const hasUserReviewed = response.data?.some((item: { user: { _id: any } }) => userId === item.user._id);
                 setUserReview(hasUserReviewed);
@@ -58,7 +58,7 @@ const RatingScreen = ({ navigation, route }: any) => {
                 content,
                 rating
             });
-            if (response.status) {
+            if (response.data) {
                 if (existingReview) {
                     setReviews(reviews.map(review =>
                         review._id === existingReview._id ? { ...review, content, rating, updatedAt: new Date() } : review
