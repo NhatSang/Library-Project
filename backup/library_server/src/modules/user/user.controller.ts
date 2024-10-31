@@ -44,4 +44,13 @@ export class UserController {
       next(error);
     }
   }
+  _getMe = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await this.userService.getMe(req.body.userId);
+        res.send(new ResponseCustom(result));
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
 }

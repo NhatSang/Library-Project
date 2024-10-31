@@ -29,6 +29,7 @@ export class ReviewService {
     }
 
     async getReviewByBookId(book: string) {
+        console.log(book);
         return await Reviews.find({ book: new mongoose.Types.ObjectId(book) })
         .populate("user","_id name image");
     }

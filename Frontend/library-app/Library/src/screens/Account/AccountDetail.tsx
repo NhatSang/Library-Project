@@ -10,6 +10,7 @@ import ImagePicker from 'react-native-image-crop-picker'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
 import { useDispatch } from 'react-redux'
 import { iUser } from 'src/types/iUser'
 import { _getProfile } from './apis'
@@ -34,7 +35,7 @@ const AccountDetail = ({ navigation }: any) => {
     const getUser = async () => {
         try {
             const response = await _getProfile();
-            if (response.status) {
+            if (response.data) {
                 setUser(response.data);
             }
         } catch (error) {
@@ -161,6 +162,30 @@ const AccountDetail = ({ navigation }: any) => {
                         onSubmitEditing={handleChangeEmail}
                         rightIcon={btnEditAndSave(name, handleChangeEmail, loadingName, 'email')}
                         leftIcon={<AntDesign name='mail' size={24} color={globalColor.dark} />}
+                    />
+                    <Input
+                        label='Mã sinh viên / giáo viên'
+                        defaultValue={user && user.code}
+                        editable={false}
+                        leftIcon={<AntDesign name='idcard' size={24} color={globalColor.dark} />}
+                    />
+                    <Input
+                        label='Chuyên ngành'
+                        defaultValue={user && user.majors}
+                        editable={false}
+                        leftIcon={<AntDesign name='profile' size={24} color={globalColor.dark} />}
+                    />
+                    <Input
+                        label='Ngày sinh'
+                        defaultValue={user && new Date(user.dob).toLocaleDateString()}
+                        editable={false}
+                        leftIcon={<FontAwesome6 name='cake-candles' size={24} color={globalColor.dark} />}
+                    />
+                    <Input
+                        label='Giới tính'
+                        defaultValue={user && user.gender}
+                        editable={false}
+                        leftIcon={<AntDesign name='user' size={24} color={globalColor.dark} />}
                     />
                 </View>
             </SafeAreaView>

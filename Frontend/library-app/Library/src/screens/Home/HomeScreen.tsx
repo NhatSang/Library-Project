@@ -1,20 +1,19 @@
-import { HOME, MAIN } from '@assets/images';
+import { MAIN } from '@assets/images';
 import AppText from '@components/AppText';
 import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
 import { WIDTH } from '@constants/index';
 import { ScreenName } from '@constants/ScreenName';
-import notifee from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import { getUserLocalStorage } from '@utils/storage';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, BackHandler, Button, FlatList, Image, ImageBackground, Pressable, ScrollView, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, Alert, BackHandler, FlatList, Image, ImageBackground, Pressable, ScrollView, useColorScheme, View } from 'react-native';
 import { Badge } from 'react-native-paper';
 import Carousel from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { iBook } from 'src/types/iBook';
-import { _getAllBook2, _getBooksByMayjors, _getNotificationByUser, _getRecomendBoook, _getRecomendBoookByMajor } from './apis';
+import { _getAllBook2, _getBooksByMajorsUser, _getBooksByMayjors, _getNotificationByUser, _getRecomendBoook } from './apis';
 
 
 const HomeScreen = ({ navigation }: any) => {
@@ -26,6 +25,7 @@ const HomeScreen = ({ navigation }: any) => {
     const [loadImage, setLoadImage] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [notifications, setNotifications] = useState<any>(null);
+    const [user, setUser] = useState<any>();
 
     useEffect(() => {
         messaging().getInitialNotification().then(async (remoteMessage: any) => {
@@ -46,11 +46,12 @@ const HomeScreen = ({ navigation }: any) => {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            getNewestBooks();
-            getRecommendBook();
+            // getNewestBooks();
+            // getRecommendBook();
             getRecommendBookByMajors();
-            getBook2();
             getNotification();
+            getMe();
+            getBook2();
         });
         return unsubscribe;
     }, [navigation]);
@@ -89,11 +90,17 @@ const HomeScreen = ({ navigation }: any) => {
         return () => backHandler.remove();
     }, []);
 
+    const getMe = async () => {
+        const user = await getUserLocalStorage();
+        setUser(user);
+    }
+
     const getBook2 = async () => {
         try {
             const response = await _getAllBook2();
+            console.log('response', response.status);
             if (response.status) {
-                setListBook2(response.data);
+                setListBook2(response.data.data);
             }
         } catch (error) {
             console.log('error', error);
@@ -144,48 +151,17 @@ const HomeScreen = ({ navigation }: any) => {
 
     const getRecommendBookByMajors = async () => {
         try {
-            const user: any = await getUserLocalStorage();
-            if (user) {
-                const response = await _getRecomendBoookByMajor(user._id);
-                if (response.status) {
-                    setListRecomendByMajors(response.data);
-                    setLoading(false);
-                }
+            const response = await _getBooksByMajorsUser();
+            if (response.data) {
+                setListRecomendByMajors(response.data);
+                setLoadImage(false);
+                setLoading(false);
             }
         } catch (error) {
             console.log('error', error);
         }
     }
-    async function localDisplayNotification() {
-        // Create a channel
-        const channelId = await notifee.createChannel({
-            id: 'default',
-            name: 'Default Channel',
-            // importance: AndroidImportance.HIGH,
-        });
 
-        // Display a notification
-        notifee.displayNotification({
-            title:
-                '<p style="color: #4caf50;"><b>Styled HTMLTitle</span></p></b></p> &#128576;',
-            subtitle: '&#129395;',
-            body: 'The <p style="text-decoration: line-through">body can</p> also be <p style="color: #ffffff; background-color: #9c27b0"><i>styled too</i></p> &#127881;!',
-            android: {
-                channelId,
-                // color: '#4caf50',
-                // actions: [
-                //     {
-                //         title: '<b>Dance</b> &#128111;',
-                //         pressAction: { id: 'dance' },
-                //     },
-                //     {
-                //         title: '<p style="color: #f44336;"><b>Cry</b> &#128557;</p>',
-                //         pressAction: { id: 'cry' },
-                //     },
-                // ],
-            },
-        });
-    }
 
     return (
         <ImageBackground source={MAIN.BACKGROUND} style={{ flex: 1 }}>
@@ -194,7 +170,7 @@ const HomeScreen = ({ navigation }: any) => {
                     <Pressable
                         onPress={() => { navigation.navigate(ScreenName.AccountDetail) }}
                     >
-                        <Image source={HOME.AVATAR} className='w-10 h-10' />
+                        <Image source={{ uri: user?.image }} className='w-10 h-10' />
                     </Pressable>
                     <Pressable
                         onPress={() => { navigation.navigate(ScreenName.Notification) }}
@@ -213,7 +189,7 @@ const HomeScreen = ({ navigation }: any) => {
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View className='absolute'>
-                        <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý theo người dùng chung ngành' />
+                        <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý theo người dùng cùng ngành' />
                     </View>
                     <View className='h-72 justify-center items-center'>
                         {/* <SwiperImage /> */}
@@ -228,7 +204,7 @@ const HomeScreen = ({ navigation }: any) => {
                                 parallaxScrollingScale: 0.8,
                                 parallaxScrollingOffset: 250,
                             }}
-                            data={listNewBook}
+                            data={listRecomendByMajors}
                             renderItem={({ item }) => {
                                 return (
                                     <Pressable

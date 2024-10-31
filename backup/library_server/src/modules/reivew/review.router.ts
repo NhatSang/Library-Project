@@ -12,4 +12,4 @@ reviewRouter.get("/review", reviewController._getReviewByBookId);
 //query: bookId
 reviewRouter.get("/review-newest", reviewController._getReviewNewestByBookId);
 
-
+export default reviewRouter;

@@ -24,5 +24,5 @@ const bookSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Books = mongoose.model("Book2", bookSchema);
+const Books = mongoose.model("Book", bookSchema);
 export default Books;

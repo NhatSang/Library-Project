@@ -44,7 +44,7 @@ export const generateToken = async (id: string, payload: any) => {
     `accessToken_${id}`,
     accessToken,
     accessToken,
-    convertTime(3, TimeType.m)
+    convertTime(3, TimeType.d)
   );
   await redisService.hSet(
     `refreshToken_${id}`,

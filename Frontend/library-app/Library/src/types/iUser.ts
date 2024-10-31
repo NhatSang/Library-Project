@@ -2,7 +2,7 @@ export interface iUser {
     _id?: string;
     name: string;
     gender:eGender;
-    majors: iMajor;
+    majors: string;
     email: string;
     password: string;
     role: string;
@@ -20,10 +20,10 @@ export interface iUserReview {
     image?: string;
 }
 
-export interface iMajor {
-    _id: string;
-    name: string | undefined;
-}
+// export interface iMajor {
+//     _id: string;
+//     name: string | undefined;
+// }
 
 export enum eGender {
     nam = 'Male',

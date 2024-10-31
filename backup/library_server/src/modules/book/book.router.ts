@@ -13,4 +13,10 @@ bookRouter.get(
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   bookController.getrBookContentByPage
 );
+
+bookRouter.get(
+  "/book/get-by-majors-user",
+  authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
+  bookController.getBookByMajorsUserId
+);
 export default bookRouter;

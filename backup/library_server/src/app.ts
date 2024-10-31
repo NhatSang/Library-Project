@@ -21,6 +21,7 @@ import { Status } from "./modules/notification/types/notification.type";
 import {NotificationService} from "./modules/notification/notification.service";
 import {UserService} from "./modules/user/user.service";
 import Container from "typedi";
+import reviewRouter from "./modules/reivew/review.router";
 
 (async () => {
   const app = express();
@@ -51,6 +52,7 @@ import Container from "typedi";
   app.use("/api/v1", chapterRouter);
   app.use("/api/v1", bookRouter);
   app.use("/api/v1", notificationRouter);
+  app.use("/api/v1", reviewRouter);
   app.use(handleErrors);
   app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`);

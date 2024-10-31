@@ -3,6 +3,7 @@ import Books from "./model/book.model";
 import mongoose from "mongoose";
 import { Errors } from "../../helper/error";
 import { BookStatus } from "./types/book.type";
+import User from "../user/model/user.model";
 
 @Service()
 export class BookService {
@@ -28,5 +29,19 @@ export class BookService {
 
   async getAllBook() {
     return Books.find({ status: BookStatus.Published });
+  }
+
+  async getBookByMajorsUserId(userId:string) {
+    const user = await User.findOne({ _id: new mongoose.Types.ObjectId(userId) });
+    console.log(user.majors);
+    const books = await Books.find({ 
+      majors: user.majors,
+       status: BookStatus.Published
+       }).limit(10);
+    return books;
+  }
+  
+  async createBook(params: any) {
+    
   }
 }

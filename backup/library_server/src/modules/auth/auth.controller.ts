@@ -64,4 +64,13 @@ export class AuthController {
       next(error);
     }
   };
+
+  loginTemp = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.authService.loginTemp(req.body);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  }
 }

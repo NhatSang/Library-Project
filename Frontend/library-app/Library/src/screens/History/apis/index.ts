@@ -1,7 +1,7 @@
 import { api } from '../../../apis/configAPI';
 
 const _getHistoryByUser = async () => {
-    const url = `/get-history-by-user-id`;
+    const url = '/histories';
     return api.get(url);
 };
 

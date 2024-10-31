@@ -2,7 +2,7 @@ import {api, api2} from '../../../apis/config';
 
 
 const _getGenres = async () => {
-    return await api.get('/get-genres');
+    return await api.get('/genres');
 };
 
 const _getMajors = async () => {

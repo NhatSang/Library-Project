@@ -28,7 +28,7 @@ const HistoryScreen = ({ navigation }: any) => {
     const getHistory = async () => {
         try {
             const response = await _getHistoryByUser();
-            if (response.status) {
+            if (response.data) {
                 setHistory(response.data);
             }
         } catch (error) {
