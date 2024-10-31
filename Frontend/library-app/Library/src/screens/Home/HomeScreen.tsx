@@ -4,10 +4,11 @@ import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
 import { WIDTH } from '@constants/index';
 import { ScreenName } from '@constants/ScreenName';
+import notifee from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import { getUserLocalStorage } from '@utils/storage';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, BackHandler, FlatList, Image, ImageBackground, Pressable, ScrollView, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, Alert, BackHandler, Button, FlatList, Image, ImageBackground, Pressable, ScrollView, useColorScheme, View } from 'react-native';
 import { Badge } from 'react-native-paper';
 import Carousel from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -35,7 +36,7 @@ const HomeScreen = ({ navigation }: any) => {
             if (remoteMessage.data) {
                 getNotification();
             }
-            });
+        });
     }, []);
 
     const navigationToNotification = (notification_id: string) => {
@@ -154,6 +155,36 @@ const HomeScreen = ({ navigation }: any) => {
         } catch (error) {
             console.log('error', error);
         }
+    }
+    async function localDisplayNotification() {
+        // Create a channel
+        const channelId = await notifee.createChannel({
+            id: 'default',
+            name: 'Default Channel',
+            // importance: AndroidImportance.HIGH,
+        });
+
+        // Display a notification
+        notifee.displayNotification({
+            title:
+                '<p style="color: #4caf50;"><b>Styled HTMLTitle</span></p></b></p> &#128576;',
+            subtitle: '&#129395;',
+            body: 'The <p style="text-decoration: line-through">body can</p> also be <p style="color: #ffffff; background-color: #9c27b0"><i>styled too</i></p> &#127881;!',
+            android: {
+                channelId,
+                // color: '#4caf50',
+                // actions: [
+                //     {
+                //         title: '<b>Dance</b> &#128111;',
+                //         pressAction: { id: 'dance' },
+                //     },
+                //     {
+                //         title: '<p style="color: #f44336;"><b>Cry</b> &#128557;</p>',
+                //         pressAction: { id: 'cry' },
+                //     },
+                // ],
+            },
+        });
     }
 
     return (
