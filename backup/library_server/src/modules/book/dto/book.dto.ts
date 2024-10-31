@@ -1,4 +1,10 @@
-import { Exclude, Expose, plainToInstance, Transform } from "class-transformer";
+import {
+  Exclude,
+  Expose,
+  plainToInstance,
+  Transform,
+  Type,
+} from "class-transformer";
 
 export class BookTotalViewDTO {
   @Expose()
@@ -45,7 +51,15 @@ export class BookAvgRatingDTO {
     });
   }
 }
+class Content {
+  page: number;
+  content: string;
 
+  constructor(page: number, content: string) {
+    this.page = page;
+    this.content = content;
+  }
+}
 export class BookResponseDTO {
   @Expose()
   @Transform(({ obj }) => obj._id.toString())
@@ -57,17 +71,27 @@ export class BookResponseDTO {
   @Expose()
   pdfLink: string;
   @Expose()
+  @Transform(({ obj }) => obj.genre?.name || null)
   genre: string;
   @Expose()
   image: string;
   @Expose()
   pageNumber: number;
   @Expose()
-  majors: string;
+  @Transform(({ obj }) => obj.majors?.name || null)
+  majors: string | null;
+  @Type(() => Content)
+  contents: Content[];
   @Expose()
   summary: string;
   @Expose()
   yob: string;
   @Expose()
   publisher: string;
+
+  static transformBook(params: any | any[]) {
+    return plainToInstance(BookResponseDTO, params, {
+      excludeExtraneousValues: true,
+    });
+  }
 }

@@ -22,7 +22,9 @@ export const Errors = {
   unAuthorized: new ErrorCustom("Unauthorized", "unAuthorized", 401),
   forbidden: new ErrorCustom("Forbidden", "forbidden", 403),
   conflict: new ErrorCustom("Conflict", "conflict", 409),
+  notFound: new ErrorCustom("NotFound", "notFound", 404),
   userExists: new ErrorCustom("Người dùng đã tồn tại", "userExists", 409),
+
   userNotExists: new ErrorCustom(
     "Người dùng không tồn tại",
     "userNotExists",
@@ -46,6 +48,12 @@ export const Errors = {
     400
   ),
   expiredCode: new ErrorCustom("Mã xác nhận hết hạn", "expiredCode", 410),
+  bookNotExits: new ErrorCustom("Sách không tồn tại", "bookNotExits", 400),
+  ChapterNotExits: new ErrorCustom(
+    "Chương này không tồn tại",
+    "ChapterNotExits",
+    400
+  ),
 };
 export const handleErrors = (
   error: any,

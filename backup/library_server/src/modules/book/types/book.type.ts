@@ -1,4 +1,4 @@
 export enum BookStatus {
-  Deleted = "deleted",
-  Published = "published",
+  Deleted = 0,
+  Published = 1,
 }

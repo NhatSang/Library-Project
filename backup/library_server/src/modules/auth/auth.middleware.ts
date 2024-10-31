@@ -11,8 +11,11 @@ export class AuthMiddleware {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
         const authHeader = req.headers["authorization"];
+
         const token = authHeader && authHeader.split(" ")[1];
 
+        console.log(token);
+        
         if (!token) throw Errors.unAuthorized;
         const decoded = verifyAccessToken(token) as {
           id: number;

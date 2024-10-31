@@ -11,10 +11,13 @@ import genreRouter from "./modules/genre/genre.router";
 import { Queues } from "./helper/queue";
 import authRouter from "./modules/auth/auth.router";
 import majorsRouter from "./modules/majors/majors.router";
+import historyRouter from "./modules/history/history.router";
+import chapterRouter from "./modules/chapter/chapter.router";
+import bookRouter from "./modules/book/book.router";
 
 (async () => {
   const app = express();
-  const port = 6000;
+  const port = 6001;
   app.use(cors());
   app.use(express.json());
   await ConnectDB();
@@ -28,6 +31,9 @@ import majorsRouter from "./modules/majors/majors.router";
   app.use("/api/v1", genreRouter);
   app.use("/api/v1", authRouter);
   app.use("/api/v1", majorsRouter);
+  app.use("/api/v1", historyRouter);
+  app.use("/api/v1", chapterRouter);
+  app.use("/api/v1", bookRouter);
   app.use(handleErrors);
   app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`);

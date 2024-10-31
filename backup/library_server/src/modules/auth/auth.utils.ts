@@ -1,9 +1,10 @@
 import jwt from "jsonwebtoken";
-import { env } from "../../helper";
-
+import { convertTime, env, TimeType } from "../../helper";
 
 export const generateAccessToken = (payload: any) => {
-  return jwt.sign(payload, env.ACCESS_TOKEN_SECRET, { expiresIn: 120 });
+  return jwt.sign(payload, env.ACCESS_TOKEN_SECRET, {
+    expiresIn: convertTime(1, TimeType.h),
+  });
 };
 
 export const generateRefreshToken = (payload: any, experation: number) => {

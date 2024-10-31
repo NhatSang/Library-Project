@@ -7,10 +7,10 @@ import { HistoryStatus } from "./types/history.type";
 @Service()
 export class HistoryService {
   async createHistory(params: HistoryCreateDTO) {
-    const { book, chapter, page, user } = params;
+    const { book, chapter, page, userId } = params;
     const history = await Histories.findOneAndUpdate(
       {
-        user: new mongoose.Types.ObjectId(user),
+        user: new mongoose.Types.ObjectId(userId),
         book: new mongoose.Types.ObjectId(book),
       },
       { chapter: new mongoose.Types.ObjectId(chapter), page: page },

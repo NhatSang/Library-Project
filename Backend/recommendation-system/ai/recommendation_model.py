@@ -15,7 +15,7 @@ from bson import Binary
 from sklearn.metrics.pairwise import cosine_similarity
 # Tải các biến môi trường từ file .env
 load_dotenv()
-tfidf_vectorizer = TfidfVectorizer()
+
 # Kết nối tới MongoDB Atlas
 mongo_uri = os.getenv('MONGO_URI')
 client = MongoClient(mongo_uri)
@@ -30,7 +30,7 @@ book_data = list(book_collection.find())
 books_df = pd.DataFrame(book_data)
 
 genres_df = pd.DataFrame(list(genre_collection.find({},{'_id':1})))
-
+tfidf_vectorizer = TfidfVectorizer()
 label_encoder_genre = LabelEncoder()
 genres_df['Genre_encoded'] = label_encoder_genre.fit_transform(genres_df['_id'])
 books_df['Genre_encoded'] = label_encoder_genre.transform(books_df['genre'])

@@ -4,7 +4,7 @@ export class HistoryCreateDTO {
   @IsString()
   book: string;
   @IsString()
-  user: string;
+  userId: string;
   @IsString()
   chapter: string;
   @IsNumber()
