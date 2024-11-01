@@ -11,7 +11,7 @@ def home():
 @app.route('/update_model', methods=['POST'])
 def update_or_create_model():
     data = request.json
-    user_id = data.get('userId')
+    user_id = data.get('user_id')
 
     update_model(user_id)
     return jsonify({"message": "User model updated or created successfully!"}), 200
