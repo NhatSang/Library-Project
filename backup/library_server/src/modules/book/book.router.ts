@@ -19,4 +19,19 @@ bookRouter.get(
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   bookController.getBookByMajorsUserId
 );
+
+bookRouter.get(
+  "/book/get-newest",
+  bookController.getBookNewest
+);
+
+bookRouter.get(
+  "/book/get-top-rated",
+  bookController.getTopRatedBooks
+);
+
+bookRouter.get(
+  "/book/get-top-viewed",
+  bookController.getTopViewedBooks
+);
 export default bookRouter;

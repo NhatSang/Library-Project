@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const ListBooks = ({ title, data }) => {
   return (
     <div className="bg-white rounded-md p-3 shadow-md space-y-3 h-1/2">
-      <p>{title}</p>
+      <p className="font-bold text-2xl" >{title}</p>
       <div className="flex whitespace-nowrap overflow-auto space-x-3 h-full">
         {data?.map((d, index) => (
           <div className="h-full p-2 w-1/6 ">

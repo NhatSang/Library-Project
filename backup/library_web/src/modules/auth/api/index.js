@@ -24,3 +24,9 @@ export const register = async (user) => {
   const url = "/auth/register";
   return await axiosInstance.post(url, user);
 };
+
+export const loginTemp = async (email, password) => {
+  const url = "/auth/login-temp";
+  return await axiosInstance.post(url, { email, password });
+}
+
