@@ -37,4 +37,31 @@ export class BookController {
       next(error);
     }
   }
+
+  getBookNewest = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.bookservice.getBookNewest();
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getTopRatedBooks = async ( req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.bookservice.getTopRatedBooks();
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  getTopViewedBooks = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.bookservice.getTopViewedBooks();
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -4,7 +4,7 @@ import { Button, Form, Input, Flex } from "antd";
 import { IMAGES } from "../../constants";
 import { PiMicrosoftOutlookLogoFill } from "react-icons/pi";
 import { notification, Space } from "antd";
-import { login } from "./api";
+import { login, loginTemp } from "./api";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { openNotificationWithIcon } from "../../helper";
 import { MsalProvider, useMsal, useIsAuthenticated } from "@azure/msal-react";
@@ -20,7 +20,7 @@ const Login = () => {
 
   const onFinish = async (values) => {
     try {
-      const response = await login(values.username, values.password);
+      const response = await loginTemp(values.username, values.password);
       console.log(response);
 
       localStorage.setItem("user", JSON.stringify(response.data.user));

@@ -5,7 +5,8 @@ import { sampleData } from "../../constants";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import ListBooks from "./components/ListBooks";
-import { getHistories } from "./api";
+import { _getBookByMajorsUser, _getBookNewest, _getBookTopRated, _getBookTopViewed, getHistories } from "./api";
+import ListBooksCustom from "./components/ListBooksCustom";
 const { Meta } = Card;
 
 const contentStyle = {
@@ -17,30 +18,74 @@ const contentStyle = {
 };
 
 const Home = () => {
-  const [top10, setTop10] = useState(sampleData);
   const user = useSelector((state) => state.user.data);
   const [histories, setHistories] = useState([]);
+  const [booksByMajorsUser, setBooksByMajorsUser] = useState([]);
+  const [booksNewest, setBooksNewest] = useState([]);
+  const [booksTopRated, setBooksTopRated] = useState([]);
+  const [booksTopViewed, setBooksTopViewed] = useState([]);
 
   useEffect(() => {
     fetchHistories();
+    fetchBookByMajorsUser();
+    fetchBookNewest();
+    fetchBookTopRated();
+    fetchBookTopViewed();
   }, []);
 
   const fetchHistories = async () => {
     try {
       const response = await getHistories();
       setHistories(response.data);
-      console.log(response.data);
-      
     } catch (error) {
       console.log(error);
     }
   };
 
+  const fetchBookByMajorsUser = async () => {
+    try {
+      const response = await _getBookByMajorsUser();
+      setBooksByMajorsUser(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const fetchBookNewest = async () => {
+    try {
+      const response = await _getBookNewest();
+      console.log(response.data);
+      setBooksNewest(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const fetchBookTopRated = async () => {
+    try {
+      const response = await _getBookTopRated();
+      setBooksTopRated(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const fetchBookTopViewed = async () => {
+    try {
+      const response = await _getBookTopViewed();
+      setBooksTopViewed(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+
   return (
     <div className="w-full px-5 py-2 space-y-3">
       <div className="w-full ">
         <Carousel autoplay>
-          {top10.map((b, index) => (
+          {booksNewest.map((b, index) => (
             <Link
               key={index}
               to={"/book"}
@@ -73,9 +118,9 @@ const Home = () => {
         </Carousel>
       </div>
       <ListBooks title={"Lịch sử"} data={histories} />
-      <ListBooks title={"Đề xuất từ người dùng tương tự"} data={[]} />
-      <ListBooks title={"Có thể bạn sẽ thích"} data={[]} />
-      <ListBooks title={"Những sách tương tự bạn đã xem"} data={[]} />
+      <ListBooksCustom title={"Đề xuất theo chuyên ngành"} data={booksByMajorsUser} type={1}  />
+      <ListBooksCustom title={"Top sách đánh giá cao"} data={booksTopRated} type={2} />
+      <ListBooksCustom title={"Top sách có lượt đọc cao"} data={booksTopViewed} type={3}  />
     </div>
   );
 };
