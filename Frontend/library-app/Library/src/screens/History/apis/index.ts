@@ -5,4 +5,15 @@ const _getHistoryByUser = async () => {
     return api.get(url);
 };
 
-export { _getHistoryByUser };
+export type iCreateHistory = {
+    book: string,
+    chapter: string,
+    page: number,
+};
+
+const _createHistory = async (data: iCreateHistory) => {
+    const url = '/history';
+    return api.post(url, data);
+};
+
+export { _createHistory, _getHistoryByUser };

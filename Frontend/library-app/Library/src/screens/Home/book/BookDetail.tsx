@@ -7,6 +7,7 @@ import { globalColor } from '@constants/globalColor'
 import { isAndroid } from '@constants/index'
 import { ScreenName } from '@constants/ScreenName'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { _createHistory, iCreateHistory } from '@screens/History/apis'
 import { getUserLocalStorage } from '@utils/storage'
 import React, { useEffect, useState } from 'react'
 import { FlatList, Image, Pressable, View } from 'react-native'
@@ -18,7 +19,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Feather from 'react-native-vector-icons/Feather'
 import { iBook } from 'src/types/iBook'
 import { IReview } from 'src/types/iReview'
-import { _createHistory, _getReviewNewest, _updateModel } from '../apis'
+import { _getReviewNewest } from '../apis'
 
 
 const BookDetail = ({ navigation, route }: any) => {
@@ -93,6 +94,7 @@ const BookDetail = ({ navigation, route }: any) => {
         try {
             const response = await _getReviewNewest(book._id);
             if (response.data) {
+                console.log('response review newest: ', response.data);
                 setReviews(response.data);
             }
         } catch (error) {
@@ -129,9 +131,14 @@ const BookDetail = ({ navigation, route }: any) => {
             }
         } else {
             try {
-                const response = await _createHistory({ book: book._id });
-                if (response.status) {
-                    await _updateModel('6708c0e4e4d8b3aef5c1ac10')
+                const data: iCreateHistory = {
+                    book: book._id,
+                    chapter: '',
+                    page: 1
+                }
+                const response = await _createHistory(data);
+                if (response.data) {
+                    // await _updateModel('6708c0e4e4d8b3aef5c1ac10')
                 }
             } catch (error) {
                 console.log('Error create history: ', error);
@@ -228,14 +235,14 @@ const BookDetail = ({ navigation, route }: any) => {
                                             <View className='flex-row justify-between '>
                                                 <View className='flex-row'>
                                                     <View className='w-9 h-9 rounded-full border border-red-500 justify-center items-center'>
-                                                        <Image source={{ uri: item.user.image }} className='w-8 h-8' />
+                                                        <Image source={{ uri: item?.user?.image }} className='w-8 h-8' />
                                                     </View>
                                                     <View className='pl-3'>
                                                         <AppText text={
-                                                            getName(item.user._id)
+                                                            getName(item.user?._id)
                                                         } font={fontFamilies.robotoBold} />
                                                         <View>
-                                                            <Rate rating={item.rating} />
+                                                            <Rate rating={item?.rating} />
                                                         </View>
                                                     </View>
                                                 </View>

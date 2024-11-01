@@ -71,7 +71,7 @@ export class NotificationController {
 
     _markAsRead = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const result = await this.notificationService.markAsRead(req.body.userId, req.query.id as string);
+            const result = await this.notificationService.markAsRead(req.body.userId, req.body.id as string);
             res.send(new ResponseCustom(result));
         } catch (error) {
             console.log(error);

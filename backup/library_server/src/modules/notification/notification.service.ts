@@ -43,9 +43,11 @@ export class NotificationService {
     }
 
     async getNotificationById(id:string){
+        console.log(id);
         const notification = await Notification.findOne({_id:id});
         const bookids = notification.data;
         const books = await Books.find({_id:{$in:bookids}});
+
         return books;
     }
 

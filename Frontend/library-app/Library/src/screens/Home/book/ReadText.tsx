@@ -6,6 +6,7 @@ import { globalColor } from '@constants/globalColor';
 import { listColorNote } from '@constants/index';
 import { ScreenName } from '@constants/ScreenName';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { _createHistory } from '@screens/History/apis';
 import React, { useEffect, useState } from 'react';
 import { AppState, FlatList, Modal, Pressable, useColorScheme, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,7 +18,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { INote } from 'src/types/iNote';
 import { defaultListChapter, IChapter } from '../../../types/iChapter';
-import { _createHistory, _createNote, _deleteNote, _getChapterByIdBook, _getHistoryByBookIdAndUser, _getNoteByBookId } from '../apis';
+import { _createNote, _deleteNote, _getChapterByIdBook, _getHistoryByBookIdAndUser, _getNoteByBookId } from '../apis';
 
 
 const ReadText = ({ navigation, route }: any) => {
@@ -84,7 +85,7 @@ const ReadText = ({ navigation, route }: any) => {
         const data = {
             book: id,
             page: page,
-            chapter: chapter.find((item) => Number(item.startPage) <= page)?._id,
+            chapter: chapter.find((item) => Number(item.startPage) <= page)?._id || '',
         }
         try {
             const response = await _createHistory(data);

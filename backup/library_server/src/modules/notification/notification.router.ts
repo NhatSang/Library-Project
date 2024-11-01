@@ -22,7 +22,7 @@ notificationRouter.get("/user/notifications",
      authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
      notificationController._getNotificationByUser);
 //query: id
-notificationRouter.get("/notification/mark-as-read",
+notificationRouter.post("/notification/mark-as-read",
         authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
         notificationController._markAsRead);
 

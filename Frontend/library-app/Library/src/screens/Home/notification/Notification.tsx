@@ -15,8 +15,12 @@ const Notification = ({ navigation }: any) => {
     const [notifications, setNotifications] = useState<any[]>([]);
 
     useEffect(() => {
-        getNotification();
-    }, []);
+        const unsubscribe = navigation.addListener('focus', () => {
+            getNotification();
+        }
+        );
+        return unsubscribe;
+    }, [navigation]);
 
     const getNotification = async () => {
         try {
@@ -53,7 +57,7 @@ const Notification = ({ navigation }: any) => {
                                     return (
                                         <Pressable
                                             onPress={() => {
-                                                navigation.navigate(ScreenName.NotificationDetail, { notification_id: item.notification })
+                                                navigation.navigate(ScreenName.NotificationDetail, { notification_id: item.notification._id })
                                             }}
                                             className='px-5'>
                                             <View className={`px-8 py-2 h-20 flex-row border border-gray-300 mt-2 rounded-xl ${item.isRead == false ? 'bg-green-200' : ''}`}>
