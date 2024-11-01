@@ -23,11 +23,12 @@ const NotificationDetail = ({ navigation, route }: any) => {
         try {
             await _markAsRead(notification_id);
             const response = await _getNotificationById(notification_id);
+            console.log('response', response);
             if (response.data) {
                 setNotificationDetail(response.data);
             }
         } catch (error) {
-            console.log('error', error);
+            console.log('error2', error);
         }
     }
 

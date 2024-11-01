@@ -13,7 +13,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { iBook } from 'src/types/iBook';
-import { _getAllBook2, _getBooksByMajorsUser, _getBooksByMayjors, _getNotificationByUser, _getRecomendBoook } from './apis';
+import { _getAllBook2, _getBookNewest, _getBooksByMajorsUser, _getBookTopView, _getNotificationByUser, _getRecomendBoook } from './apis';
 
 
 const HomeScreen = ({ navigation }: any) => {
@@ -21,6 +21,7 @@ const HomeScreen = ({ navigation }: any) => {
     const [listNewBook, setListNewBook] = useState<iBook[]>([]);
     const [listRecommendBook, setListRecommendBook] = useState<iBook[]>([]);
     const [listRecomendByMajors, setListRecomendByMajors] = useState<iBook[]>([]);
+    const [listBookTopView, setListBookTopView] = useState<iBook[]>([]);
     const [listBook2, setListBook2] = useState<iBook[]>([]);
     const [loadImage, setLoadImage] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -46,7 +47,8 @@ const HomeScreen = ({ navigation }: any) => {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            // getNewestBooks();
+            getNewestBooks();
+            getBookTopView();
             // getRecommendBook();
             getRecommendBookByMajors();
             getNotification();
@@ -123,13 +125,19 @@ const HomeScreen = ({ navigation }: any) => {
         setLoading(true);
         setLoadImage(true);
         try {
-            const user: any = await getUserLocalStorage();
-            if (user) {
-                const response = await _getBooksByMayjors(user.majors);
-                if (response.status) {
-                    setListNewBook(response.data);
-                    setLoadImage(false);
-                }
+            const response = await _getBookNewest();
+            if (response.data) {
+                setListNewBook(response.data);
+            }
+        } catch (error) {
+            console.log('error', error);
+        }
+    }
+    const getBookTopView = async () => {
+        try {
+            const response = await _getBookTopView();
+            if (response.data) {
+                setListBookTopView(response.data);
             }
         } catch (error) {
             console.log('error', error);
@@ -274,7 +282,7 @@ const HomeScreen = ({ navigation }: any) => {
                             listNewBook.length > 0 && (
                                 <>
                                     <View className='py-2'>
-                                        <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý theo người dùng chung ngành' />
+                                        <AppText size={20} font={fontFamilies.robotoBold} text='Sách mới nhất' />
                                     </View>
                                     <FlatList
                                         data={listNewBook}
@@ -314,6 +322,43 @@ const HomeScreen = ({ navigation }: any) => {
                                             </Pressable>
                                         )}
                                         keyExtractor={(item, index) => index.toString()}
+                                    />
+                                </>
+                            )
+                        }
+                        {
+                            listBookTopView.length > 0 && (
+                                <>
+                                    <View className='py-2'>
+                                        <AppText size={20} font={fontFamilies.robotoBold} text='Sách có lượt đọc cao nhất' />
+                                    </View>
+                                    <FlatList
+                                        showsHorizontalScrollIndicator={false}
+                                        data={listBookTopView}
+                                        renderItem={({ item }) => {
+                                            return (
+                                                <Pressable
+                                                    onPress={() => navigation.navigate(ScreenName.BookDetail, { item })}
+                                                    className="px-3 mx-1 py-2 rounded-md bg-white">
+                                                    {
+                                                        loadImage ? (
+                                                            <View className="w-36 h-44 rounded-md justify-center items-center">
+                                                                <ActivityIndicator size="large" color={globalColor.primary} />
+                                                            </View>
+                                                        ) : (
+                                                            <Image resizeMode='stretch' source={{ uri: item.image }} className="w-36 h-44 rounded-md" />
+                                                        )
+                                                    }
+                                                    <View className="w-32 justify-center items-center pt-2">
+                                                        <AppText center numberOfLines={2} size={14} font={fontFamilies.robotoBold} text={item.title} />
+                                                        <AppText numberOfLines={1} size={11} text={item.author} />
+                                                    </View>
+                                                </Pressable>
+
+                                            )
+                                        }}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        horizontal
                                     />
                                 </>
                             )

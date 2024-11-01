@@ -365,6 +365,7 @@ export const getBookById = async (req, res) => {
 export const searchBooksByName = async (req,res) => {
   try {
     const searchString = req.query.searchString;
+    console.log(searchString);
     const books = await searchBooks(searchString);
     return res.status(200).json({
       status: true,

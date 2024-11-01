@@ -20,9 +20,8 @@ const SearchScreen = ({ navigation }: any) => {
         debounce(async (text: string) => {
             try {
                 const response = await _searchBook(text);
-                console.log(response);
                 if (response.status) {
-                    setSearchResult(response.data);
+                    setSearchResult(response.data.data);
                 }
             } catch (error) {
                 console.log(error);
@@ -70,6 +69,7 @@ const SearchScreen = ({ navigation }: any) => {
                     renderItem={({ item }: { item: iBook }) => {
                         return (
                             <Pressable
+                                key={item._id}
                                 onPress={() => navigation.navigate(ScreenName.BookDetail, { item })}
                                 className="flex-row items-center mx-2 p-3 bg-white rounded-md shadow-md w-72 h-36"
                             >

@@ -30,7 +30,7 @@ const ListentText = ({ navigation, route }: any) => {
     const [sentences, setSentences] = useState<string[]>([]);
     const [renderTrigger, setRenderTrigger] = useState(0);
     const flatListRef = useRef<FlatList>(null);
-    const [isPlaying, setIsPlaying] = useState<boolean>(true);
+    const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const [chapter, setChapter] = useState<IChapter[]>([]);
     const speechRates = [
         { id: 0.1, label: 'x0.5', value: 0.1 },
@@ -103,7 +103,7 @@ const ListentText = ({ navigation, route }: any) => {
         const finishListener = Tts.addListener('tts-finish', onTtsFinish);
         if (sentences.length > 0) {
             Tts.speak(sentences[0]);
-            startReading();
+            // startReading();
             scrollToIndex(1);
         }
 
@@ -125,13 +125,13 @@ const ListentText = ({ navigation, route }: any) => {
     const getContent = async () => {
         const res: any = await _getBookContentBypage(bookId, currentPage.current);
         if (res.status) {
-            pages.current = res.data.pages;
-            const a = splitIntoSentences(res.data.content.content);
+            pages.current = res.data.data.pages;
+            const a = splitIntoSentences(res.data.data.content.content);
             if (a.length === 0) {
                 console.log('Page is empty');
                 nextPage();
             }
-            const content = res.data.content.content;
+            const content = res.data.data.content.content;
             setSentences(splitIntoSentences(content));
         }
     };
@@ -179,8 +179,8 @@ const ListentText = ({ navigation, route }: any) => {
     const getChapterByIdBook = async () => {
         try {
             const response = await _getChapterByIdBook(bookId);
-            if (response.status) {
-                setChapter(response.data);
+            if (response.data) {
+                setChapter(response.data.data);
             }
         } catch (error) {
             console.log('Error getChapterByIdBook: ', error);
@@ -282,8 +282,16 @@ const ListentText = ({ navigation, route }: any) => {
             onPress={() => {
                 currentPage.current = item.startPage + 1;
                 console.log('currentPage.current', currentPage.current);
+                Tts.stop();
+                isPaused.current = false;
+                currentPage.current -= 1;
+                currentSentenceIndex.current = 0;
+                renderIndex.current = 0;
+                setRenderTrigger((prev) => prev + 1);
                 getContent();
+
                 setModalVisible(false);
+
             }}>
             <AppText font={fontFamilies.robotoBold} text={item.title} />
             <AppText text={item.startPage} />

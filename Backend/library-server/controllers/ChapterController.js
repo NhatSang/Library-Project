@@ -3,6 +3,7 @@ import Chapter from "../models/Chapter.js";
 export const getChapterByBookId = async (req, res) => {
     try {
         const bookId = req.query.bookId;
+        console.log(bookId);
         const chapters = await Chapter.find({ book: bookId });
         return res.status(200).json({
             status:true,

@@ -7,7 +7,7 @@ const _getNewestBooks = async () => {
 
 const _getChapterByIdBook = async (id: string) => {
     const url = '/get-chapter-by-book-id';
-    return api.get(url, {
+    return api2.get(url, {
         params: {
             bookId: id,
         },
@@ -60,14 +60,14 @@ const _deleteNote = async (id: string) => {
     });
 };
 
-const _createHistory = async (data: any) => {
-    const url = '/create-history';
-    return api.post(url, data);
-};
+// const _createHistory = async (data: any) => {
+//     const url = '/create-history';
+//     return api.post(url, data);
+// };
 
 const _getHistoryByBookIdAndUser = async (bookId: string) => {
     const url = '/get-history-by-book-id-and-user';
-    return api.get(url, {
+    return api2.get(url, {
         params: {
             bookId,
         },
@@ -106,7 +106,7 @@ const _getAllBook2 = async () => {
 
 const _getBookContentBypage = async (id: string, page: number) => {
     const url = '/get-book-content-by-page';
-    return api.get(url, {
+    return api2.get(url, {
         params: {
             bookId: id,
             page,
@@ -125,7 +125,7 @@ const _getSummaryByBookId = async (id: string) => {
 
 const _searchBook = async (stringName: any) => {
     const url = '/search-book';
-    return api.get(url, {
+    return api2.get(url, {
         params: {
             searchString: stringName,
         },
@@ -138,6 +138,7 @@ const _getNotificationByUser = async () => {
 };
 
 const _getNotificationById = async (id: string) => {
+    console.log('id', id);
     const url = '/notification';
     return api.get(url, {
         params: {
@@ -151,6 +152,16 @@ const _getBooksByMajorsUser = () => {
     return api.get(url);
 };
 
+const _getBookNewest = async () => {
+    const url = '/book/get-newest';
+    return api.get(url);
+};
+
+const _getBookTopView = async () => {
+    const url = '/book/get-top-viewed';
+    return api.get(url);
+};
+
 const _markAsRead = async (id: string) => {
     const url = '/notification/mark-as-read';
     return api.post(url, {
@@ -159,15 +170,16 @@ const _markAsRead = async (id: string) => {
 };
 
 export {
-    _createHistory,
     _createNote,
     _createReview,
     _deleteNote,
     _getAllBook2,
     _getAllReviewByBookId,
     _getBookContentBypage,
+    _getBookNewest,
     _getBooksByMajorsUser,
     _getBooksByMayjors,
+    _getBookTopView,
     _getChapterByIdBook,
     _getHistoryByBookIdAndUser,
     _getNewestBooks,
