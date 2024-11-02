@@ -188,6 +188,7 @@ const ListentText = ({ navigation, route }: any) => {
     }
 
     const nextIndexSentence = () => {
+        Tts.stop();
         if (currentSentenceIndex.current < sentences.length - 1) {
             currentSentenceIndex.current += 1;
             renderIndex.current = currentSentenceIndex.current;
@@ -197,6 +198,7 @@ const ListentText = ({ navigation, route }: any) => {
     }
 
     const prevIndexSentence = () => {
+        Tts.stop();
         if (currentSentenceIndex.current > 0) {
             currentSentenceIndex.current -= 1;
             renderIndex.current = currentSentenceIndex.current;

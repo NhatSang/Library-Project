@@ -1,4 +1,4 @@
-import { api, api2 } from '../../../apis/configAPI';
+import { api, api2, api3 } from '../../../apis/configAPI';
 
 const _getNewestBooks = async () => {
     const url = `/get-newest-books`;
@@ -169,6 +169,11 @@ const _markAsRead = async (id: string) => {
     });
 };
 
+const _getBooksAI = async (id: string) => {
+    const url = `/recommend/recommend_books_rating/${id}`;
+    return api3.get(url);
+};
+
 export {
     _createNote,
     _createReview,
@@ -177,6 +182,7 @@ export {
     _getAllReviewByBookId,
     _getBookContentBypage,
     _getBookNewest,
+    _getBooksAI,
     _getBooksByMajorsUser,
     _getBooksByMayjors,
     _getBookTopView,
