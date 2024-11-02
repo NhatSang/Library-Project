@@ -6,13 +6,15 @@ import mongoose from "mongoose";
 export class ReviewService {
 
     async checkReviewExist(book: string, user: string) {
-        const review = await Reviews.findOne({ book: new mongoose.Types.ObjectId(book), user: new mongoose.Types.ObjectId(user) });
+        const review = await Reviews.findOne({ book: book, user: user });
         return review;
     }
 
     async createReview(params: any) {
-        const { book, user, content, rating } = params;
-        const reviewExist = await this.checkReviewExist(book, user);
+        const { book, userId, content, rating } = params;
+        console.log(params);
+        const reviewExist = await this.checkReviewExist(book, userId);
+        console.log(reviewExist);
         if(reviewExist) {
             reviewExist.content = content;
             reviewExist.rating = rating;
@@ -21,7 +23,7 @@ export class ReviewService {
         }
         const review = await Reviews.create({
             book: new mongoose.Types.ObjectId(book),
-            user: new mongoose.Types.ObjectId(user),
+            user: new mongoose.Types.ObjectId(userId),
             content,
             rating,
         });
@@ -30,8 +32,9 @@ export class ReviewService {
 
     async getReviewByBookId(book: string) {
         console.log(book);
-        return await Reviews.find({ book: new mongoose.Types.ObjectId(book) })
+        const review = await Reviews.find({ book: new mongoose.Types.ObjectId(book) })
         .populate("user","_id name image");
+        return review;
     }
 
     async getReviewNewestByBookId(book: string) {

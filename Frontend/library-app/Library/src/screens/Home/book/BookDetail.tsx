@@ -93,8 +93,8 @@ const BookDetail = ({ navigation, route }: any) => {
     const getReviewNewest = async () => {
         try {
             const response = await _getReviewNewest(book._id);
+            console.log('response: ', response.data);
             if (response.data) {
-                console.log('response review newest: ', response.data);
                 setReviews(response.data);
             }
         } catch (error) {
@@ -102,11 +102,12 @@ const BookDetail = ({ navigation, route }: any) => {
         }
     };
 
+
     const getName = (id: string) => {
         if (id === userId) {
             return 'Bạn';
         }
-        return reviews.find((item) => item.user._id === id)?.user.name;
+        return reviews.find((item) => item?.user?._id === id)?.user?.name;
     }
 
     const downloadPDF = async (url: string) => {
@@ -239,7 +240,7 @@ const BookDetail = ({ navigation, route }: any) => {
                                                     </View>
                                                     <View className='pl-3'>
                                                         <AppText text={
-                                                            getName(item.user?._id)
+                                                            getName(item?.user?._id)
                                                         } font={fontFamilies.robotoBold} />
                                                         <View>
                                                             <Rate rating={item?.rating} />
@@ -248,7 +249,7 @@ const BookDetail = ({ navigation, route }: any) => {
                                                 </View>
                                                 <View>
                                                     <AppText text={
-                                                        new Date(item.createdAt).toLocaleDateString('vi-VN', {
+                                                        new Date(item?.createdAt).toLocaleDateString('vi-VN', {
                                                             year: 'numeric',
                                                             month: 'numeric',
                                                             day: 'numeric',

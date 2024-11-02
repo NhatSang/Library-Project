@@ -13,7 +13,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { iBook } from 'src/types/iBook';
-import { _getAllBook2, _getBookNewest, _getBooksByMajorsUser, _getBookTopView, _getNotificationByUser, _getRecomendBoook } from './apis';
+import { _getAllBook2, _getBookNewest, _getBooksAI, _getBooksByMajorsUser, _getBookTopView, _getNotificationByUser, _getRecomendBoook } from './apis';
 
 
 const HomeScreen = ({ navigation }: any) => {
@@ -27,6 +27,7 @@ const HomeScreen = ({ navigation }: any) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [notifications, setNotifications] = useState<any>(null);
     const [user, setUser] = useState<any>();
+    const [booksAI, setBooksAI] = useState<iBook[]>([]);
 
     useEffect(() => {
         messaging().getInitialNotification().then(async (remoteMessage: any) => {
@@ -47,6 +48,7 @@ const HomeScreen = ({ navigation }: any) => {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
+            getBookAI();
             getNewestBooks();
             getBookTopView();
             // getRecommendBook();
@@ -95,6 +97,19 @@ const HomeScreen = ({ navigation }: any) => {
     const getMe = async () => {
         const user = await getUserLocalStorage();
         setUser(user);
+    }
+
+    const getBookAI = async () => {
+        try {
+            const user = await getUserLocalStorage();
+            if (user) {
+                const response: any = await _getBooksAI(user._id);
+                setBooksAI(response.data);
+            }
+        } catch (error) {
+            console.log('error', error);
+
+        }
     }
 
     const getBook2 = async () => {
@@ -238,14 +253,14 @@ const HomeScreen = ({ navigation }: any) => {
                     </View>
                     <View className='py-4'>
                         {
-                            listRecommendBook.length > 0 && (
+                            booksAI.length > 0 && (
                                 <>
                                     <View className='py-2'>
                                         <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý dành riêng cho bạn' />
                                     </View>
                                     <FlatList
                                         showsHorizontalScrollIndicator={false}
-                                        data={listRecommendBook}
+                                        data={booksAI}
                                         renderItem={({ item }) => {
                                             return (
                                                 <Pressable

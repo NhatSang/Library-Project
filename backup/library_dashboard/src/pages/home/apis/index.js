@@ -47,7 +47,7 @@ export const _getSummary = async (startDate, endDate, genreId) => {
 export const _getGenres = async () => {
     try {
         const resListGenres = await api.get(
-        "/get-genres"
+        "/genres"
         );
         return resListGenres;
     } catch (error) {
