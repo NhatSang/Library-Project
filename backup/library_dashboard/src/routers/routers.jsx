@@ -21,6 +21,7 @@ const Notifications = React.lazy(() => import('../pages/notification/Notificatio
 const AddNotification = React.lazy(() => import('../pages/notification/AddNotification'))
 
 
+
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Tổng quan', element: Dashboard },

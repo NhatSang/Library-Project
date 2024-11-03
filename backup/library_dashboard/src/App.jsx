@@ -13,6 +13,34 @@ const Login = React.lazy(() => import('./pages/login/Login'))
 const Page404 = React.lazy(() => import('./pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./pages/page500/Page500'))
 
+// Dashboard
+const Dashboard = React.lazy(() => import('./pages/dashboard/Dashboard'))
+
+// Users
+const Users = React.lazy(() => import('./pages/user/Users'))
+const StatisticUser = React.lazy(() => import('./pages/user/StatisticUser'))
+
+// Books
+const Books = React.lazy(() => import('./pages/book/Books'))
+
+const AddBook = React.lazy(() => import('./pages/book/AddBook'))
+const AddChapter = React.lazy(() => import('./pages/book/AddChapter'))
+const EditBook = React.lazy(() => import('./pages/book/EditBook'))
+const StatisticBook = React.lazy(() => import('./pages/book/StatisticBook'))
+
+// Genres
+const Genres = React.lazy(() => import('./pages/genre/Genres'))
+const AddGenre = React.lazy(() => import('./pages/genre/AddGenre'))
+
+// Majors
+const Majors = React.lazy(() => import('./pages/majors/Majors'))
+const AddMajor = React.lazy(() => import('./pages/majors/AddMajors'))
+
+// Notifications
+const Notifications = React.lazy(() => import('./pages/notification/Notifications'))
+const AddNotification = React.lazy(() => import('./pages/notification/AddNotification'))
+
+
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
   const storedTheme = useSelector((state) => state.theme)
@@ -44,7 +72,26 @@ const App = () => {
           <Route exact path="/login" name="Login Page" element={<Login />} />
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
           <Route exact path="/500" name="Page 500" element={<Page500 />} />
-          <Route path="*" name="Home" element={<DefaultLayout />} />
+
+          <Route path="/" element={<DefaultLayout />}>
+            <Route index element={<Dashboard />} /> 
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="users/list" element={<Users />} />
+            <Route path="users/statistic" element={<StatisticUser />} />
+            <Route path="books/list" element={<Books />} />
+            <Route path="books/add" element={<AddBook />} />
+            <Route path="books/add-chapter" element={<AddChapter />} />
+            <Route path="books/edit" element={<EditBook />} />
+            <Route path="books/statistic" element={<StatisticBook />} />
+            <Route path="genres/list" element={<Genres />} />
+            <Route path="genres/add" element={<AddGenre />} />
+            <Route path="majors/list" element={<Majors />} />
+            <Route path="majors/add" element={<AddMajor />} />
+            <Route path="notifications/list" element={<Notifications />} />
+            <Route path="notifications/add" element={<AddNotification />} />
+          </Route>  
+
+          <Route path="*" element={<Page404 />} />
         </Routes>
       </Suspense>
     </HashRouter>
