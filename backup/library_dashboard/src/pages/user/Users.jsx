@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { _banUser, _getUsers } from "./apis";
-import { Pagination, Search, TableUsers } from "../../components";
-import { Button, Space, Table } from 'antd';
+import { Button, Col, ConfigProvider, Pagination, Space, Table } from 'antd';
+import { CCol, CRow, useColorModes } from "@coreui/react";
+import Search from "antd/es/input/Search";
+import { formatDate } from "../../utils";
+import viVN from 'antd/lib/locale/vi_VN';
+
 
 
 
 const Users = () => {
   const [users,setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({});
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
@@ -31,12 +36,13 @@ const Users = () => {
       title:'Ngày sinh',
       dataIndex: 'dob',
       key: 'dob',
-      render: (value) => new Date(value).toLocaleString(),
+      render: (value) => formatDate(value),
     },
     {
       title:'Giới tính',
       dataIndex:'gender',
       key:'gender',
+      render: (value) => value === 'Male' ? 'Nam' : 'Nữ',
     },
     {
       title:"Email",
@@ -44,7 +50,7 @@ const Users = () => {
       key:'email',
     },
     {
-      title:"Action",
+      title:"Xử lý",
       render: (value, item) => (
         <Space>
           {item.status === "active" ? (
@@ -63,15 +69,17 @@ const Users = () => {
   ]
   
   useEffect(() => {
-    fetchUser(page, 10, keyword);
+    fetchUser(page, 5, keyword);
   }, [page,keyword]);
 
   const fetchUser = async (page, limit, keyword) => {
+    setLoading(true);
     const response = await _getUsers(page, limit, keyword);
     if(!response.error){
       setUsers(response.data);
-      console.log(response.data[0]);
+      console.log(response);
       setPagination(response.pagination);
+      setLoading(false);
     }
   };
 
@@ -85,22 +93,38 @@ const Users = () => {
     }));
   };
 
+  const handlePageChange = (page) => {
+    setPage(page);
+  }
+
+  
+
   const handleSearch = async (keyword) => {
     setKeyword(keyword);
   };
   return (
-    <div className="m-2 space-y-2 flex flex-col items-center">
-      <div className="w-full">
-        <Search
-          placeholder={"Search by name or code"}
-          handleSearch={handleSearch}
-        />
-      </div>
-      <div className="w-full">
-      <Table dataSource={users} columns={columns} pagination={false}  bordered/>
-      </div>
-      <Pagination pagination={pagination} setPage={setPage} />
-    </div>
+    <CRow>
+      <CCol xs>
+        <CCol style={{padding:20}}>
+        <Search placeholder="Nhập từ khóa" onChange={(e) => handleSearch(e.target.value)} />
+        </CCol>
+        <Table title={()=>{
+          return (
+            <Col>
+              <h3>Danh sách người dùng</h3>
+            </Col>
+          )
+        }} 
+        loading={loading} bordered  dataSource={users} columns={columns} pagination={false} />
+
+        <CCol xs={12} md={12} style={{marginTop:20,marginBottom:10,justifyContent:'center',alignItems:'center'}}>
+        <ConfigProvider locale={viVN}>  
+        <Pagination showQuickJumper defaultCurrent={pagination.page} total={pagination.total} onChange={handlePageChange} />
+        </ConfigProvider>
+        </CCol>
+
+      </CCol>
+    </CRow>
   );
 };
 

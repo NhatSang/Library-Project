@@ -1,7 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, message } from "antd";
+import { CButton, CForm, CFormInput, CFormSelect, CCol, CRow, CCard, CCardBody, CSpinner } from '@coreui/react';
+import { message, Spin } from "antd"; // Keep Ant Design message for notifications
 import { Link, useNavigate } from "react-router-dom";
 import { _createBook, _getGenres, _getMajors } from "./apis";
+import { Loading } from "../../components";
+
+const LoadingOverlay = ({ loading }) => {
+  if (!loading) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+      <CSpinner size="lg" />
+    </div>
+  );
+};
 
 const AddBook = () => {
   const navigate = useNavigate();
@@ -10,11 +22,12 @@ const AddBook = () => {
   const [formData, setFormData] = useState({
     title: "",
     author: "",
-    genre: "", // Chỉ lưu ID của genre
-    majors: "", // Chỉ lưu ID của majors
+    genre: "",
+    majors: "",
   });
   const [selectedPdfFile, setSelectedPdfFile] = useState(null);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [loading, setLoading] = useState(false); // Loading state
 
   useEffect(() => {
     getGenres();
@@ -55,11 +68,11 @@ const AddBook = () => {
   };
 
   const handleGenreChange = (value) => {
-    setFormData((prev) => ({ ...prev, genre: value })); // Chỉ lưu ID genre
+    setFormData((prev) => ({ ...prev, genre: value }));
   };
 
   const handleMajorChange = (value) => {
-    setFormData((prev) => ({ ...prev, majors: value })); // Chỉ lưu ID majors
+    setFormData((prev) => ({ ...prev, majors: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -77,11 +90,12 @@ const AddBook = () => {
     data.append("pdf", selectedPdfFile);
     data.append("image", selectedImageFile); 
 
+    setLoading(true); // Set loading state to true
     try {
       const response = await _createBook(data);
       console.log(response.message);
       console.log(response.data._id);
-      if (response.message == "add_chapter") {
+      if (response.message === "add_chapter") {
         navigate("/books/add-chapter", {
           state: {
             data: {
@@ -105,119 +119,140 @@ const AddBook = () => {
       }
     } catch (error) {
       message.error(error.message);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-md shadow-md mt-8">
-      <div className="flex items-center justify-between mb-6">
-        <Link to="/books" className="text-blue-500 hover:underline">
-          Quay lại
-        </Link>
-        <h2 className="text-2xl font-semibold text-gray-700">Thêm Sách Mới</h2>
-      </div>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Tiêu đề sách</label>
-          <Input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            placeholder="Nhập tiêu đề sách"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Tác giả</label>
-          <Input
-            type="text"
-            name="author"
-            value={formData.author}
-            onChange={handleInputChange}
-            placeholder="Nhập tên tác giả"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">PDF File:</label>
-          <input
-            type="file"
-            accept="application/pdf"
-            onChange={handleFilePdfChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Thể loại</label>
-          <select
-            name="genre"
-            value={formData.genre}
-            onChange={(e) => handleGenreChange(e.target.value)}
-            className="mt-1 w-full"
-            required
-          >
-            <option value="" disabled>
-              Chọn thể loại
-            </option>
-            {genres.map((genre) => (
-              <option key={genre._id} value={genre._id}>
-                {genre.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Khoa</label>
-          <select
-            name="majors"
-            value={formData.majors}
-            onChange={(e) => handleMajorChange(e.target.value)}
-            className="mt-1 w-full"
-          >
-            <option value="" disabled>
-              Chọn khoa
-            </option>
-            {majors.map((major) => (
-              <option key={major._id} value={major._id}>
-                {major.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Ảnh bìa sách</label>
-          <input
-            type="file"
-            accept="image/jpeg,image/png"
-            onChange={handleFileImageChange}
-            required
-          />
-        </div>
-
-        {selectedImageFile && (
-          <div className="mt-4">
-            <h3 className="text-sm font-medium text-gray-700">Ảnh bìa đã chọn:</h3>
-            <img
-              src={URL.createObjectURL(selectedImageFile)}
-              alt="Selected Cover"
-              className="mt-2 h-48 object-cover border rounded-md"
-            />
-          </div>
+    <>
+      {loading && (
+          <Loading/>
         )}
+      <CCard className="max-w-3xl mx-auto p-6 mt-8">
+        <CCardBody>
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Thêm Sách Mới</h2>
+          <CForm onSubmit={handleSubmit} className="space-y-4">
+            <CRow className="mb-3">
+              <CCol>
+                <label className="form-label">Tiêu đề sách</label>
+                <CFormInput
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  placeholder="Nhập tiêu đề sách"
+                  required
+                />
+              </CCol>
+            </CRow>
 
-        <div className="flex justify-end mt-6">
-          <Button type="primary" htmlType="submit">
-            Lưu
-          </Button>
-        </div>
-      </form>
-    </div>
+            <CRow className="mb-3">
+              <CCol>
+                <label className="form-label">Tác giả</label>
+                <CFormInput
+                  type="text"
+                  name="author"
+                  value={formData.author}
+                  onChange={handleInputChange}
+                  placeholder="Nhập tên tác giả"
+                  required
+                />
+              </CCol>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CCol>
+                <label className="form-label">PDF File:</label>
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handleFilePdfChange}
+                  required
+                  className="form-control"
+                />
+              </CCol>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CCol>
+                <label className="form-label">Thể loại</label>
+                <CFormSelect
+                  name="genre"
+                  value={formData.genre}
+                  onChange={(e) => handleGenreChange(e.target.value)}
+                  required
+                >
+                  <option value="" disabled>
+                    Chọn thể loại
+                  </option>
+                  {genres.map((genre) => (
+                    <option key={genre._id} value={genre._id}>
+                      {genre.name}
+                    </option>
+                  ))}
+                </CFormSelect>
+              </CCol>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CCol>
+                <label className="form-label">Khoa</label>
+                <CFormSelect
+                  name="majors"
+                  value={formData.majors}
+                  onChange={(e) => handleMajorChange(e.target.value)}
+                >
+                  <option value="" disabled>
+                    Chọn khoa
+                  </option>
+                  {majors.map((major) => (
+                    <option key={major._id} value={major._id}>
+                      {major.name}
+                    </option>
+                  ))}
+                </CFormSelect>
+              </CCol>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CCol>
+                <label className="form-label">Ảnh bìa sách</label>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png"
+                  onChange={handleFileImageChange}
+                  required
+                  className="form-control"
+                />
+              </CCol>
+            </CRow>
+
+            {selectedImageFile && (
+              <CRow className="mb-3">
+                <CCol>
+                  <h3 className="text-sm font-medium text-gray-700">Ảnh bìa đã chọn:</h3>
+                  <img
+                    src={URL.createObjectURL(selectedImageFile)}
+                    alt="Selected Cover"
+                    className="mt-2 h-48 object-cover border rounded-md"
+                  />
+                </CCol>
+              </CRow>
+            )}
+
+            <CRow className="mt-4">
+              <CCol className="text-end">
+                <CButton type="submit" color="success" disabled={loading}>
+                  <span className="text-white">Thêm sách</span>
+                </CButton>
+              </CCol>
+            </CRow>
+          </CForm>
+        </CCardBody>
+      </CCard>
+    </>
   );
 };
 

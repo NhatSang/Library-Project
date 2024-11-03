@@ -7,6 +7,7 @@ import { Viewer } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import { _createChapter, _createSummary, _getChapters } from "./apis";
+import { CAlert, CCol, CRow } from "@coreui/react";
 
 const { Title, Text } = Typography;
 
@@ -16,7 +17,7 @@ export default function AddChapterPage() {
   const { state } = location || {};
   const { data } = state || {};
   const [chapters, setChapters] = useState([]);
-  const [pdfFile, setPdfFile] = useState(data.pdfLink); 
+  const [pdfFile, setPdfFile] = useState('https://pdf8888.s3.ap-southeast-1.amazonaws.com/1730397950247_sotaylaptrinh.pdf'); 
   const [numPages, setNumPages] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,7 +28,7 @@ export default function AddChapterPage() {
   const fetchData = async () => {
     try {
     console.log(data);
-      const response = await _getChapters(data.bookId);
+      const response = await _getChapters('6723c70115c65b18e58d5e92');
       setChapters(response.data.data);
     } catch (err) {
       console.log(err);
@@ -35,8 +36,8 @@ export default function AddChapterPage() {
   };
 
   const [formData, setFormData] = useState({
-    bookId: data.bookId,
-    bookLink: data.pdfLink,
+    bookId: 'a',
+    bookLink: '',
     title: "",
     startPage: 0,
     endPage: 0,
@@ -155,17 +156,28 @@ export default function AddChapterPage() {
  
   const characterMap = { 
     isCompressed: true, 
-    url: "https://unpkg.com/pdfjs-dist@3.4.120/cmaps/", 
+    url: "https://unpkg.com/pdfjs-dist@3.11.174/cmaps/", 
   };
 
-  const handleFinish = async ()=>{
-    await _createSummary({bookId: data.bookId,title: data.title});
-      navigate("/books");
-      alert("Thêm sách thành công");
-  }
+  const handleFinish = async () => {
+    const userConfirmed = window.confirm("Bạn đã chắc chắn nhập xong chương chưa?");
+  
+    if (userConfirmed) {
+      try {
+        // await _createSummary({ bookId: data.bookId, title: data.title });
+        // navigate("/books");
+       message.success("Bạn đã tạo sách thành công!");
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        message.error("Đã xảy ra lỗi khi gửi yêu cầu.");
+      }
+    } else {
+      message.info("Vui lòng nhập xong chương trước khi hoàn thành.");
+    }
+  };
 
   return (
-    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
     <div style={{ display: 'flex', padding: '20px' }}>
     {isLoading && (
           <div style={{
@@ -183,9 +195,8 @@ export default function AddChapterPage() {
             <Spin size="large" tip="Đang tải..." />
           </div>
         )}
-      {/* Bên trái: Xem PDF */}
       <div style={{ flex: 1 }}>
-        <Title level={3}>Xem PDF</Title>
+        {/* <Title level={3}>Xem PDF</Title> */}
         <div style={{ border: '1px solid #ddd', padding: '10px', height: '600px', overflowY: 'auto' }}>
         <Viewer 
         fileUrl={pdfFile}
@@ -196,7 +207,6 @@ export default function AddChapterPage() {
         </div>
       </div>
 
-      {/* Bên phải: Form nhập liệu */}
       <div style={{ flex: 1, paddingLeft: '20px' }}>
         <Title level={2}>Thêm Chương Mới</Title>
         <Form onSubmit={handleSubmit} layout="vertical">
@@ -229,18 +239,25 @@ export default function AddChapterPage() {
             />
           </Form.Item>
           <Form.Item>
-            <div className="flex w-full justify-between">
+            <CRow xs={12}>
+            <CCol  md={9}>
             <Button onClick={()=>{
               handleSubmit();
             }} type="primary" htmlType="submit">
               Thêm Chương
             </Button>
+            </CCol>
+            <CCol md={3}>
             <Button onClick={()=>{
               handleFinish();
-            }} type="primary">
+            }}
+            type="primary"
+            style={{backgroundColor: '#52c41a', color: 'white'}} 
+            >
               Hoàn thành
             </Button>
-            </div>
+            </CCol>
+            </CRow>
           </Form.Item>
         </Form>
         <Title level={3}>Danh Sách Chương</Title>
