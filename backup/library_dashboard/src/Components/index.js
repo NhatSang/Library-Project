@@ -1,20 +1,17 @@
+import SideBar from './SideBar';
+import Content from './Content';
+import Footer from './Footer';
 import Header from './Header';
-import Chart from './Chart';
-import Layout from './Layout';
-import Pagination from './Pagination';
-import Search from './Search';
-import TableBook from './TableBook';
-import TableUsers from './TableUsers';
-import Sidebar from './Sidebar';
-
+import Breadcrumb from './Breadcrumb';
+import SidebarNav from './SidebarNav';
+import Loading from './Loading';
 
 export {
+    SideBar,
+    Content,
+    Footer,
     Header,
-    Chart,
-    Layout,
-    Sidebar,
-    Pagination,
-    Search,
-    TableBook,
-    TableUsers,
+    Breadcrumb,
+    SidebarNav,
+    Loading
 }

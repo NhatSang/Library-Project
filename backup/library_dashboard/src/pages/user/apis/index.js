@@ -9,3 +9,8 @@ export const _getUsers = async (page, limit, keyword) => {
     const url = `/find-user?page=${page}&limit=${limit}`;
     return await api.post(url, {keyword});
 }
+
+export const _getMajors = async () => {
+    const url = '/majors';
+    return await api.get(url);
+}

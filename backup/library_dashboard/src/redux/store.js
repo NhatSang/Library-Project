@@ -1,10 +1,12 @@
 // store.js
 import { configureStore } from "@reduxjs/toolkit";
-import userReducer from "./userSlice"; // Import export mặc định từ userSlice
+import userReducer from "./userSlice"; 
+import appReducer from "./appSlice";
 
 export const store = configureStore({
   reducer: {
-    user: userReducer, // Đặt tên reducer cho state user
+    user: userReducer,
+    app: appReducer,
   },
 });
 
