@@ -1,12 +1,32 @@
 import { useEffect, useState } from "react";
 import { _getGenres } from "../home/apis";
-import { Button, Col, Space, Table } from "antd";
+import { Button, Col, ConfigProvider, Space, Table } from "antd";
 import { CCol } from "@coreui/react";
 import Search from "antd/es/transfer/search";
+import { useSelector } from "react-redux";
 
 const Genres = () => {
     const [genres, setGenres] = useState([]);
     const [loading, setLoading] = useState(false);
+    const theme = useSelector((state) => state.app.theme);
+    const [themeTokens, setThemeTokens] = useState({
+      colorBgContainer: '#ffffff',
+      colorText: '#000000',
+      colorBorder: '#d9d9d9'
+    });
+  
+  
+    useEffect(() => {
+      setThemeTokens(theme ==='dark' ? {
+        colorBgContainer: '#212631',
+        colorText: '#E2E3E4',
+        colorBorder: '#434343'
+      } : {
+        colorBgContainer: '#ffffff',
+        colorText: '#000000',
+        colorBorder: '#d9d9d9'
+      });
+    }, [theme]);
     const column = [
         {
             title: "ID",
@@ -61,6 +81,7 @@ const Genres = () => {
     }
     
     return (
+        <ConfigProvider theme={{ token: themeTokens }}>
         <div>
             <CCol style={{padding:20}}>
         <Search placeholder="Nhập từ khóa" onChange={(e) => handleSearch(e.target.value)} />
@@ -73,6 +94,7 @@ const Genres = () => {
           )
         }}  dataSource={genres} columns={column} loading={loading} rowKey="id" pagination={{pageSize:5}}/>
         </div>
+        </ConfigProvider>
     );
 }
 

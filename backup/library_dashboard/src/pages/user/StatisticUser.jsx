@@ -2,13 +2,14 @@ import { CButton, CCol, CFormInput, CFormLabel, CFormSelect, CRow } from "@coreu
 import { _getGenres } from "../home/apis";
 import { useEffect, useRef, useState } from "react";
 import { CChartBar, CChartPie } from "@coreui/react-chartjs";
-import { Button, Space, Table, Tag } from "antd";
+import { Button, ConfigProvider, Space, Table, Tag } from "antd";
 import { _getMajors, _getUsers } from "./apis";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import {Roboto_Regular}  from "../../assets/fonts/Roboto_Regular";
 import {Roboto_Bold} from "../../assets/fonts/Roboto_Bold";
 import { formatDate } from "../../utils";
+import { useSelector } from "react-redux";
 
 const StatisticUser = () => {
     const today = new Date().toISOString().split("T")[0];
@@ -23,6 +24,25 @@ const StatisticUser = () => {
     const [loading, setLoading] = useState(false);
     const [majors, setMajors] = useState([]);
     const chartRef = useRef(null);
+    const theme = useSelector((state) => state.app.theme);
+    const [themeTokens, setThemeTokens] = useState({
+      colorBgContainer: '#ffffff',
+      colorText: '#000000',
+      colorBorder: '#d9d9d9'
+    });
+  
+  
+    useEffect(() => {
+      setThemeTokens(theme ==='dark' ? {
+        colorBgContainer: '#212631',
+        colorText: '#9ea15a',
+        colorBorder: '#434343'
+      } : {
+        colorBgContainer: '#ffffff',
+        colorText: '#000000',
+        colorBorder: '#d9d9d9'
+      });
+    }, [theme]);
 
     useEffect(() => {
         fetchUsers();
@@ -165,6 +185,7 @@ const StatisticUser = () => {
     
 
       return (
+        <ConfigProvider theme={{ token: themeTokens }} >
         <CCol xs>
           <CRow className="d-flex justify-content-center align-items-center gap-4 ">
             
@@ -248,6 +269,7 @@ const StatisticUser = () => {
                 </CCol>
             </CRow>
         </CCol>
+        </ConfigProvider>
       );
       
     }

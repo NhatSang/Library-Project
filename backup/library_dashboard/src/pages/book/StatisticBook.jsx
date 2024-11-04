@@ -382,7 +382,7 @@ const StatisticBook = () => {
               </CFormSelect>
               </CCol>
               <div style={{width:30}}/>
-              <CFormLabel  className="mb-0 text-base font-medium">Số lượng sách:</CFormLabel>
+              <CFormLabel  className="mb-0 text-base font-medium">Số lượng sách(1-20):</CFormLabel>
               <CCol md={1}>
                 <Input 
                 value={limit}

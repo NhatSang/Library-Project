@@ -5,6 +5,7 @@ import { _getBook } from './apis';
 import { CCol, CRow } from '@coreui/react';
 import Search from 'antd/es/transfer/search';
 import viVN from 'antd/lib/locale/vi_VN';
+import { useSelector } from 'react-redux';
 
 
 const Books = () => {
@@ -12,6 +13,25 @@ const Books = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({});
+  const theme = useSelector((state) => state.app.theme);
+  const [themeTokens, setThemeTokens] = useState({
+    colorBgContainer: '#ffffff',
+    colorText: '#000000',
+    colorBorder: '#d9d9d9'
+  });
+
+
+  useEffect(() => {
+    setThemeTokens(theme ==='dark' ? {
+      colorBgContainer: '#212631',
+      colorText: '#E2E3E4',
+      colorBorder: '#434343'
+    } : {
+      colorBgContainer: '#ffffff',
+      colorText: '#000000',
+      colorBorder: '#d9d9d9'
+    });
+  }, [theme]);
 
   useEffect(() => {
     fetchData();
@@ -90,6 +110,7 @@ const Books = () => {
 
 
   return (
+    <ConfigProvider locale={viVN} theme={{token:themeTokens}}>
     <CRow>
     <CCol xs>
       <CCol style={{padding:20}}>
@@ -112,6 +133,7 @@ const Books = () => {
 
     </CCol>
   </CRow>
+  </ConfigProvider>
   );
 }
 

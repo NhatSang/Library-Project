@@ -69,7 +69,10 @@ const Header = () => {
                 className="d-flex align-items-center"
                 as="button"
                 type="button"
-                onClick={() => setColorMode('light')}
+                onClick={() => {
+                  setColorMode('light')
+                  dispatch(set({ theme: 'light' }))
+                }}
               >
                 <CIcon className="me-2" icon={cilSun} size="lg" /> Sáng
               </CDropdownItem>
@@ -78,7 +81,10 @@ const Header = () => {
                 className="d-flex align-items-center"
                 as="button"
                 type="button"
-                onClick={() => setColorMode('dark')}
+                onClick={() => {
+                  setColorMode('dark')
+                  dispatch(set({ theme: 'dark' }))
+                }}
               >
                 <CIcon className="me-2" icon={cilMoon} size="lg" /> Tối
               </CDropdownItem>
@@ -87,7 +93,10 @@ const Header = () => {
                 className="d-flex align-items-center"
                 as="button"
                 type="button"
-                onClick={() => setColorMode('auto')}
+                onClick={() => {
+                  setColorMode('auto')
+                  dispatch(set({ theme: 'auto' }))
+                }}
               >
                 <CIcon className="me-2" icon={cilContrast} size="lg" /> Tự động
               </CDropdownItem>
