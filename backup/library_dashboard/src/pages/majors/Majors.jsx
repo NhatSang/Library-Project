@@ -1,13 +1,34 @@
 import { useEffect, useState } from "react";
 import { _getGenres } from "../home/apis";
-import { Button, Col, Space, Table } from "antd";
+import { Button, Col, ConfigProvider, Space, Table } from "antd";
 import { CCol } from "@coreui/react";
 import Search from "antd/es/transfer/search";
 import { _getMajors } from "../user/apis";
+import { useSelector } from "react-redux";
+import { ConfigContext } from "antd/lib/config-provider";
 
 const Majors = () => {
     const [majors, setMajors] = useState([]);
     const [loading, setLoading] = useState(false);
+    const theme = useSelector((state) => state.app.theme);
+    const [themeTokens, setThemeTokens] = useState({
+      colorBgContainer: '#ffffff',
+      colorText: '#000000',
+      colorBorder: '#d9d9d9'
+    });
+  
+  
+    useEffect(() => {
+      setThemeTokens(theme ==='dark' ? {
+        colorBgContainer: '#212631',
+        colorText: '#E2E3E4',
+        colorBorder: '#434343'
+      } : {
+        colorBgContainer: '#ffffff',
+        colorText: '#000000',
+        colorBorder: '#d9d9d9'
+      });
+    }, [theme]);
     const column = [
         {
             title: "ID",
@@ -62,6 +83,7 @@ const Majors = () => {
     }
     
     return (
+        <ConfigProvider theme={{ token: themeTokens }}>
         <div>
             <CCol style={{padding:20}}>
         <Search placeholder="Nhập từ khóa" onChange={(e) => handleSearch(e.target.value)} />
@@ -75,6 +97,7 @@ const Majors = () => {
           )
         }}  dataSource={majors} columns={column} loading={loading} rowKey="id" pagination={{pageSize:5}}/>
         </div>
+        </ConfigProvider>
     );
 }
 

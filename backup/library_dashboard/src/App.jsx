@@ -1,9 +1,11 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
+import { ConfigProvider } from 'antd'
+import viVN from 'antd/lib/locale/vi_VN'
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/Layout'))
@@ -43,7 +45,26 @@ const AddNotification = React.lazy(() => import('./pages/notification/AddNotific
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
-  const storedTheme = useSelector((state) => state.theme)
+  const storedTheme = useSelector((state) => state.theme);
+  const theme = useSelector((state) => state.app.theme);
+  const [themeTokens, setThemeTokens] = useState({
+    colorBgContainer: '#ffffff',
+    colorText: '#000000',
+    colorBorder: '#d9d9d9'
+  });
+
+
+  useEffect(() => {
+    setThemeTokens(theme ==='dark' ? {
+      colorBgContainer: '#212631',
+      colorText: '#E2E3E4',
+      colorBorder: '#434343'
+    } : {
+      colorBgContainer: '#ffffff',
+      colorText: '#000000',
+      colorBorder: '#d9d9d9'
+    });
+  }, [theme]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.href.split('?')[1])
@@ -60,6 +81,7 @@ const App = () => {
   }, []) 
 
   return (
+    <ConfigProvider theme={{ token: themeTokens }} locale={viVN}>
     <HashRouter>
       <Suspense
         fallback={
@@ -95,6 +117,7 @@ const App = () => {
         </Routes>
       </Suspense>
     </HashRouter>
+    </ConfigProvider>
   )
 }
 

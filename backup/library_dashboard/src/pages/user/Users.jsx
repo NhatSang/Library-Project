@@ -5,6 +5,7 @@ import { CCol, CRow, useColorModes } from "@coreui/react";
 import Search from "antd/es/transfer/search";
 import { formatDate } from "../../utils";
 import viVN from 'antd/lib/locale/vi_VN';
+import { useSelector } from "react-redux";
 
 
 
@@ -15,6 +16,26 @@ const Users = () => {
   const [pagination, setPagination] = useState({});
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
+  const theme = useSelector((state) => state.app.theme);
+  const [themeTokens, setThemeTokens] = useState({
+    colorBgContainer: '#ffffff',
+    colorText: '#000000',
+    colorBorder: '#d9d9d9'
+  });
+
+
+  useEffect(() => {
+    setThemeTokens(theme ==='dark' ? {
+      colorBgContainer: '#212631',
+      colorText: '#E2E3E4',
+      colorBorder: '#434343'
+    } : {
+      colorBgContainer: '#ffffff',
+      colorText: '#000000',
+      colorBorder: '#d9d9d9'
+    });
+  }, [theme]);
+
   const columns = [
     {
       key: "stt",
@@ -103,12 +124,15 @@ const Users = () => {
 
 
   return (
+    <ConfigProvider theme={{ token: themeTokens }} locale={viVN}>
     <CRow>
       <CCol xs>
         <CCol style={{padding:20}}>
-        <Search placeholder="Nhập từ khóa" onChange={(e) => handleSearch(e.target.value)} />
+        <Search
+         placeholder="Nhập từ khóa" onChange={(e) => handleSearch(e.target.value)} />
         </CCol>
-        <Table title={()=>{
+        <Table 
+        title={()=>{
           return (
             <Col>
               <h3>Danh sách người dùng</h3>
@@ -118,13 +142,12 @@ const Users = () => {
         loading={loading} bordered  dataSource={users} columns={columns} pagination={false} />
 
         <CCol xs={12} md={12} style={{marginTop:20,marginBottom:10,justifyContent:'center',alignItems:'center'}}>
-        <ConfigProvider locale={viVN}>  
         <Pagination showQuickJumper defaultCurrent={pagination.page} total={pagination.total} onChange={handlePageChange} />
-        </ConfigProvider>
         </CCol>
 
       </CCol>
     </CRow>
+    </ConfigProvider>
   );
 };
 
