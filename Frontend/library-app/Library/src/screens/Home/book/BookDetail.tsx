@@ -9,7 +9,7 @@ import { ScreenName } from '@constants/ScreenName'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { _createHistory, iCreateHistory } from '@screens/History/apis'
 import { getUserLocalStorage } from '@utils/storage'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FlatList, Image, Pressable, View } from 'react-native'
 import RNFetchBlob from 'react-native-blob-util'
 import ImageColors from 'react-native-image-colors'
@@ -20,6 +20,9 @@ import Feather from 'react-native-vector-icons/Feather'
 import { iBook } from 'src/types/iBook'
 import { IReview } from 'src/types/iReview'
 import { _getReviewNewest } from '../apis'
+import Fontisto from 'react-native-vector-icons/Fontisto'
+import Share from 'react-native-share';
+import ViewShot from 'react-native-view-shot';
 
 
 const BookDetail = ({ navigation, route }: any) => {
@@ -31,6 +34,7 @@ const BookDetail = ({ navigation, route }: any) => {
     const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
     const [reviews, setReviews] = useState<IReview[]>([]);
     const [show, setShow] = useState<boolean>(false);
+    const viewShot:any = useRef();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -172,8 +176,27 @@ const BookDetail = ({ navigation, route }: any) => {
         }
     };
 
+    const captureAndShare = async () => {
+        viewShot.current.capture().then(async (uri: any) => {
+            console.log("do something with ", uri);
+            const shareOptions = {
+                title: 'Chia sẽ',
+                message: 'Hãy tải ứng dụng Library để đọc sách miễn phí',
+                url: uri,
+                type: 'image/jpeg',
+            };
+            await Share.open(shareOptions)
+            .then((res: any) => { console.log(res) })
+            .catch((err: any) => { err && console.log(err); });
+        }
+        );
+    }
+
     return (
         loading ? <Loading /> :
+        <ViewShot style={{flex:1}}
+        ref={viewShot}
+        options={{ format: 'jpg', quality: 0.9 }}>
             <SafeAreaView style={{ backgroundColor: background }} className='flex-1 justify-between'>
                 <View className='flex-row justify-between h-16 items-center px-3'>
                     <Pressable onPress={() => {
@@ -182,8 +205,8 @@ const BookDetail = ({ navigation, route }: any) => {
                         <AntDesign name='left' size={30} color={globalColor.text_dark} />
                     </Pressable>
                     <AppText size={20} color={globalColor.text_light} text='Sách' font={fontFamilies.robotoBold} />
-                    <Pressable>
-                        <AntDesign name='heart' color={'red'} size={30} />
+                    <Pressable onPress={captureAndShare}>
+                        <Fontisto name='share-a' size={24} color={globalColor.text_dark} />
                     </Pressable>
                 </View>
                 <View className='h-5/6   rounded-tl-3xl rounded-tr-3xl relative justify-end'>
@@ -297,6 +320,7 @@ const BookDetail = ({ navigation, route }: any) => {
                     </View>
                 </View>
             </SafeAreaView>
+        </ViewShot>
     )
 }
 
