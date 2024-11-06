@@ -36,8 +36,17 @@ const _getChapters = async (bookId) => {
 }
 
 const _getBook = async () => {
-    const url = "/get-all-book2";
-    return await api2.get(url);
+    const url = "/book/get-newest";
+    return await api.get(url);
+}
+
+const _getBookById = async (id) => {
+    const url = "/book"
+    return await api.get(url, {
+        params: {
+            id
+        }
+    });
 }
 
 
@@ -49,5 +58,6 @@ export {
     _createChapter,
     _createSummary,
     _getChapters,
-    _getBook
+    _getBook,
+    _getBookById
 }

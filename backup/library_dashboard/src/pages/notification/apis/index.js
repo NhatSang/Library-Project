@@ -2,7 +2,7 @@ import {api,api2} from '../../../apis/config';
 
 const _getNotifications = async () => {
     const url = '/notifications';
-    const response = await api2.get(url);
+    const response = await api.get(url);
     return response;
 };
 

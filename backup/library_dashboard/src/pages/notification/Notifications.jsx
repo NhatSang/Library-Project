@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Pagination, Search, TableUsers } from "../../components";
 import { _deleteNotification, _getNotifications, _sendNotification } from "./apis";
-import { Button, Space, Table } from 'antd';
+import { Button, Col, Space, Table, Tag } from 'antd';
 import { useNavigate } from "react-router-dom";
+import Search from "antd/es/transfer/search";
+import { CCol } from "@coreui/react";
 
 const Notifications = () => {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
   const renderStatus = (status) => {
     let statusText;
     let statusColor;
@@ -31,9 +33,9 @@ const Notifications = () => {
     }
 
     return (
-      <span style={{ color: statusColor, fontWeight: 'bold' }}>
+      <Tag style={{ color: statusColor, fontWeight: 'bold' }}>
         {statusText}
-      </span>
+      </Tag>
     );
   };
 
@@ -117,7 +119,7 @@ const Notifications = () => {
         <Space size="middle">
           <Button onClick={() => {
             navigate('/notification/edit-notification', { state: { notificationItem: item } });
-          }} type="primary">Edit</Button>
+          }} >Edit</Button>
           <Button onClick={()=>{
             handleDeleteNotification(item._id);
           }} type="primary" danger>Delete</Button>
@@ -134,33 +136,35 @@ const Notifications = () => {
   }, []);
 
   const getNotifications = async () => {
-    const response = await _getNotifications();
-    setNotifications(response.data);
+    setLoading(true);
+    try {
+      const res = await _getNotifications();
+      if(res.data){
+        setNotifications(res.data);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   }
 
 
 
     return (
-        <div className="m-2 space-y-2 flex flex-col items-center">
-        <div className="w-full flex justify-end">
-          <Button onClick={()=>{
-            navigate('/notification/add-notification');
-          }} type="primary">Thêm thông báo</Button>
-          </div>
-        <div className="w-full">
-          <Search
-            placeholder={"Search by name or code"}
-            handleSearch={()=>{}}
-          />
-        </div>
-        <div className="w-full">
-          <Table
-            columns={columns}
-            dataSource={notifications}
-            pagination={false}
-          />
-        </div>
-      </div>
+      <div>
+      <CCol style={{padding:20}}>
+  <Search placeholder="Nhập từ khóa" onChange={(e) => handleSearch(e.target.value)} />
+  </CCol>
+      <Table 
+      title={()=>{
+    return (
+      <Col>
+        <h3>Danh sách thông báo</h3>
+      </Col>
+    )
+  }}  dataSource={notifications} columns={columns} loading={loading} rowKey="id" pagination={{pageSize:3}}/>
+  </div>
     )
 };
 

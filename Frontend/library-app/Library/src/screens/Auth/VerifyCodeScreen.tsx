@@ -10,6 +10,8 @@ import { ImageBackground, Pressable, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useCountdown } from '../../hooks/useCountDown';
+import { _sendVerifyCode, _verifyCode, iVerifyCode } from './apis';
+import Toast from 'react-native-toast-message';
 
 const VerifyCodeScreen = ({ navigation, route }: any) => {
     const { email } = route.params;
@@ -54,6 +56,50 @@ const VerifyCodeScreen = ({ navigation, route }: any) => {
         }
     };
 
+    const handleVerifyCode = async () => {
+        const data:iVerifyCode = {
+            email,
+            verificationCode: code.join(""),
+        }
+       try {
+        const res = await _verifyCode(data);
+        if (res.data) {
+            navigation.navigate(ScreenName.UserFormScreen, { email });
+        }
+       } catch (error:any) {
+        console.log(error);
+        Toast.show({
+            type: 'error',
+            text1: 'Lỗi',
+            text2: error?.response?.data?.error?.message,
+            position: 'bottom',
+        });
+       }
+    }
+
+    const handleResendCode = async () => {
+        setIsLoading(true);
+        try {
+            const res = await _sendVerifyCode(email);
+            if (res.data) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Thành công',
+                    text2: 'Mã xác nhận đã được gửi đến email của bạn',
+                    position: 'bottom',
+                });
+                navigation.navigate(ScreenName.VerifyCodeScreen, { email });
+            }
+        } catch (error: any) {
+            Toast.show({
+                type: 'error',
+                text1: 'Lỗi',
+                text2: error?.response?.data?.error?.message,
+                position: 'bottom',
+            });
+        }
+    }
+
     return (
         <ImageBackground className="flex-1" source={MAIN.BACKGROUND}>
             <SafeAreaView>
@@ -88,14 +134,13 @@ const VerifyCodeScreen = ({ navigation, route }: any) => {
                             color={globalColor.primary_2}
                             title="Xác nhận"
                             onPress={() => {
-                                navigation.navigate(ScreenName.UserFormScreen, { email });
+                                handleVerifyCode();
                             }}
                             textStyleProps={{ color: globalColor.white, fontFamily: fontFamilies.robotoBold, fontSize: 22 }}
                         />
                     </View>
                     <AppText onPress={() => {
-                        console.log("Resend code");
-                        setIsLoading(true);
+                        handleResendCode();
                     }} disabled={isLoading} color={isLoading ? globalColor.text_dark : globalColor.primary} font={fontFamilies.robotoBold} size={16} text={`${isLoading ? `${count}s` : "Gửi lại mã xác nhân"}`} />
                 </View>
             </SafeAreaView>

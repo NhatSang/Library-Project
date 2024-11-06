@@ -394,6 +394,7 @@ export class BookService {
     return true;
   };
 
+
   getBookDetails = async (bookId: string) => {
     const book = this.checkPublishedBook(bookId);
     const totalView = await this.viewService.getTotalView(bookId);
@@ -462,4 +463,7 @@ export class BookService {
     await book.save();
     return true;
   };
+
 }
+
+

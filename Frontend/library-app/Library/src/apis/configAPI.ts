@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { getToken } from '../utils/storage';
+import { getToken, logout } from '../utils/storage';
+import { Alert } from 'react-native';
+import RNRestart from 'react-native-restart';
+import { isIOS } from '@rneui/base';
 
 export const api = axios.create({
     baseURL: 'http://192.168.2.34:6001/api/v1',
@@ -49,7 +52,21 @@ api.interceptors.response.use(
     function (error) {
         if (error.response) {
             if (error.response.status === 403) {
-                //logout
+                Alert.alert(
+                    'Thông báo',
+                    'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại',
+                    [
+                        {
+                            text: 'OK',
+                            onPress: () => {
+                                logout();
+                                setTimeout(() => {
+                                   isIOS && RNRestart.restart();
+                                }, 1000);
+                            },
+                        },
+                    ],
+                );
             }
             if (error.response.status === 401) {
                 // _retrieveData('login_data').then(data => {
