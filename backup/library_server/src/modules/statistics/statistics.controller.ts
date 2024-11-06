@@ -64,4 +64,17 @@ export class StatisticsController {
       next(error);
     }
   };
+
+  statisticsUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.statisticsService.statisticsUser(
+        req.query.fromDate as string,
+        req.query.toDate as string
+      );
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
 }

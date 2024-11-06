@@ -18,4 +18,14 @@ statisticsRouter.get(
   statisticsController.getNumOfUser
 );
 
+statisticsRouter.get(
+  "/get-statistics-dashboard",
+  statisticsController.statisticsViewsReviews
+);
+
+statisticsRouter.get(
+  "/get-statistics-user",
+  statisticsController.statisticsUser
+);
+
 export default statisticsRouter;

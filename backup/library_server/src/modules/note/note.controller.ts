@@ -1,8 +1,9 @@
-import { Inject } from "typedi";
+import { Inject, Service } from "typedi";
 import { NoteService } from "./note.service";
 import { NextFunction, Request, Response } from "express";
 import { ResponseCustom } from "../../helper/response";
 
+@Service()
 export class NoteController {
   constructor(@Inject() private noteService: NoteService) {}
   createNote = async (req: Request, res: Response, next: NextFunction) => {

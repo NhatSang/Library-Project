@@ -223,4 +223,61 @@ export class StatisticsService {
 
     return { listViews, listReviews, totalViews, totalReviews };
   };
+
+  statisticsUser = async (fromDateStr: string, toDateStr: string) => {
+    const fromDate = new Date(fromDateStr);
+    const toDate = new Date(toDateStr);
+    const [result] = await User.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: fromDate, $lte: toDate },
+        },
+      },
+      {
+        $facet: {
+          userList: [
+            {
+              $project: {
+                _id: 1,
+                name: 1, 
+                email: 1, 
+                createdAt: 1,
+                gender: 1,
+              },
+            },
+          ],
+          countFemale: [
+            {
+              $match: { gender: "Female" },
+            },
+            {
+              $count: "countFemale",
+            },
+          ],
+          countMale: [
+            {
+              $match: { gender: "Male" },
+            },
+            {
+              $count: "countMale",
+            },
+          ],
+        },
+      },
+      {
+        $project: {
+          userList: 1,
+          countFemale: { $arrayElemAt: ["$countFemale.countFemale", 0] },
+          countMale: { $arrayElemAt: ["$countMale.countMale", 0] },
+        },
+      },
+    ]);
+  
+    return {
+      userList: result.userList,
+      countFemale: result.countFemale || 0, 
+      countMale: result.countMale || 0,  
+    };
+  };
+  
 }

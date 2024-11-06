@@ -51,13 +51,18 @@ import {
 import { _getUsers } from '../user/apis'
 import { formatDate } from '../../utils'
 import { CChartBar, CChartPie } from '@coreui/react-chartjs'
+import { _getStatisticsDashBoard, _getStatisticsDashBoardUser } from './apis'
 
 const Dashboard = () => {
   const [major, setMajor] = useState('Tất cả')
   const [users,setUsers] = useState([]);
+  const [statistic, setStatistic] = useState({});
+  const [statisticUser, setStatisticUser] = useState({});
 
   useEffect(() => {
-    fetchUser(1, 5, '');
+    handleStatistic();
+    handleStatisticUser();
+    // fetchUser(1, 5, '');
   }, []);
 
   const fetchUser = async (page, limit, keyword) => {
@@ -94,20 +99,50 @@ const Dashboard = () => {
     { name: 'An toàn thông tin', value: 22 },
     { name: 'Mạng máy tính', value: 43 },
   ]
-  const getCurrentWeekDatesFromAnyDay = (date)=>{
+  const getMondayAndSundayFromAnyDay = (date) => {
     const currentDay = date.getDay();
-    const firstDayOfWeek = new Date(date);
-    firstDayOfWeek.setDate(date.getDate() - currentDay + (currentDay === 0 ? -6 : 1)); // Đặt về ngày đầu tuần (Thứ Hai)
-    const weekDates = [];
-    for (let i = 0; i < 7; i++) {
-        const day = new Date(firstDayOfWeek);
-        day.setDate(firstDayOfWeek.getDate() + i);
-        weekDates.push(day.toLocaleDateString("vi-VN")); // Định dạng ngày theo chuẩn Việt Nam
-    }
-    return weekDates;
-  }
+    const monday = new Date(date);
+    monday.setDate(date.getDate() - currentDay + (currentDay === 0 ? -6 : 1)); 
 
-  console.log(getCurrentWeekDatesFromAnyDay(new Date("2024-11-12")));
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6); 
+
+    return { monday, sunday };
+};
+
+const handleStatistic = async() => {
+  try {
+    // const date = new Date();
+  const { monday, sunday } = getMondayAndSundayFromAnyDay(new Date("2024-11-01"));
+  const response = await _getStatisticsDashBoard({
+    fromDate: monday,
+    toDate: sunday,
+  });
+  if(response.data){
+    setStatistic(response.data);
+  }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const handleStatisticUser = async() => {
+  try {
+    // const date = new Date();
+  const { monday, sunday } = getMondayAndSundayFromAnyDay(new Date("2024-11-01"));
+  const response = await _getStatisticsDashBoardUser({
+    fromDate: monday,
+    toDate: sunday,
+  });
+  if(response.data){
+    console.log(response.data);
+    setStatisticUser(response.data);
+  }
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
 
   return (
     <>
@@ -124,7 +159,9 @@ const Dashboard = () => {
                         <div className="text-body-secondary text-truncate small">
                           Lượt đọc mới
                           </div>
-                        <div className="fs-5 fw-semibold">100</div>
+                        <div className="fs-5 fw-semibold">
+                          {statistic?.totalViews}
+                        </div>
                       </div>
                     </CCol>
                     <CCol xs={6}>
@@ -132,7 +169,9 @@ const Dashboard = () => {
                         <div className="text-body-secondary text-truncate small">
                           Lượt đánh giá mới
                         </div>
-                        <div className="fs-5 fw-semibold">200</div>
+                        <div className="fs-5 fw-semibold">
+                          {statistic?.totalReviews}
+                        </div>
                       </div>
                     </CCol>
                   </CRow>
@@ -144,18 +183,20 @@ const Dashboard = () => {
                     labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'],
                     datasets: [
                       {
-                        label: 'Lượt đọc',
+                        label: 'Lượt đánh giá mới',
                         backgroundColor: 'rgba(255,99,132,0.2)',
                         borderColor: 'rgba(255,99,132,1)',
                         borderWidth: 2,
-                        data: [65, 59, 80, 81, 56, 55, 40],
+                        data: statistic?.listReviews?.map((item) => item.reviewCount),
+                        
+                        
                       },
                       {
-                        label: 'Lượt đánh giá',
+                        label: 'Lượt đọc mới',
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
                         borderColor: 'rgba(54, 162, 235, 1)',
                         borderWidth: 2,
-                        data: [28, 48, 40, 19, 86, 27, 90],
+                        data: statistic?.listViews?.map((item) => item.totalViews),
                       },
                     ],
                   }
@@ -172,7 +213,9 @@ const Dashboard = () => {
                     <CCol xs={6}>
                       <div className="border-start border-start-4 border-start-warning py-1 px-3 mb-3">
                         <div className="text-body-secondary text-truncate small">Người dùng mới</div>
-                        <div className="fs-5 fw-semibold">100</div>
+                        <div className="fs-5 fw-semibold">
+                          {statisticUser?.userList?.length}
+                        </div>
                       </div>
                     </CCol>
 
@@ -201,39 +244,34 @@ const Dashboard = () => {
 
                   <hr className="mt-0" />
 
-                  {progressGroupExample2.map((item, index) => (
-                    <div className="progress-group mb-4" key={index}>
+                    <div className="progress-group mb-4" key={'nam'}>
                       <div className="progress-group-header">
-                        <CIcon className="me-2" icon={item.icon} size="lg" />
-                        <span>{item.title}</span>
-                        <span className="ms-auto fw-semibold">{item.value}%</span>
+                        <CIcon className="me-2" icon={cilUser} size="lg" />
+                        <span>Nam</span>
+                        <span className="ms-auto fw-semibold">
+                          {statisticUser.countFemale}
+                        </span>
                       </div>
                       <div className="progress-group-bars">
-                        <CProgress thin color="warning" value={item.value} />
+                        <CProgress thin color="warning" value={
+                          (statisticUser.countFemale / (statisticUser.countMale + statisticUser.countFemale)) * 100
+                        } />
                       </div>
                     </div>
-                  ))}
-                  {/* <CChartPie
-                  style={{height: "250px",margin: "auto"}}
-                  responsive
-                  data = {{
-                    labels: ['Nam', 'Nữ'],
-                    datasets: [
-                      {
-                        label: 'Số lượng',
-                        backgroundColor: ['rgba(75, 192, 192, 0.2)','rgba(255, 206, 86, 0.2)'],
-                        borderColor: ['rgba(75, 192, 192, 1)','rgba(255, 206, 86, 1)'],
-                        borderWidth: 2,
-                        data: [53, 43],
-                      },
-                    ],
-                  }}
-                  options={{
-                    tooltips: {
-                      enabled: true,
-                    },
-                  }}
-                  /> */}
+                    <div className="progress-group mb-4" key={'nu'}>
+                      <div className="progress-group-header">
+                        <CIcon className="me-2" icon={cilUserFemale} size="lg" />
+                        <span>Nữ</span>
+                        <span className="ms-auto fw-semibold">
+                          {statisticUser.countMale}
+                        </span>
+                      </div>
+                      <div className="progress-group-bars">
+                        <CProgress thin color="warning" value={
+                          (statisticUser.countMale / (statisticUser.countFemale + statisticUser.countMale)) * 100
+                        } />
+                      </div>
+                    </div>
                 </CCol>
               </CRow>
 
