@@ -3,7 +3,7 @@ import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 import { handleErrorsMiddleware } from "../../helper/error";
 
-export class ViewMiddleware {
+export class NoteMiddleware {
   validate<T extends object>(dtoClass: new () => T) {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {

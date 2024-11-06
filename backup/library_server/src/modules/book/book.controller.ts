@@ -3,12 +3,13 @@ import { BookService } from "./book.service";
 import { NextFunction, Request, Response } from "express";
 import { ResponseCustom } from "../../helper/response";
 import { saveFile } from "../../../aws/aws.helper";
+import { Pagination } from "../../helper/pagination";
 
 @Service()
 export class BookController {
   constructor(@Inject() private bookservice: BookService) {}
 
-  getrBookContentByPage = async (
+  getBookContentByPage = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -32,17 +33,12 @@ export class BookController {
   ) => {
     try {
       const userId = req.body.userId;
-      const result = await this.bookservice.getBookByMajorsUserId(userId);
-      res.send(new ResponseCustom(result));
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  getBookNewest = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const result = await this.bookservice.getBookNewest();
-      res.send(new ResponseCustom(result));
+      const { books, pagination } =
+        await this.bookservice.getBookByMajorsUserId(
+          userId,
+          Pagination.fromRequest(req)
+        );
+      res.send(new ResponseCustom(books, null, pagination));
     } catch (error) {
       next(error);
     }
@@ -80,8 +76,11 @@ export class BookController {
     next: NextFunction
   ) => {
     try {
-      const result = await this.bookservice.getRecommendBooks(req.body.userId);
-      res.send(new ResponseCustom(result));
+      const { books, pagination } = await this.bookservice.getRecommendBooks(
+        req.body.userId,
+        Pagination.fromRequest(req)
+      );
+      res.send(new ResponseCustom(books, null, pagination));
     } catch (error) {
       next(error);
     }
@@ -128,13 +127,63 @@ export class BookController {
     }
   };
 
-  getBookById = async (req: Request, res: Response, next: NextFunction) => {
+  getBookDetails = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const bookId = req.query.id;
-      const result = await this.bookservice.getBookById(bookId as string);
+      const result = await this.bookservice.getBookDetails(
+        req.query.bookId as string
+      );
       res.send(new ResponseCustom(result));
     } catch (error) {
       next(error);
     }
-  }
+  };
+
+  findBookByKeyword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { books, pagination } = await this.bookservice.findBooksByKeyword(
+        req.query.keyword as string,
+        Pagination.fromRequest(req)
+      );
+      res.send(new ResponseCustom(books, null, pagination));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deleteBook = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.bookservice.deleteBook(
+        req.query.bookId as string
+      );
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  updateBook = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const imageFile = req.files["image"][0];
+      const pdfFile = req.files["pdf"][0];
+      console.log(imageFile);
+      console.log(pdfFile);
+      if (imageFile) {
+        const imageLink = await saveFile(imageFile);
+        req.body.image = imageLink;
+      }
+      if (pdfFile) {
+        const pdfLink = await saveFile(pdfFile);
+        req.body.pdfLink = pdfLink;
+      }
+
+      const result = await this.bookservice.updateBook(req.body);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  };
 }

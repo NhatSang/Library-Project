@@ -14,5 +14,11 @@ export class MajorsService {
     });
     return majors;
   }
-  
+
+  async getMajorsByKeyword(keyword: string) {
+    return await Majors.find(
+      { name: { $regex: keyword, $options: "i" } },
+      { _id: 1 }
+    );
+  }
 }

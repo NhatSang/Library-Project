@@ -120,3 +120,68 @@ export class BookCreateReqDTO {
   })
   yob: string;
 }
+
+export class BookDetailsResponseDTO {
+  @Expose()
+  @Transform(({ obj }) => obj._id.toString())
+  _id: string;
+  @Expose()
+  title: string;
+  @Expose()
+  author: string;
+  @Expose()
+  pdfLink: string;
+  @Expose()
+  @Transform(({ obj }) => obj.genre?.name || null)
+  genre: string;
+  @Expose()
+  image: string;
+  @Expose()
+  pageNumber: number;
+  @Expose()
+  @Transform(({ obj }) => obj.majors?.name || null)
+  majors: string | null;
+  @Type(() => Content)
+  contents: Content[];
+  @Expose()
+  summary: string;
+  @Expose()
+  yob: string;
+  @Expose()
+  publisher: string;
+  @Expose()
+  totalView: number;
+  @Expose()
+  avgRating: number;
+  static transformBook(params: any | any[]) {
+    return plainToInstance(BookDetailsResponseDTO, params, {
+      excludeExtraneousValues: true,
+    });
+  }
+}
+
+export class BookUpdateReqDTO {
+  @IsString()
+  bookId:string;
+  @IsString()
+  @IsOptional()
+  author: string;
+  @IsString()
+  @IsOptional()
+  pdfLink: string;
+  @IsString()
+  @IsOptional()
+  image: string;
+  @IsString()
+  @IsOptional()
+  genre: string;
+  @IsString()
+  @IsOptional()
+  majors: string;
+  @IsString()
+  @IsOptional()
+  publisher: string;
+  @IsString()
+  @IsOptional()
+  yob: string;
+}

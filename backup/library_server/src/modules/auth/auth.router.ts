@@ -8,7 +8,7 @@ import {
   UserRegisterDTO,
   UserVerifyEmailDTO,
 } from "../user/dto/user.dto";
-import { AuthVerifyEmailDTO } from "./dto/auth.dto";
+import { AuthUpdatePassDTO, AuthVerifyEmailDTO } from "./dto/auth.dto";
 import { Role } from "../user/types/user.type";
 
 const authRouter = Router();
@@ -19,9 +19,13 @@ const authMiddleware = Container.get(AuthMiddleware);
 authRouter.post(
   "/auth/send-code",
   userMiddleware.validateUser(UserVerifyEmailDTO),
-  authController.sendVerificationCode
+  authController.sendCodeToRegister
 );
-
+authRouter.post(
+  "/auth/send-code-update",
+  userMiddleware.validateUser(UserVerifyEmailDTO),
+  authController.sendCodeToUpdate
+);
 authRouter.post(
   "/auth/verify-code",
   userMiddleware.validateUser(AuthVerifyEmailDTO),
@@ -54,8 +58,12 @@ authRouter.post(
   authController.refreshToken
 );
 
-authRouter.post("/auth/login-temp",
-  authController.loginTemp
+authRouter.post(
+  "/auth/reset-password",
+  userMiddleware.validateUser(AuthUpdatePassDTO),
+  authController.updatePassword
 );
+
+authRouter.post("/auth/login-temp", authController.loginTemp);
 
 export default authRouter;

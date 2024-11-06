@@ -4,35 +4,33 @@ import Histories from "./model/history.mode";
 import mongoose from "mongoose";
 import { HistoryStatus } from "./types/history.type";
 import axios from "axios";
+import { Length } from "class-validator";
 
 @Service()
 export class HistoryService {
   async createHistory(params: HistoryCreateDTO) {
-    const { book, chapter, page, userId } = params;
+    const { book, page, userId } = params;
 
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-      const history = await Histories.findOneAndUpdate(
-        {
+      let history = await this.getHistory(userId, book);
+      if (!history) {
+        history = new Histories({
           user: new mongoose.Types.ObjectId(userId),
           book: new mongoose.Types.ObjectId(book),
-        },
-        {
-          chapter: new mongoose.Types.ObjectId(chapter),
           page: page,
-        },
-        {
-          new: true,
-          upsert: true,
-          session,
-        }
-      );
-      const response = await axios.post(
-        `http://localhost:5002/api/v1/recommend/create_model_rating`,
-        { userId: userId }
-      );
+        });
+        await history.save({ session });
+        const response = await axios.post(
+          `http://localhost:5002/api/v1/recommend/create_model_rating`,
+          { userId: userId }
+        );
+      } else {
+        history.page = page;
+        await history.save({ session });
+      }
       await session.commitTransaction();
       session.endSession();
 
@@ -42,15 +40,19 @@ export class HistoryService {
       session.endSession();
       throw error;
     }
-
   }
   async getOneHistory(userId: string, bookId: string) {
+    const history = await this.getHistory(userId, bookId);
+    if (!history) return { page: 1 };
+    return history;
+  }
+
+  async getHistory(userId: string, bookId: string) {
     const history = await Histories.findOne({
       user: new mongoose.Types.ObjectId(userId),
       book: new mongoose.Types.ObjectId(bookId),
       status: HistoryStatus.Saved,
     });
-    if (!history) return { page: 1 };
     return history;
   }
 
