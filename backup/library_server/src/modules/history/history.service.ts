@@ -10,36 +10,24 @@ import { Length } from "class-validator";
 export class HistoryService {
   async createHistory(params: HistoryCreateDTO) {
     const { book, page, userId } = params;
-
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
-    try {
-      let history = await this.getHistory(userId, book);
-      if (!history) {
-        history = new Histories({
-          user: new mongoose.Types.ObjectId(userId),
-          book: new mongoose.Types.ObjectId(book),
-          page: page,
-        });
-        await history.save({ session });
-        const response = await axios.post(
-          `http://localhost:5002/api/v1/recommend/create_model_rating`,
-          { userId: userId }
-        );
-      } else {
-        history.page = page;
-        await history.save({ session });
-      }
-      await session.commitTransaction();
-      session.endSession();
-
-      return history;
-    } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-      throw error;
+    let history = await this.getHistory(userId, book);
+    if (!history) {
+      history = new Histories({
+        user: new mongoose.Types.ObjectId(userId),
+        book: new mongoose.Types.ObjectId(book),
+        page: page,
+      });
+      await history.save();
+      const response = await axios.post(
+        `http://localhost:5002/api/v1/recommend/create_model_rating`,
+        { userId: userId }
+      );
+    } else {
+      history.page = page;
+      await history.save();
     }
+
+    return history;
   }
   async getOneHistory(userId: string, bookId: string) {
     const history = await this.getHistory(userId, bookId);
