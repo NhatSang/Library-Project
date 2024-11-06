@@ -25,7 +25,7 @@ import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 const navigation = [
   {
     component: CNavItem,
-    name: 'Dashboard',
+    name: 'Tổng quan',
     to: '/dashboard',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
   },
@@ -73,18 +73,18 @@ const navigation = [
   {
     component:CNavGroup,
     name:'Thể loại',
-    to:'/categories',
+    to:'/genres',
     icon:<CIcon icon={cilNotes} customClassName="nav-icon"/>,
     items:[
       {
         component:CNavItem,
         name:'Danh sách',
-        to:'/categories/list'
+        to:'/genres/list'
       },
       {
         component:CNavItem,
         name:'Thêm mới',
-        to:'/categories/add'
+        to:'/genres/add'
       },
     ]
   },

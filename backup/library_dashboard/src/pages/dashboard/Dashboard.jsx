@@ -48,16 +48,6 @@ import {
   cilUserFemale,
 } from '@coreui/icons'
 
-import avatar1 from 'src/assets/images/avatars/1.jpg'
-import avatar2 from 'src/assets/images/avatars/2.jpg'
-import avatar3 from 'src/assets/images/avatars/3.jpg'
-import avatar4 from 'src/assets/images/avatars/4.jpg'
-import avatar5 from 'src/assets/images/avatars/5.jpg'
-import avatar6 from 'src/assets/images/avatars/6.jpg'
-
-import WidgetsBrand from '../widgets/WidgetsBrand'
-import WidgetsDropdown from '../widgets/WidgetsDropdown'
-import MainChart from './MainChart'
 import { _getUsers } from '../user/apis'
 import { formatDate } from '../../utils'
 import { CChartBar, CChartPie } from '@coreui/react-chartjs'
@@ -78,16 +68,6 @@ const Dashboard = () => {
     }
   };
 
-
-  const progressGroupExample1 = [
-    { title: 'Thứ hai', value1: 0, value2: 0 },
-    { title: 'Thứ ba', value1: 56, value2: 94 },
-    { title: 'Thứ tư', value1: 12, value2: 67 },
-    { title: 'Thứ năm', value1: 43, value2: 91 },
-    { title: 'Thứ sáu', value1: 22, value2: 73 },
-    { title: 'Thứ bảy', value1: 53, value2: 82 },
-    { title: 'Chủ nhật', value1: 9, value2: 69 },
-  ]
 
   const progressGroupExample2 = [
     { title: 'Nam', icon: cilUser, value: 53 },

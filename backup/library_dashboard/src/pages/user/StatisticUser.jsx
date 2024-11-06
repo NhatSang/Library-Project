@@ -12,7 +12,7 @@ const StatisticUser = () => {
     const oneWeekAgoFormatted = oneWeekAgo.toISOString().split("T")[0];
     const [startDate, setStartDate] = useState(oneWeekAgoFormatted);
     const [endDate, setEndDate] = useState(today);
-    const [selectedGenre, setSelectedGenre] = useState("");
+    const [selectedMajors, setSelectedMajors] = useState("");
     const [genres, setGenres] = useState([]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -51,10 +51,10 @@ const StatisticUser = () => {
         setEndDate(e.target.value);
       };
     
-      const handleGenreChange = (e) => {
+      const handleMajor = (e) => {
         console.log(e.target.value);
-    
-        setSelectedGenre(e.target.value);
+        setSelectedMajors(e.target.value);
+        
       };
 
       const columns = [
@@ -75,7 +75,9 @@ const StatisticUser = () => {
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
-            render: (text) => <Tag color={text === 'active' ? 'green' : 'red'}>{text}</Tag>,
+            render: (text) => <Tag color={text === 'active' ? 'green' : 'red'}>{
+                text === 'active' ? 'Hoạt động' : 'Bị khóa'
+            }</Tag>,
             },
         ];
 
@@ -112,7 +114,7 @@ const StatisticUser = () => {
               <CFormSelect
                 id="genre-select"
                 className="w-40"
-                onChange={handleGenreChange}
+                onChange={handleMajor}
               >
                 <option value="">------</option>
                 {majors.map((major) => (

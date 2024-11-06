@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { CButton, CForm, CFormInput, CFormSelect, CCol, CRow, CCard, CCardBody, CSpinner } from '@coreui/react';
 import { message, Spin } from "antd"; // Keep Ant Design message for notifications
-import { Link, useNavigate } from "react-router-dom";
-import { _createBook, _getGenres, _getMajors } from "./apis";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { _createBook, _getBook, _getBookById, _getGenres, _getMajors } from "./apis";
 import { Loading } from "../../components";
 
 
-const AddBook = () => {
+const EditBook = () => {
+    const location = useLocation();
+  const { state } = location || {};
+  const { data } = state || {};
   const navigate = useNavigate();
   const [genres, setGenres] = useState([]);
   const [majors, setMajors] = useState([]);
@@ -18,9 +21,11 @@ const AddBook = () => {
   });
   const [selectedPdfFile, setSelectedPdfFile] = useState(null);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
+  const [existingImageUrl, setExistingImageUrl] = useState("");
 
   useEffect(() => {
+    getBook(data.bookId);
     getGenres();
     getMajors();
   }, []);
@@ -34,6 +39,19 @@ const AddBook = () => {
     const response = await _getMajors();
     setMajors(response.data);
   };
+
+  const getBook = async (id) => {
+    const response = await _getBookById(id);
+    console.log(response.data);
+    setFormData({
+        title: response.data.title,
+        author: response.data.author,
+        genre: response.data.genre,
+        majors: response.data.majors,
+    });
+    setSelectedPdfFile(response.data.pdfLink);
+    setExistingImageUrl(response.data.image);
+    };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -123,7 +141,7 @@ const AddBook = () => {
         )}
       <CCard className="max-w-3xl mx-auto p-6 mt-8">
         <CCardBody>
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Thêm Sách Mới</h2>
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Chỉnh sửa thông tin sách</h2>
           <CForm onSubmit={handleSubmit} className="space-y-4">
             <CRow className="mb-3">
               <CCol>
@@ -155,12 +173,11 @@ const AddBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">PDF File:</label>
+                <label className="form-label">PDF File: (Nếu muốn thay đổi thì chọn lại)</label>
                 <input
                   type="file"
                   accept="application/pdf"
                   onChange={handleFilePdfChange}
-                  required
                   className="form-control"
                 />
               </CCol>
@@ -189,14 +206,14 @@ const AddBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">Khoa</label>
+                <label className="form-label">Chuyên ngành</label>
                 <CFormSelect
                   name="majors"
                   value={formData.majors}
                   onChange={(e) => handleMajorChange(e.target.value)}
                 >
                   <option value="" disabled>
-                    Chọn khoa
+                    Chọn chuyên ngành
                   </option>
                   {majors.map((major) => (
                     <option key={major._id} value={major._id}>
@@ -214,29 +231,36 @@ const AddBook = () => {
                   type="file"
                   accept="image/jpeg,image/png"
                   onChange={handleFileImageChange}
-                  required
                   className="form-control"
                 />
               </CCol>
             </CRow>
 
-            {selectedImageFile && (
-              <CRow className="mb-3">
-                <CCol>
-                  <h3 className="text-sm font-medium text-gray-700">Ảnh bìa đã chọn:</h3>
+            {selectedImageFile || existingImageUrl ? (
+            <CRow className="mb-3">
+              <CCol>
+                <h3 className="text-sm font-medium text-gray-700">Ảnh bìa đã chọn:</h3>
+                {selectedImageFile ? (
                   <img
                     src={URL.createObjectURL(selectedImageFile)}
                     alt="Selected Cover"
-                    className="mt-2 h-48 object-cover border rounded-md"
+                    className="mt-2 h-24 object-cover border rounded-md"
                   />
-                </CCol>
-              </CRow>
-            )}
+                ) : (
+                  <img
+                    src={existingImageUrl}
+                    alt="Existing Cover"
+                    className="mt-2 h-24 object-cover border rounded-md"
+                  />
+                )}
+              </CCol>
+            </CRow>
+          ) : null}
 
             <CRow className="mt-4">
               <CCol className="text-end">
                 <CButton type="submit" color="success" disabled={loading}>
-                  <span className="text-white">Thêm sách</span>
+                  <span className="text-white">Lưu sách</span>
                 </CButton>
               </CCol>
             </CRow>
@@ -247,4 +271,4 @@ const AddBook = () => {
   );
 };
 
-export default AddBook;
+export default EditBook;
