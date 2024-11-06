@@ -19,7 +19,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Feather from 'react-native-vector-icons/Feather'
 import { iBook } from 'src/types/iBook'
 import { IReview } from 'src/types/iReview'
-import { _getReviewNewest } from '../apis'
+import { _getBookDetail, _getReviewNewest } from '../apis'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import Share from 'react-native-share';
 import ViewShot from 'react-native-view-shot';
@@ -35,17 +35,32 @@ const BookDetail = ({ navigation, route }: any) => {
     const [reviews, setReviews] = useState<IReview[]>([]);
     const [show, setShow] = useState<boolean>(false);
     const viewShot:any = useRef();
+    const [bookDetail, setBookDetail] = useState<any>(item);
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            await getImageColors();
-            await getUserLocal();
-            await getShowSummary();
+            getBookDetail();
+            getImageColors();
+            getUserLocal();
+            getShowSummary();
             setLoading(false);
         };
         fetchData();
     }, []);
+
+    const getBookDetail = async () => {
+        try {
+            const response = await _getBookDetail(book._id);
+        if(response.data){
+            console.log('book detail: ', response.data);
+            setBookDetail(response.data);
+        }
+        } catch (error) {
+            console.log('Error get book detail: ', error);
+            
+        }
+    }
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -97,7 +112,6 @@ const BookDetail = ({ navigation, route }: any) => {
     const getReviewNewest = async () => {
         try {
             const response = await _getReviewNewest(book._id);
-            console.log('response: ', response.data);
             if (response.data) {
                 setReviews(response.data);
             }
@@ -143,7 +157,6 @@ const BookDetail = ({ navigation, route }: any) => {
                 }
                 const response = await _createHistory(data);
                 if (response.data) {
-                    // await _updateModel('6708c0e4e4d8b3aef5c1ac10')
                 }
             } catch (error) {
                 console.log('Error create history: ', error);
@@ -228,14 +241,14 @@ const BookDetail = ({ navigation, route }: any) => {
                                 </View>
                             </View>
                             <View className='justify-center items-center'>
-                                <AppText text='99,9k' font={fontFamilies.robotoBold} />
+                                <AppText text={bookDetail?.totalView} font={fontFamilies.robotoBold} />
                                 <View className='flex-row items-center'>
                                     <AntDesign color={globalColor.bg_dark} size={16} name='eye' />
                                     <AppText styles={{ paddingLeft: 4 }} text='lượt xem' />
                                 </View>
                             </View>
                             <View className='justify-center items-center'>
-                                <AppText text={999} font={fontFamilies.robotoBold} />
+                                <AppText text={bookDetail?.avgRating} font={fontFamilies.robotoBold} />
                                 <View className='flex-row items-center'>
                                     <AntDesign name='star' color={'yellow'} size={16} />
                                     <AppText styles={{ paddingLeft: 4 }} text='đánh giá' />

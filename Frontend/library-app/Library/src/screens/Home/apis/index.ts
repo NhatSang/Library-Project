@@ -60,11 +60,6 @@ const _deleteNote = async (id: string) => {
     });
 };
 
-// const _createHistory = async (data: any) => {
-//     const url = '/create-history';
-//     return api.post(url, data);
-// };
-
 const _getHistoryByBookIdAndUser = async (bookId: string) => {
     const url = '/get-history-by-book-id-and-user';
     return api2.get(url, {
@@ -174,6 +169,24 @@ const _getBooksAI = async (id: string) => {
     return api3.get(url);
 };
 
+const _findBook = async (keyword: string) => {
+    const url ="/books/find_books";
+    return api.get(url, {
+        params: {
+            keyword,
+        },
+    });
+}
+
+const _getBookDetail = async (bookId: string) => {
+    const url =  "/books/book-details";
+    return api.get(url, {
+        params: {
+            bookId,
+        },
+    });
+}
+
 export {
     _createNote,
     _createReview,
@@ -199,4 +212,6 @@ export {
     _markAsRead,
     _searchBook,
     _updateModel,
+    _findBook,
+    _getBookDetail
 };

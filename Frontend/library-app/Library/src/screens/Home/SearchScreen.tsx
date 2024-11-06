@@ -10,7 +10,7 @@ import { FlatList } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { iBook } from 'src/types/iBook'
-import { _searchBook } from './apis'
+import { _findBook, _searchBook } from './apis'
 
 const SearchScreen = ({ navigation }: any) => {
     const [searchText, setSearchText] = useState<string>('');
@@ -19,9 +19,10 @@ const SearchScreen = ({ navigation }: any) => {
     const debouncedSearch = useRef(
         debounce(async (text: string) => {
             try {
-                const response = await _searchBook(text);
-                if (response.status) {
-                    setSearchResult(response.data.data);
+                const response = await _findBook(text);
+                if (response.data) {
+                    console.log(response.data);
+                    setSearchResult(response.data);
                 }
             } catch (error) {
                 console.log(error);

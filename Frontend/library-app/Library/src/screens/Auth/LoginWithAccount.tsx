@@ -22,7 +22,6 @@ import { _login, _postFCMToken, iLogin, iPostFCMToken } from './apis'
 
 const LoginWithAccount = ({ navigation,route }: any) => {
     const {userEmail ='',userPassword=''} = route?.params ||{};
-    console.log(userEmail,userPassword);
     const [email, setEmail] = useState<string>(userEmail);
     const [password, setPassword] = useState<string>(userPassword);
     const dispatch = useDispatch();
