@@ -4,7 +4,7 @@ import { AuthMiddleware } from "../auth/auth.middleware";
 import { BookController } from "./book.controller";
 import { Role } from "../user/types/user.type";
 import { BookMiddleware } from "./book.middleware";
-import { BookCreateReqDTO } from "./dto/book.dto";
+import { BookCreateReqDTO, BookUpdateReqDTO } from "./dto/book.dto";
 import { upload } from "../../../aws/aws.helper";
 
 const bookRouter = Router();
@@ -15,19 +15,13 @@ const bookMiddleware = new BookMiddleware();
 bookRouter.get(
   "/book/get-content",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
-  bookController.getrBookContentByPage
+  bookController.getBookContentByPage
 );
 
 bookRouter.get(
   "/book/get-by-majors-user",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   bookController.getBookByMajorsUserId
-);
-
-bookRouter.get(
-  "/book/get-newest",
-  authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
-  bookController.getBookNewest
 );
 
 bookRouter.get(
@@ -60,4 +54,23 @@ bookRouter.post(
   bookController.createSummary
 );
 
+bookRouter.get(
+  "/books/book-details",
+  authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
+  bookController.getBookDetails
+);
+
+bookRouter.get(
+  "/books/find_books",
+  authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
+  bookController.findBookByKeyword
+);
+
+bookRouter.post(
+  "/books/update-book",
+  authMiddleware.authenticateAccessToken([Role.Admin]),
+  upload.fields([{ name: "image" }, { name: "pdf" }]),
+  bookMiddleware.validate(BookUpdateReqDTO),
+  bookController.updateBook
+);
 export default bookRouter;

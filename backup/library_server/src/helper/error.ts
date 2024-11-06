@@ -54,7 +54,11 @@ export const Errors = {
     "ChapterNotExits",
     400
   ),
-  
+  noteNotExits: new ErrorCustom(
+    "Ghi chú này không tồn tại",
+    "noteNotExits",
+    400
+  ),
 };
 export const handleErrors = (
   error: any,

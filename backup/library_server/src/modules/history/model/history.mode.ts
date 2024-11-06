@@ -6,7 +6,6 @@ const historySchema = new mongoose.Schema(
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     book: { type: mongoose.Schema.Types.ObjectId, ref: "Book" },
     page: { type: Number },
-    chapter: { type: mongoose.Schema.Types.ObjectId, ref: "Chapters" },
     status: {
       type: Number,
       enum: [HistoryStatus.Deleted, HistoryStatus.Saved],

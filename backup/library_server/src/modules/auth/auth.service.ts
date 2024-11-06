@@ -25,7 +25,7 @@ import {
 import { UserService } from "../user/user.service";
 import Verification from "./model/auth.model";
 import { VerificationCodeType } from "./types/auth.type";
-import { AuthVerifyEmailDTO } from "./dto/auth.dto";
+import { AuthUpdatePassDTO, AuthVerifyEmailDTO } from "./dto/auth.dto";
 import mongoose from "mongoose";
 import User from "../user/model/user.model";
 import { UserStatus } from "../user/types/user.type";
@@ -37,13 +37,7 @@ export class AuthService {
     @Inject() private userService: UserService
   ) {}
 
-  sendVerificationCode = async (params: UserVerifyEmailDTO) => {
-    const { email } = params;
-    console.log(email);
-
-    const existedUser = await this.userService.getUserByEmail(email);
-    if (existedUser) throw Errors.userExists;
-
+  sendVerificationCode = async (email: string) => {
     const attemptsToday = await this.countCodeToday(email);
     if (attemptsToday >= 3) throw Errors.tooManyRequest;
 
@@ -56,6 +50,20 @@ export class AuthService {
     await this.saveVerificationCode(email, verificationCode);
 
     sendCodeToEmail(email, verificationCode);
+  };
+
+  sendCodeToRegister = async (params: UserVerifyEmailDTO) => {
+    const { email } = params;
+    const existedUser = await this.userService.getUserByEmail(email);
+    if (existedUser) throw Errors.userExists;
+    await this.sendVerificationCode(email);
+    return email;
+  };
+
+  sendCodeToUpdate = async (params: UserVerifyEmailDTO) => {
+    const { email } = params;
+    const existedUser = await this.userService.checkExistedEmail(email);
+    await this.sendVerificationCode(email);
     return email;
   };
 
@@ -177,7 +185,7 @@ export class AuthService {
       if (password != user.emailId) throw Errors.wrongPassword;
     } else {
       const hashpass = await hashPassword(password);
-  
+
       user = await User.findOneAndUpdate(
         { email: email, status: UserStatus.Pending },
         { $set: { password: hashpass, emailId: password } },
@@ -279,5 +287,26 @@ export class AuthService {
     ]);
 
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  };
+
+  updatePassword = async (params: AuthUpdatePassDTO) => {
+    const { email, password } = params;
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const hashPass = await hashPassword(password);
+      const user = await User.findOneAndUpdate(
+        { email: email, status: UserStatus.Active },
+        { password: hashPass },
+        { session, new: true }
+      );
+      console.log(user._id.toString());
+      await this.redisService.deleteAllKeyByUserId(user._id.toString());
+      return true;
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      throw error;
+    }
   };
 }

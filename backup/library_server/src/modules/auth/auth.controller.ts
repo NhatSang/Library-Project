@@ -7,13 +7,26 @@ import { ResponseCustom } from "../../helper/response";
 export class AuthController {
   constructor(@Inject() private authService: AuthService) {}
 
-  sendVerificationCode = async (
+  sendCodeToRegister = async (
     req: Request,
     res: Response,
     next: NextFunction
   ) => {
     try {
-      const result = await this.authService.sendVerificationCode(req.body);
+      const result = await this.authService.sendCodeToRegister(req.body);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  sendCodeToUpdate = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const result = await this.authService.sendCodeToUpdate(req.body);
       res.send(new ResponseCustom(result));
     } catch (error) {
       next(error);
@@ -81,6 +94,15 @@ export class AuthController {
   loginTemp = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.authService.loginTemp(req.body);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  updatePassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.authService.updatePassword(req.body);
       res.send(new ResponseCustom(result));
     } catch (error) {
       next(error);

@@ -1,20 +1,37 @@
 import { loadPdfJsLib } from "./../../helper/index";
-import { Service } from "typedi";
+import { Inject, Service } from "typedi";
 import Books from "./model/book.model";
-import mongoose from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import { Errors } from "../../helper/error";
 import { BookStatus } from "./types/book.type";
 import User from "../user/model/user.model";
-import { BookCreateReqDTO, BookResponseDTO } from "./dto/book.dto";
+import {
+  BookCreateReqDTO,
+  BookDetailsResponseDTO,
+  BookResponseDTO,
+  BookUpdateReqDTO,
+} from "./dto/book.dto";
 import axios from "axios";
 // import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import { PDFDocument } from "pdf-lib";
 import pdf from "pdf-parse";
 import { openai } from "../../helper";
 import Chapter from "../chapter/model/chapter.model";
+import { Pagination } from "../../helper/pagination";
+import { ViewService } from "../view/view.service";
+import { ReviewService } from "../reivew/review.service";
+import { GenreService } from "../genre/genre.service";
+import { MajorsService } from "../majors/majors.service";
 
 @Service()
 export class BookService {
+  constructor(
+    @Inject() private viewService: ViewService,
+    @Inject() private reviewService: ReviewService,
+    @Inject() private genreService: GenreService,
+    @Inject() private majorsService: MajorsService
+  ) {}
+
   async getPublishedBook(bookId: string) {
     return await Books.findOne({
       _id: new mongoose.Types.ObjectId(bookId),
@@ -39,29 +56,26 @@ export class BookService {
     return Books.find({ status: BookStatus.Published });
   }
 
-  async getBookByMajorsUserId(userId: string) {
+  async getBookByMajorsUserId(userId: string, pagination: Pagination) {
+    const { limit, getOffset } = pagination;
     const user = await User.findOne({
       _id: new mongoose.Types.ObjectId(userId),
     });
-    console.log(user.majors);
-    const books = await Books.find({
-      majors: user.majors,
-      status: BookStatus.Published,
-    })
-      .limit(10)
-      .populate("genre")
-      .populate("majors");
-    return BookResponseDTO.transformBook(books);
-  }
 
-  async getBookNewest() {
-    const books = await Books.find({ status: BookStatus.Published })
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .populate("genre")
-      .populate("majors");
+    const matchStage = { majors: user.majors, status: BookStatus.Published };
 
-    return BookResponseDTO.transformBook(books);
+    const [books, total] = await Promise.all([
+      Books.find(matchStage)
+        .limit(limit)
+        .skip(getOffset())
+        .populate("genre")
+        .populate("majors"),
+      Books.countDocuments(matchStage),
+    ]);
+
+    const transformedBooks = BookResponseDTO.transformBook(books);
+    pagination.total = total;
+    return { books: transformedBooks, pagination };
   }
 
   async getTopRatedBooks() {
@@ -205,12 +219,15 @@ export class BookService {
     return BookResponseDTO.transformBook(topViewedBooks);
   }
 
-  async getRecommendBooks(userId: string) {
+  async getRecommendBooks(userId: string, pagination: Pagination) {
+    const { limit, getOffset } = pagination;
     const response = await axios.get(
       `http://localhost:5002/api/v1/recommend/recommend_books_rating/${userId}`
     );
-    console.log(response);
-    return BookResponseDTO.transformBook(response.data);
+    const books = response.data;
+    pagination.total = books.length;
+    const paginatedBooks = books.slice(getOffset(), getOffset() + limit);
+    return { books: BookResponseDTO.transformBook(paginatedBooks), pagination };
   }
 
   getPageNumber = async (filePath: string) => {
@@ -374,6 +391,75 @@ export class BookService {
       },
       { new: true }
     );
+    return true;
+  };
+
+  getBookDetails = async (bookId: string) => {
+    const book = this.checkPublishedBook(bookId);
+    const totalView = await this.viewService.getTotalView(bookId);
+    const avgRating = await this.reviewService.getAvgRating(bookId);
+    const bookDetails = { ...book, totalView, avgRating };
+    return BookDetailsResponseDTO.transformBook(bookDetails);
+  };
+
+  findBooksByKeyword = async (keyword: string, pagination: Pagination) => {
+    const { getOffset, limit } = pagination;
+    const matchStage: FilterQuery<any> = {
+      status: BookStatus.Published,
+    };
+    if (keyword) {
+      const genres = await this.genreService.getGenresByKeyword(keyword);
+      const majors = await this.majorsService.getMajorsByKeyword(keyword);
+      const genreIds = genres.map((genre: any) => genre._id);
+      const majorIds = majors.map((major: any) => major._id);
+      matchStage.$or = [
+        { title: { $regex: keyword, $options: "i" } },
+        { author: { $regex: keyword, $options: "i" } },
+        { publisher: { $regex: keyword, $options: "i" } },
+        { genre: { $in: genreIds } },
+        { majors: { $in: majorIds } },
+      ];
+    }
+    const [books, total] = await Promise.all([
+      Books.find(matchStage)
+        .skip(getOffset())
+        .limit(limit)
+        .populate("genre")
+        .populate("majors"),
+      Books.countDocuments(matchStage),
+    ]);
+    pagination.total = total;
+    const transformedList = BookResponseDTO.transformBook(books);
+    return { books: transformedList, pagination };
+  };
+
+  deleteBook = async (bookId: string) => {
+    const book = await this.checkPublishedBook(bookId);
+    book.status = BookStatus.Deleted;
+    await book.save();
+    return true;
+  };
+
+  updateBook = async (params: BookUpdateReqDTO) => {
+    const { bookId, author, genre, majors, image, pdfLink, publisher, yob } =
+      params;
+    const book = await this.checkPublishedBook(bookId);
+    const fieldsToUpdate = {
+      author,
+      genre: genre ? new mongoose.Types.ObjectId(genre) : null,
+      majors: majors ? new mongoose.Types.ObjectId(majors) : null,
+      image,
+      pdfLink,
+      publisher,
+      yob,
+    };
+
+    for (const field in fieldsToUpdate) {
+      if (fieldsToUpdate[field]) {
+        book[field] = fieldsToUpdate[field];
+      }
+    }
+    await book.save();
     return true;
   };
 }

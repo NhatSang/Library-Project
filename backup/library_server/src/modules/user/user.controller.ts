@@ -26,7 +26,7 @@ export class UserController {
   ) => {
     try {
       const { users, pagination } = await this.userService.findUserByKeyword(
-        req.body.keyword,
+        req.query.keyword as string,
         Pagination.fromRequest(req)
       );
       res.send(new ResponseCustom(users, null, pagination));

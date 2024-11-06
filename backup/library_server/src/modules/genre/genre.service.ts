@@ -4,7 +4,7 @@ import { GenreResponeDTO } from "./dto/genre.dto";
 
 @Service()
 export class GenreService {
-  async getListGenres() { 
+  async getListGenres() {
     return GenreResponeDTO.transformGenre(await Genres.find());
   }
 
@@ -14,5 +14,12 @@ export class GenreService {
       name,
     });
     return genres;
+  }
+
+  async getGenresByKeyword(keyword: string) {
+    return await Genres.find(
+      { name: { $regex: keyword, $options: "i" } },
+      { _id: 1 }
+    );
   }
 }
