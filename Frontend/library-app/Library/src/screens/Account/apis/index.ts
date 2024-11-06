@@ -5,4 +5,22 @@ const _getProfile = async () => {
     return api.get(url);
 };
 
-export { _getProfile };
+const _updateImage = async (data: any) => {
+    const url = '/users/update-avatar';
+    return api.post(url, data,{
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+}
+
+export type iUpdateUser = {
+    name: string;
+}
+
+const _updateUser = async (data: any) => {
+    const url = '/users/update';
+    return api.post(url, data);
+}
+
+export { _getProfile,_updateImage };

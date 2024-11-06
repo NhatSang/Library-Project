@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { IReview } from 'src/types/iReview'
 import { _createReview, _getAllReviewByBookId } from '../apis'
+import Toast from 'react-native-toast-message'
 
 
 const RatingScreen = ({ navigation, route }: any) => {
@@ -54,7 +55,7 @@ const RatingScreen = ({ navigation, route }: any) => {
             setLoadingBtn(true);
             const existingReview = reviews.find(review => review.user._id === userId);
             const response = await _createReview({
-                book: id,
+                bookId: id,
                 content,
                 rating
             });
@@ -81,7 +82,14 @@ const RatingScreen = ({ navigation, route }: any) => {
                 Keyboard.dismiss();
                 toggleReviewForm();
             }
-        } catch (error) {
+        } catch (error:any) {
+            setLoadingBtn(false);
+            Toast.show({
+                type: 'error',
+                text1: 'Đánh giá thất bại',
+                text2: 'Vui lòng thử lại',
+                position: 'bottom',
+            });
             console.log('error', error);
         }
     }

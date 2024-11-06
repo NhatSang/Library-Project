@@ -32,7 +32,13 @@ const _getAllReviewByBookId = async (id: string) => {
     });
 };
 
-const _createReview = async (data: any) => {
+export type iCreateReview = {
+    bookId: string;
+    content: string;
+    rating: number;
+};
+
+const _createReview = async (data: iCreateReview) => {
     const url = '/review';
     return api.post(url, data);
 };
@@ -78,9 +84,9 @@ const _getBooksByMayjors = async (id: string) => {
     });
 };
 
-const _getRecomendBoook = async (id: string) => {
-    const url = `/recommend_books/${id}`;
-    return api2.get(url);
+const _getRecomendBoook = async () => {
+    const url = "/book/recommend-books";
+    return api.get(url);
 };
 
 const _getRecomendBoookByMajor = async (id: string) => {

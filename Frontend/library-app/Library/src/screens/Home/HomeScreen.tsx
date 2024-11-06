@@ -51,7 +51,7 @@ const HomeScreen = ({ navigation }: any) => {
             getBookAI();
             getNewestBooks();
             getBookTopView();
-            // getRecommendBook();
+            getRecommendBook();
             getRecommendBookByMajors();
             getNotification();
             getMe();
@@ -160,13 +160,11 @@ const HomeScreen = ({ navigation }: any) => {
     }
     const getRecommendBook = async () => {
         try {
-            const user: any = await getUserLocalStorage();
-            if (user) {
-                const response = await _getRecomendBoook(user._id);
-                if (response.status) {
+                const response = await _getRecomendBoook();
+                console.log('response', response);
+                if (response.data) {
                     setListRecommendBook(response.data);
                 }
-            }
         } catch (error) {
             console.log('error', error);
         }

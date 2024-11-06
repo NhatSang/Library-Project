@@ -13,7 +13,9 @@ import Entypo from 'react-native-vector-icons/Entypo'
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
 import { useDispatch } from 'react-redux'
 import { iUser } from 'src/types/iUser'
-import { _getProfile } from './apis'
+import { _getProfile, _updateImage } from './apis'
+import Toast from 'react-native-toast-message'
+import { isiOS } from '@constants/index'
 
 const AccountDetail = ({ navigation }: any) => {
     const dispatch = useDispatch();
@@ -24,6 +26,7 @@ const AccountDetail = ({ navigation }: any) => {
     const [email, setEmail] = useState<string>('');
     const inputName: any = useRef(null);
     const inputEmail: any = useRef(null);
+    const [loadingImage, setLoadingImage] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchDate = async () => {
@@ -69,9 +72,59 @@ const AccountDetail = ({ navigation }: any) => {
             cropperCircleOverlay: true,
             compressImageQuality: 0.5
         }).then(async (image) => {
-            console.log(image);
+            if (image) {
+                await updateAvatar(image);
+            }
         })
     };
+
+    const updateAvatar = async (image: any) => {
+        setLoadingImage(true);
+        try {
+            const data = new FormData();
+            data.append('image', {
+                uri: isiOS ? image.path.replace('file://', '') : image.path,
+                type: image.mime,
+                name: `${image.modificationDate}_image_${Date.now()}.jpeg`,
+            });
+            console.log('data', image);
+            const response = await _updateImage(data);
+            if (response.data) {
+                console.log('response', response.data);
+                setUser(response.data);
+                setLoadingImage(false)
+            }
+        } catch (error) {
+            setLoadingImage(false);
+            Toast.show({
+                type: 'error',
+                text1: 'Thông báo',
+                text2: 'Có lỗi xảy ra, vui lòng thử lại',
+            });
+        
+            console.log('error', error);
+        }
+    }
+
+    // const handleChangeName = async () => {
+    //     try {
+    //         setLoadingName(true);
+    //         Keyboard.dismiss();
+    //         const response = await _updateName(name);
+    //         if (response.data) {
+    //             setUser(response.data);
+    //             setLoadingName(false);
+    //         }
+    //     } catch (error) {
+    //         setLoadingName(false);
+    //         Toast.show({
+    //             type: 'error',
+    //             text1: 'Thông báo',
+    //             text2: 'Có lỗi xảy ra, vui lòng thử lại',
+    //         });
+    //         console.log('error', error);
+    //     }
+    // }
 
     const btnEditAndSave = (
         value: string,
@@ -135,15 +188,19 @@ const AccountDetail = ({ navigation }: any) => {
                 </View>
                 <View className='flex-1 justify-center items-center'>
                     {user && (
-                        <View className=''>
+                        loadingImage ? (
+                            <View className='w-32 h-32 rounded-full bg-gray-300 justify-center items-center'>
+                                <ActivityIndicator size={28} color={globalColor.primary} />
+                            </View>
+                        ) : (
+                            <Pressable onPress={handleChangeImage} >
                             <Image source={{ uri: user.image }} resizeMode='contain' className='w-32 h-32 rounded-full' />
                             <Pressable
-                                onPress={handleChangeImage}
                                 className='absolute bottom-1 right-1 w-10 h-10 bg-white justify-center items-center rounded-full'>
                                 <Entypo name='camera' size={24} color={globalColor.dark} />
                             </Pressable>
-                        </View>
-
+                        </Pressable>
+                        )
                     )}
                     <Input
                         ref={inputName}

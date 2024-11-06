@@ -16,6 +16,7 @@ def update_or_create_model_rating():
 
 @bp.route('/recommend_books_rating/<user_id>', methods=['GET'])
 def recommend_rating_books_route(user_id):
+    print(user_id)
     try:
         recommendations = recommend_books_rating(user_id)
         return jsonify(recommendations), 200

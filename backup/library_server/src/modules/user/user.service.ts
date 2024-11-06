@@ -168,7 +168,9 @@ export class UserService {
 
   updateAvatar = async (params: any) => {
     const { userId, image } = params;
-    await User.updateOne({ _id: userId }, { image: image });
-    return true;
+    const user = await User.findOneAndUpdate({ _id: userId }, { image: image },{new:true})
+    .populate("majors", "name");
+    const userTransformed = UserResponseDTO.transformUser(user);
+    return userTransformed;
   };
 }
