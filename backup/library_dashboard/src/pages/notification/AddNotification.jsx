@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { CButton, CCard, CCardBody, CCardHeader, CCol, CFormInput, CFormLabel, CFormTextarea, CModal, CModalBody, CModalHeader, CModalTitle } from '@coreui/react';
 import { _getUsers } from '../user/apis';
 import { _getBook, _getMajors } from '../book/apis';
 import { _createNotification, _updateNotification } from './apis';
 import { useLocation } from 'react-router-dom';
 
 const AddNotification = () => { 
-    const location = useLocation(); 
+  const location = useLocation(); 
   const notificationItem = location.state?.notificationItem;
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -26,23 +27,14 @@ const AddNotification = () => {
   }, []);
 
   useEffect(() => {
-    // If notificationItem is provided, populate the form fields
-    console.log(notificationItem);
     if (notificationItem) {
       setTitle(notificationItem.title);
       setContent(notificationItem.content);
       setFilterCondition(notificationItem.filterCondition.type);
-
-      if (notificationItem.filterCondition.type === 'ALL') {
-        setSecondarySelection([]);
-      } else {
-        setSecondarySelection(notificationItem.filterCondition.value || []);
-      }
-      
+      setSecondarySelection(notificationItem.filterCondition.type === 'ALL' ? [] : notificationItem.filterCondition.value || []);
       setPreviewImage(notificationItem.image);
     }
   }, [notificationItem]);
-  
 
   const fetchData = async () => {
     const resUser = await _getUsers();
@@ -50,8 +42,8 @@ const AddNotification = () => {
     const resBook = await _getBook();
     setUsers(resUser.data);
     setMajors(resMajor.data);
-    setBooks(resBook.data.data);
-  }
+    setBooks(resBook.data);
+  };
 
   const handleSelectData = (item) => {
     if (!selectedData.includes(item)) {
@@ -60,9 +52,12 @@ const AddNotification = () => {
   };
 
   const handleSelectFilterCondition = (condition) => {
+    setIsFilterConditionModalOpen(false);
     setFilterCondition(condition);
     setSecondarySelection([]);
-    setIsSecondaryModalOpen(true);
+    setIsSecondaryModalOpen(
+      condition === 'Theo Người dùng' || condition === 'Theo Ngành' ? true : false
+    );
   };
 
   const handleSelectSecondaryOption = (option) => {
@@ -78,26 +73,18 @@ const AddNotification = () => {
     }
   };
 
-  const handleSaveNotification = async() => {
+  const handleSaveNotification = async () => {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('content', content);
     let filterConditionObject;
-    if (filterCondition === 'Theo User') {
-        filterConditionObject = { 
-          userId: secondarySelection.map((item) => item._id), 
-          type: 'USER' 
-        };
-      } else if (filterCondition === 'Theo Ngành') {
-        filterConditionObject = { 
-          major: secondarySelection.map((item) => item._id), 
-          type: 'MAJOR' 
-        };
-      } else if (filterCondition === 'Tất cả') {
-        filterConditionObject = { 
-          type: 'ALL' 
-        };
-      }
+    if (filterCondition === 'Theo Người dùng') {
+      filterConditionObject = { userId: secondarySelection.map((item) => item._id), type: 'USER' };
+    } else if (filterCondition === 'Theo Ngành') {
+      filterConditionObject = { major: secondarySelection.map((item) => item._id), type: 'MAJOR' };
+    } else if (filterCondition === 'Tất cả') {
+      filterConditionObject = { type: 'ALL' };
+    }
     formData.append('filterCondition', JSON.stringify(filterConditionObject));
     const selectedObject = JSON.stringify(selectedData.map((item) => item._id));
     formData.append('data', selectedObject);
@@ -105,7 +92,7 @@ const AddNotification = () => {
     if (previewImage) {
       formData.append('image', {
         uri: previewImage,
-        name: 'image.jpg', 
+        name: 'image.jpg',
         type: 'image/jpeg',
       });
     }
@@ -113,10 +100,8 @@ const AddNotification = () => {
     try {
       let response;
       if (notificationItem) {
-        // If editing, call the update function
         response = await _updateNotification(notificationItem._id, formData);
       } else {
-        // If adding, call the create function
         response = await _createNotification(formData);
       }
 
@@ -127,200 +112,129 @@ const AddNotification = () => {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="p-8 bg-white rounded-lg shadow-lg w-full max-w-2xl">
-        <h1 className="text-2xl font-bold mb-4">{notificationItem ? 'Cập Nhật Thông Báo' : 'Thêm Thông Báo'}</h1>
-
-        {/* Form Inputs */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-2">Tiêu đề</label>
-          <input 
-            type="text" 
-            value={title} 
-            onChange={(e) => setTitle(e.target.value)} 
-            className="border border-gray-300 rounded-lg p-2 w-full" 
-            placeholder="Nhập tiêu đề..." 
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-semibold mb-2">Nội dung</label>
-          <textarea 
-            value={content} 
-            onChange={(e) => setContent(e.target.value)} 
-            className="border border-gray-300 rounded-lg p-2 w-full h-24" 
-            placeholder="Nhập nội dung..."
-          />
-        </div>
-
-        {/* Image Upload */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-2">Tải lên hình ảnh</label>
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handleImageUpload} 
-            className="border border-gray-300 rounded-lg p-2 w-full" 
-          />
-          {previewImage && (
-            <div className="mt-4">
-              <p className="font-semibold">Xem trước hình ảnh:</p>
-              <img src={previewImage} alt="Preview" className="w-32 h-auto mt-2 rounded-lg" />
-            </div>
-          )}
-        </div>
-
-        {/* Select Multiple Data (Sách) */}
-        <div className="mb-4">
-          <button 
-            onClick={() => setIsDataModalOpen(true)} 
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          >
-            Chọn Sách
-          </button>
-          {selectedData.length > 0 && (
-            <div className="mt-2">
-              <p>Sách đã chọn:</p>
-              <ul>
-                {selectedData.map((data, index) => (
-                  <li key={index} className="text-sm">{data.title}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        {/* Select Filter Condition */}
-        <div className="mb-4">
-          <button 
-            onClick={() => setIsFilterConditionModalOpen(true)} 
-            className="bg-green-500 text-white px-4 py-2 rounded-lg"
-          >
-            Chọn Kiểu Lọc
-          </button>
-          {filterCondition && (
-            <div className="mt-2">
-              <p>Kiểu lọc đã chọn: {filterCondition}</p>
-              <ul>
-                {secondarySelection.map((item, index) => (
-                  <li key={index} className="text-sm">{item.name}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        {/* Save Button */}
-        <div className='w-full flex justify-between'>
-          <button onClick={handleSaveNotification} className="bg-indigo-600 text-white px-6 py-2 rounded-lg mt-4">
-            {notificationItem ? 'Cập Nhật Thông Báo' : 'Lưu Thông Báo'}
-          </button>
-          <button 
-            onClick={() => window.history.back()}
-            className="bg-gray-500 text-white px-6 py-2 rounded-lg mt-4 ml-4">Quay lại</button>
-        </div>
-
-        {/* Data Modal */}
-        
-{/* {isDataModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
-              <h2 className="text-xl font-bold mb-4">Chọn Sách</h2>
-              <input
-                type="text"
-                placeholder="Tìm kiếm sách..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="border border-gray-300 rounded-lg p-2 mb-4 w-full"
-              />
-              <ul>
-                {books
-                  .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
-                  .map((book, index) => (
-                    <li key={index} className="mb-2 cursor-pointer" onClick={() => handleSelectData(book)}>
-                      {book.title}
-                    </li>
-                ))}
-              </ul>
-              <button onClick={() => setIsDataModalOpen(false)} className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Đóng</button>
-            </div>
+    <CCol className="d-flex align-items-center justify-content-center">
+      <CCard className="w-100 max-w-2xl shadow-lg border-0">
+        <CCardHeader>
+          <h2>{notificationItem ? 'Cập Nhật Thông Báo' : 'Thêm Thông Báo'}</h2>
+        </CCardHeader>
+        <CCardBody>
+          <div className="mb-4">
+            <CFormLabel className="fw-bold">Tiêu đề</CFormLabel>
+            <CFormInput value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Nhập tiêu đề..." />
           </div>
-        )}  */}
 
-{isDataModalOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg shadow-lg w-1/2 max-h-[80vh] overflow-auto">
-      <h2 className="text-xl font-bold mb-4">Chọn Sách</h2>
-      <input
-        type="text"
-        placeholder="Tìm kiếm sách..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="border border-gray-300 rounded-lg p-2 mb-4 w-full"
-      />
-      <ul className="max-h-[60vh] overflow-y-auto">
-        {books
-          .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
-          .map((book, index) => (
-            <li key={index} className="mb-2 cursor-pointer" onClick={() => handleSelectData(book)}>
-              {book.title}
-            </li>
-          ))}
-      </ul>
-      <button onClick={() => setIsDataModalOpen(false)} className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Đóng</button>
-    </div>
-  </div>
-)}
-
-        {/* Filter Condition Modal */}
-        {isFilterConditionModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
-              <h2 className="text-xl font-bold mb-4">Chọn Kiểu Lọc</h2>
-              <ul>
-                {['Theo User', 'Theo Ngành','Tất cả'].map((condition, index) => (
-                  <li key={index} className="mb-2 cursor-pointer" onClick={() => handleSelectFilterCondition(condition)}>
-                    {condition}
-                  </li>
-                ))}
-              </ul>
-              <button onClick={() => setIsFilterConditionModalOpen(false)} className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Đóng</button>
-            </div>
+          <div className="mb-4">
+            <CFormLabel className="fw-bold">Nội dung</CFormLabel>
+            <CFormTextarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Nhập nội dung..." />
           </div>
-        )}
 
-        {/* Secondary Modal for selecting options based on filter condition */}
-  {isSecondaryModalOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg shadow-lg w-1/2 max-h-[80vh] overflow-auto">
-      <h2 className="text-xl font-bold mb-4">{filterCondition} Options</h2>
-      <ul className="max-h-[60vh] overflow-y-auto">
-        {filterCondition === 'Tất cả' ? (
-          <li className="mb-2">Chọn tất cả người dùng hoặc ngành</li>
-        ) : filterCondition === 'Theo User' ? (
-          users.map((user, index) => (
-            <li key={index} className="mb-2 cursor-pointer" onClick={() => handleSelectSecondaryOption(user)}>
-              {user.name}
-            </li>
-          ))
-        ) : (
-          majors.map((major, index) => (
-            <li key={index} className="mb-2 cursor-pointer" onClick={() => handleSelectSecondaryOption(major)}>
-              {major.name}
-            </li>
-          ))
-        )}
-      </ul>
-      <button onClick={() => setIsSecondaryModalOpen(false)} className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Đóng</button>
-    </div>
-  </div>
-)}
+          <div className="mb-4">
+            <CFormLabel className="fw-bold">Tải lên hình ảnh</CFormLabel>
+            <CFormInput type="file" accept="image/*" onChange={handleImageUpload} />
+            {previewImage && (
+              <div className="mt-4 text-center">
+                <p className="fw-semibold">Xem trước hình ảnh:</p>
+                <img src={previewImage} alt="Preview" className="w-14 h-auto mt-2 rounded-lg shadow-sm" />
+              </div>
+            )}
+          </div>
 
-      </div>
-    </div>
+          <div className="mb-4">
+            <CButton color="primary" onClick={() => setIsDataModalOpen(true)}>Chọn Sách</CButton>
+            {selectedData.length > 0 && (
+              <div className="mt-3">
+                <p>Sách đã chọn:</p>
+                <ul className="ps-3">
+                  {selectedData.map((data, index) => (
+                    <li key={index} className="text-sm">{data.title}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <CButton style={{backgroundColor:'blueviolet'}} onClick={() => setIsFilterConditionModalOpen(true)}>
+              <span className="text-white">Chọn Kiểu Lọc</span>
+            </CButton>
+            {filterCondition && (
+              <div className="mt-3">
+                <p>Kiểu lọc đã chọn: {filterCondition}</p>
+                <ul className="ps-3">
+                  {secondarySelection.map((item, index) => (
+                    <li key={index} className="text-sm">{item.name}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="d-flex justify-content-between mt-5">
+            <div/>
+            <CButton color='success' className="px-4" onClick={handleSaveNotification}>
+              <span className="text-white">
+              {notificationItem ? 'Cập Nhật Thông Báo' : 'Lưu Thông Báo'}
+              </span>
+            </CButton>
+          </div>
+        </CCardBody>
+      </CCard>
+
+      {/* Modals */}
+      <CModal alignment="center" visible={isDataModalOpen} onClose={() => setIsDataModalOpen(false)}>
+        <CModalHeader closeButton>
+          <CModalTitle>Chọn Sách</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CFormInput placeholder="Tìm kiếm sách..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          <ul className="list-unstyled mt-3">
+            {books.filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase())).map((book, index) => (
+              <li key={index} onClick={() => handleSelectData(book)} className="py-1 cursor-pointer border-bottom">
+                {book.title}
+              </li>
+            ))}
+          </ul>
+        </CModalBody>
+      </CModal>
+
+      <CModal alignment="center" visible={isFilterConditionModalOpen} onClose={() => setIsFilterConditionModalOpen(false)}>
+        <CModalHeader closeButton>
+          <CModalTitle>Chọn Kiểu Lọc</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <ul className="list-unstyled">
+            {['Theo Người dùng', 'Theo Ngành', 'Tất cả'].map((condition, index) => (
+              <li key={index} onClick={() => handleSelectFilterCondition(condition)} className="py-1 cursor-pointer border-bottom">
+                {condition}
+              </li>
+            ))}
+          </ul>
+        </CModalBody>
+      </CModal>
+
+      <CModal alignment="center" visible={isSecondaryModalOpen} onClose={() => setIsSecondaryModalOpen(false)}>
+        <CModalHeader closeButton>
+          <CModalTitle>{filterCondition} Lựa chọn</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+        <CFormInput placeholder="Tìm kiếm sách..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          <ul className="list-unstyled">
+            {filterCondition === 'Theo Người dùng' ? users.filter((user) => user.name.toLowerCase().includes(searchQuery.toLowerCase())).map((user, index) => (
+              <li key={index} onClick={() => handleSelectSecondaryOption(user)} className="py-1 cursor-pointer border-bottom">
+                {user.name}
+              </li>
+            )) : filterCondition === 'Theo Ngành' ? majors.filter((major) => major.name.toLowerCase().includes(searchQuery.toLowerCase())).map((major, index) => (
+              <li key={index} onClick={() => handleSelectSecondaryOption(major)} className="py-1 cursor-pointer border-bottom">
+                {major.name}
+              </li>
+            )) : null}
+          </ul>
+        </CModalBody>
+      </CModal>
+    </CCol>
   );
 };
 

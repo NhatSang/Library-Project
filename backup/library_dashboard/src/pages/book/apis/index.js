@@ -40,6 +40,15 @@ const _getBook = async () => {
     return await api.get(url);
 }
 
+const _getBookById = async (id) => {
+    const url = "/book"
+    return await api.get(url, {
+        params: {
+            id
+        }
+    });
+}
+
 
 
 export {
@@ -49,5 +58,6 @@ export {
     _createChapter,
     _createSummary,
     _getChapters,
-    _getBook
+    _getBook,
+    _getBookById
 }

@@ -127,4 +127,14 @@ export class BookController {
       next(error);
     }
   };
+
+  getBookById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const bookId = req.query.id;
+      const result = await this.bookservice.getBookById(bookId as string);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  }
 }

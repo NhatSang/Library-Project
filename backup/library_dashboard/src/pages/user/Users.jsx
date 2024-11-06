@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { _banUser, _getUsers } from "./apis";
 import { Button, Col, ConfigProvider, Pagination, Space, Table } from 'antd';
 import { CCol, CRow, useColorModes } from "@coreui/react";
-import Search from "antd/es/input/Search";
+import Search from "antd/es/transfer/search";
 import { formatDate } from "../../utils";
 import viVN from 'antd/lib/locale/vi_VN';
 
@@ -50,7 +50,7 @@ const Users = () => {
       key:'email',
     },
     {
-      title:"Xử lý",
+      title:"Hành động",
       render: (value, item) => (
         <Space>
           {item.status === "active" ? (
@@ -97,11 +97,11 @@ const Users = () => {
     setPage(page);
   }
 
-  
-
   const handleSearch = async (keyword) => {
     setKeyword(keyword);
   };
+
+
   return (
     <CRow>
       <CCol xs>

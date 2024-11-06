@@ -376,4 +376,11 @@ export class BookService {
     );
     return true;
   };
+
+  async getBookById(bookId: string) {
+    const book = Books.findOne({ _id: new mongoose.Types.ObjectId(bookId) });
+    return book;
+  }
 }
+
+

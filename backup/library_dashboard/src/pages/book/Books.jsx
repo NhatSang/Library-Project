@@ -58,7 +58,13 @@ const Books = () => {
       render: (text, record) => (
         <div className="flex space-x-2">
           <Button onClick={()=>{
-            navigate(`/books/add-chapter`)
+            navigate(`/books/edit`,{
+              state: {
+                data: {
+                  bookId: record._id,
+                }
+              }
+            })
           }} type="primary">Sửa</Button>
           <Button type="danger">Xóa</Button>
         </div>
