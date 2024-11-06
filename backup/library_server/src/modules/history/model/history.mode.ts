@@ -4,7 +4,7 @@ import { HistoryStatus } from "../types/history.type";
 const historySchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    book: { type: mongoose.Schema.Types.ObjectId, ref: "Book" },
+    book: { type: mongoose.Schema.Types.ObjectId, ref: "Books" },
     page: { type: Number },
     status: {
       type: Number,

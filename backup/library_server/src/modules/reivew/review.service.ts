@@ -21,7 +21,7 @@ export class ReviewService {
     );
 
     const response = await axios.post(
-      `http://localhost:5002/api/v1/recommend/create_model_rating`,
+      `http://localhost:5003/api/v1/recommend/create_model_rating`,
       { userId: userId }
     );
     return review;
