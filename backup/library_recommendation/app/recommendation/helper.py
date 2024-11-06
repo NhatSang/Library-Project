@@ -62,6 +62,7 @@ def get_history_for_user(userId,books_df):
 def get_rating_for_user(userId, books_df):
     # Lấy lịch sử sách đã đọc của người dùng
     histories_df = pd.DataFrame(list(db['histories'].find({'user': ObjectId(userId)})))
+    print(histories_df)
     review_df = pd.DataFrame(list(db['reviews'].find({'user': ObjectId(userId)})))
     
     # Ghép lịch sử sách đã đọc với thông tin sách
