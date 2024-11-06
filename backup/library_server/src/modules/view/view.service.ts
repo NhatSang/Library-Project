@@ -24,13 +24,35 @@ export class ViewService {
     return result.length > 0 ? result[0].totalViews : 0;
   }
 
-  async countViewByDate(fromDate: Date, toDate: Date) {
-    const result = await View.aggregate([
+  async countViewByDate(fromDate: Date, toDate: Date, majorsId?: string) {
+    const pipeline: any[] = [
       {
         $match: {
           viewDate: { $gte: fromDate, $lte: toDate },
         },
       },
+    ];
+    if (majorsId) {
+      pipeline.push(
+        {
+          $lookup: {
+            from: "books",
+            localField: "book",
+            foreignField: "_id",
+            as: "bookInfo",
+          },
+        },
+        {
+          $unwind: "$bookInfo",
+        },
+        {
+          $match: {
+            "bookInfo.majors": new mongoose.Types.ObjectId(majorsId),
+          },
+        }
+      );
+    }
+    pipeline.push(
       {
         $group: {
           _id: {
@@ -41,8 +63,10 @@ export class ViewService {
       },
       {
         $sort: { "_id.day": 1 },
-      },
-    ]);
+      }
+    );
+    const result = await View.aggregate(pipeline);
+
     const allDates = eachDayOfInterval({ start: fromDate, end: toDate }).map(
       (date) => format(date, "yyyy-MM-dd")
     );
@@ -58,15 +82,43 @@ export class ViewService {
     return viewCountsByDate;
   }
 
-  async totalViewsByDate(fromDate: Date, toDate: Date) {
-    const result = await View.aggregate([
+  async totalViewsByDate(fromDate: Date, toDate: Date, majorsId?: string) {
+    const pipeline: any[] = [
       {
         $match: {
           viewDate: { $gte: fromDate, $lte: toDate },
         },
       },
-      { $group: { _id: null, totalViews: { $sum: "$count" } } },
-    ]);
+    ];
+
+    if (majorsId) {
+      pipeline.push(
+        {
+          $lookup: {
+            from: "books",
+            localField: "book",
+            foreignField: "_id",
+            as: "bookInfo",
+          },
+        },
+        {
+          $unwind: "$bookInfo",
+        },
+        {
+          $match: {
+            "bookInfo.majors": new mongoose.Types.ObjectId(majorsId),
+          },
+        }
+      );
+    }
+
+    pipeline.push({
+      $group: {
+        _id: null,
+        totalViews: { $sum: "$count" },
+      },
+    });
+    const result = await View.aggregate(pipeline);
     return result.length > 0 ? result[0].totalViews : 0;
   }
 }

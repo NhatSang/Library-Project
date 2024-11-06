@@ -57,13 +57,35 @@ export class ReviewService {
     return result.length > 0 ? result[0].avgRating : 0;
   }
 
-  async countReviewByDate(fromDate: Date, toDate: Date) {
-    const result = await Reviews.aggregate([
+  async countReviewByDate(fromDate: Date, toDate: Date, majorsId?: string) {
+    const pipeline: any[] = [
       {
         $match: {
           createdAt: { $gte: fromDate, $lte: toDate },
         },
       },
+    ];
+    if (majorsId) {
+      pipeline.push(
+        {
+          $lookup: {
+            from: "books",
+            localField: "book",
+            foreignField: "_id",
+            as: "bookInfo",
+          },
+        },
+        {
+          $unwind: "$bookInfo",
+        },
+        {
+          $match: {
+            "bookInfo.majors": new mongoose.Types.ObjectId(majorsId),
+          },
+        }
+      );
+    }
+    pipeline.push(
       {
         $group: {
           _id: {
@@ -74,10 +96,11 @@ export class ReviewService {
       },
       {
         $sort: { "_id.day": 1 },
-      },
-    ]);
-    const allDates = eachDayOfInterval({ start: fromDate, end: toDate }).map((date) =>
-      format(date, "yyyy-MM-dd")
+      }
+    );
+    const result = await Reviews.aggregate(pipeline);
+    const allDates = eachDayOfInterval({ start: fromDate, end: toDate }).map(
+      (date) => format(date, "yyyy-MM-dd")
     );
     const reviewCountsByDate = allDates.map((date) => {
       const dayData = result.find((item) => item._id.day === date);
@@ -90,15 +113,44 @@ export class ReviewService {
     return reviewCountsByDate;
   }
 
-  async totalReviewByDate(fromDate:Date,toDate:Date){
-    const result = await Reviews.aggregate([
+  async totalReviewByDate(fromDate: Date, toDate: Date, majorsId?: string) {
+    const pipeline: any[] = [
       {
         $match: {
           createdAt: { $gte: fromDate, $lte: toDate },
         },
       },
-      { $group: { _id: null, totalReviews: { $sum: 1 } } },
-    ]);
+    ];
+
+    if (majorsId) {
+      pipeline.push(
+        {
+          $lookup: {
+            from: "books",
+            localField: "book",
+            foreignField: "_id",
+            as: "bookInfo",
+          },
+        },
+        {
+          $unwind: "$bookInfo",
+        },
+        {
+          $match: {
+            "bookInfo.majors": new mongoose.Types.ObjectId(majorsId),
+          },
+        }
+      );
+    }
+
+    pipeline.push({
+      $group: {
+        _id: null,
+        totalReviews: { $sum: 1 },
+      },
+    });
+
+    const result = await Reviews.aggregate(pipeline);
     return result.length > 0 ? result[0].totalReviews : 0;
   }
 }
