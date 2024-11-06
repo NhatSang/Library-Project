@@ -10,9 +10,9 @@ import {
 } from "../../services/AwsServices.js";
 import { Storage } from "@google-cloud/storage";
 import Chapter from "../../models/Chapter.js";
-import OpenAI from 'openai';
+import OpenAI from "openai";
 
-import axios from 'axios';
+import axios from "axios";
 import Book from "../../models/Book.js";
 import Majors from "../../models/Majors.js";
 import Genre from "../../models/Genre.js";
@@ -181,35 +181,31 @@ export const deleteChapterById = async (id) => {
 
 export const processPdfPages = async (pathFile) => {
   try {
-    const response = await axios.get(pathFile, { responseType: 'arraybuffer' });
-    const data = await pdf(response.data.buffer); 
+    const response = await axios.get(pathFile, { responseType: "arraybuffer" });
+    const data = await pdf(response.data.buffer);
 
-
-    const textByPage = data.text.split(/\f|\n\n/); 
-
+    const textByPage = data.text.split(/\f|\n\n/);
 
     const contents = textByPage.map((content, index) => ({
       page: index + 1,
-      content: content.trim()
+      content: content.trim(),
     }));
 
     return contents;
-
   } catch (error) {
     console.error("Error processing PDF:", error);
     return [];
   }
 };
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-const openai = new OpenAI(
-  {
-    apiKey: process.env.OPENAI_API_KEY,
-  }
-);
-
-export async function generateSummaryByOpenAI(title,tableOfContents){
-  const outline = tableOfContents.map((chapter, index) => `${index + 1}. ${chapter.title}`).join('\n');
+export async function generateSummaryByOpenAI(title, tableOfContents) {
+  const outline = tableOfContents
+    .map((chapter, index) => `${index + 1}. ${chapter.title}`)
+    .join("\n");
   const prompt = `
   Hãy đóng vai là một nhà tóm tắt sách hãy 20 đến 30 câu về nội dung của quyển sách
   Tóm tắt quyển sách "${title}" 
@@ -219,42 +215,43 @@ export async function generateSummaryByOpenAI(title,tableOfContents){
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-          { role: "system", content: "You are a helpful assistant." },
-          {
-              role: "user",
-              content: prompt,
-          },
+        { role: "system", content: "You are a helpful assistant." },
+        {
+          role: "user",
+          content: prompt,
+        },
       ],
-  });
-   return completion.choices[0].message.content;
+    });
+    return completion.choices[0].message.content;
   } catch (error) {
     console.error(error);
   }
-};
+}
 
 export const searchBooks = async (searchString) => {
   try {
     const query = {
-      $or: [
-        { title: { $regex: searchString, $options: "i" } }, 
-      ]
+      $or: [{ title: { $regex: searchString, $options: "i" } }],
     };
 
-    const major = await Majors.findOne({ name: { $regex: searchString, $options: "i" } });
+    const major = await Majors.findOne({
+      name: { $regex: searchString, $options: "i" },
+    });
     if (major) {
       query.$or.push({ majors: major._id });
     }
 
-    const genre = await Genre.findOne({ name: { $regex: searchString, $options: "i" } });
+    const genre = await Genre.findOne({
+      name: { $regex: searchString, $options: "i" },
+    });
     if (genre) {
       query.$or.push({ genre: genre._id });
     }
 
-
     const books = await Book.find(query)
       .populate({ path: "genre", select: "name" })
       .populate({ path: "majors", select: "name" })
-      .limit(8)
+      .limit(8);
 
     return books;
   } catch (error) {

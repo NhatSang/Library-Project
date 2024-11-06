@@ -35,7 +35,7 @@ export class RedisService {
     return await this.redisClient.get(key);
   };
 
-  deleteAllKeyByUserId = async (id: number) => {
+  deleteAllKeyByUserId = async (id: string) => {
     await this.redisClient.del(`accessToken_${id}`);
     await this.redisClient.del(`refreshToken_${id}`);
   };

@@ -5,6 +5,7 @@ import {
   Transform,
   Type,
 } from "class-transformer";
+import { IsOptional, IsString, Matches } from "class-validator";
 
 export class BookTotalViewDTO {
   @Expose()
@@ -94,4 +95,28 @@ export class BookResponseDTO {
       excludeExtraneousValues: true,
     });
   }
+}
+
+export class BookCreateReqDTO {
+  @IsString()
+  title: string;
+  @IsString()
+  author: string;
+  @IsString()
+  genre: string;
+  @IsString()
+  majors: string;
+  @IsString()
+  @IsOptional()
+  image: string;
+  @IsString()
+  @IsOptional()
+  pdfLink: string;
+  @IsString()
+  publisher: string;
+  @IsString()
+  @Matches(/^[1-2]\d{3}$/, {
+    message: "Năm gồm 4 chữ số từ 1xxx đền 2xxx",
+  })
+  yob: string;
 }

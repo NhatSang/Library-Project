@@ -40,6 +40,12 @@ authRouter.post(
   authController.login
 );
 
+authRouter.post(
+  "/auth/login-microsoft",
+  userMiddleware.validateUser(UserLoginDTO),
+  authController.loginWithMicrosoft
+);
+
 authRouter.post("/auth/logout", authController.logout);
 
 authRouter.post(

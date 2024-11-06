@@ -3,6 +3,7 @@ import { UserService } from "./user.service";
 import { NextFunction, Request, Response } from "express";
 import { ResponseCustom } from "../../helper/response";
 import { Pagination } from "../../helper/pagination";
+import { saveFile } from "../../../aws/aws.helper";
 
 @Service()
 export class UserController {
@@ -10,7 +11,7 @@ export class UserController {
 
   _banUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.userService.banUser(req.body.userId);
+      const result = await this.userService.banUser(req.body.bannedUserId);
       res.send(new ResponseCustom(result));
     } catch (error) {
       console.log(error);
@@ -43,14 +44,47 @@ export class UserController {
       console.log(error);
       next(error);
     }
-  }
+  };
   _getMe = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const result = await this.userService.getMe(req.body.userId);
-        res.send(new ResponseCustom(result));
+      const result = await this.userService.getMe(req.body.userId);
+      res.send(new ResponseCustom(result));
     } catch (error) {
-        console.log(error);
-        next(error);
+      console.log(error);
+      next(error);
     }
-}
+  };
+
+  _updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.userService.updateUser(req.body);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
+  _getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.userService.getAllUsers();
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
+  _updateAvatar = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const imgFile = req.file["image"][0];
+      const image = await saveFile(imgFile);
+      req.body.image = image;
+      const result = await this.userService.updateAvatar(req.body);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
 }

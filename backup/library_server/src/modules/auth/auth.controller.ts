@@ -65,6 +65,19 @@ export class AuthController {
     }
   };
 
+  loginWithMicrosoft = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const result = await this.authService.loginWithMicrosoft(req.body);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  };
+
   loginTemp = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.authService.loginTemp(req.body);
@@ -72,5 +85,5 @@ export class AuthController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

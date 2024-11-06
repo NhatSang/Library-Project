@@ -17,10 +17,21 @@ userRouter.get(
   userController._getMe
 );
 
-userRouter.post("/ban-user", userController._banUser);
+userRouter.post(
+  "/users/ban-user",
+  authMiddleware.authenticateAccessToken([Role.Admin]),
+  userController._banUser
+);
 
-userRouter.post("/find-user", userController._findUserByKeyword);
+userRouter.post("/users/find-user", userController._findUserByKeyword);
 
-userRouter.post("/user/fcm-token", userController._postFcmtoken);
+userRouter.post("/users/fcm-token", userController._postFcmtoken);
 
+userRouter.post(
+  "/users/update-user",
+  authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
+  userController._updateUser
+);
+
+userRouter.post("/users", userController._getAllUsers);
 export default userRouter;

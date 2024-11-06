@@ -59,7 +59,6 @@ export const addBook = async (req, res) => {
           outline[i].endPageNumber,
           newBook._id
         );
-
        const newChapter = new Chapter({
           book: newBook._id,
           title: outline[i].title,

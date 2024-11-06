@@ -10,9 +10,9 @@ def recommend_books_rating(userId):
     tfidf_vectorizer, label_encoder_genre,label_encoder_majors = load_vector_label()
     if (model is None or svd is None or scaler is None):
         raise Exception("Model not found")
-    histories_df = pd.DataFrame(list(db['histories'].find({'user': ObjectId(userId)})))
+    histories_df = pd.DataFrame(list(db['histories'].find({'user': ObjectId(userId),'status':1})))
     read_books = set(histories_df['book'].values) 
-    books_df = pd.DataFrame(list(db['books'].find()))
+    books_df = pd.DataFrame(list(db['books'].find({'status':1})))
     # Lấy các sách chưa đọc
     unread_books_df = books_df[~books_df['_id'].isin(read_books)].copy()
 
@@ -44,15 +44,15 @@ def recommend_books_rating(userId):
     genre_data = {str(genre['_id']): genre for genre in db['genres'].find()}
     major_data = {str(major['_id']): major for major in db['majors'].find()}
      # Lặp qua từng sách và chèn thông tin genre và major dưới dạng object
-    recommended_books['genre_details'] = recommended_books['genre'].apply(lambda genre_id: genre_data.get(genre_id, {}))
-    recommended_books['major_details'] = recommended_books['majors'].apply(lambda major_id: major_data.get(major_id, {}))
+    recommended_books['genre'] = recommended_books['genre'].apply(lambda genre_id: genre_data.get(genre_id, {}))
+    recommended_books['majors'] = recommended_books['majors'].apply(lambda major_id: major_data.get(major_id, {}))
     # Chuyển đổi _id trong genre_details và major_details thành str
-    recommended_books['genre_details'] = recommended_books['genre_details'].apply(
+    recommended_books['genre'] = recommended_books['genre'].apply(
         lambda details: {**details, '_id': str(details.get('_id', ''))}
     )
-    recommended_books['major_details'] = recommended_books['major_details'].apply(
+    recommended_books['majors'] = recommended_books['majors'].apply(
         lambda details: {**details, '_id': str(details.get('_id', ''))}
     )
-    recommended_books = recommended_books.drop(columns=['Genre_encoded', 'read_prediction','genre','majors'], errors='ignore')  
+    recommended_books = recommended_books.drop(columns=['Genre_encoded', 'read_prediction','Majors_encoded'], errors='ignore')  
     recommended_books = recommended_books.to_dict(orient='records')
     return recommended_books

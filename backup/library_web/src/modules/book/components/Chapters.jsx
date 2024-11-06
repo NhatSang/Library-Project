@@ -4,18 +4,28 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaHeadphones } from "react-icons/fa6";
 import { sampleChapters } from "../../../constants";
 import { IoIosBook } from "react-icons/io";
+import { _getChapterByIdBook } from "../api";
+
 const Chapters = () => {
   const [chapters, setChapters] = useState([]);
   const [isAudio, setIsAudio] = useState(false);
   const navigate = useNavigate();
   const book = JSON.parse(localStorage.getItem("book"));
   useEffect(() => {
-    setChapters(sampleChapters);
+    fetchChapters();
   }, []);
 
+  const fetchChapters = async () => {
+    try {
+      console.log(book._id);
+      
+      const response = await _getChapterByIdBook(book._id);
+      setChapters(response.data.data);
+    } catch (error) {}
+  };
   const handleAudio = () => {
     setIsAudio(true);
-    navigate("/book-audio", { state: { book: book, page: 1 } });
+    navigate("/book-audio", { state: { book: book, page: 2 } });
   };
   const handleText = () => {
     setIsAudio(false);
@@ -23,8 +33,11 @@ const Chapters = () => {
   };
   const handleChangeChapter = (c) => {
     if (isAudio)
-      navigate("/book-audio", { state: { book: book, page: c.startPage } });
-    else navigate("/book-content", { state: { book: book, page: c.startPage } });
+      navigate("/book-audio", { state: { book: book, page: c.startPage + 1 } });
+    else
+      navigate("/book-content", {
+        state: { book: book, page: c.startPage - 1 },
+      });
   };
   return (
     <div className="p-4 bg-white">
