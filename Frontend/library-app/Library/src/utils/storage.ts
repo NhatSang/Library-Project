@@ -52,3 +52,12 @@ export const clearUserLocalStorage = async () => {
         console.log(e);
     }
 };
+
+export const logout = async () => {
+    try {
+        await clearToken();
+        await clearUserLocalStorage();
+    } catch (e) {
+        console.log(e);
+    }
+}

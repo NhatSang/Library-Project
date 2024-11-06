@@ -12,24 +12,27 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { eGender, iMajor } from '../../types/iUser';
-import { _getMajors } from './apis';
+import { eGender } from '../../types/iUser';
+import { _getMajors, _register, iRegister } from './apis';
+import Loading from '@components/Loading';
+import { ScreenName } from '@constants/ScreenName';
 
 
-const UserFormScreen = ({ route }: any) => {
+const UserFormScreen = ({ navigation,route }: any) => {
     const { email } = route?.params;
-    const [majors, setMajors] = useState<iMajor[]>([]);
+    const [majors, setMajors] = useState<any[]>([]);
     const [password, setPassword] = useState<string>('');
-    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(true);
     const [rePassword, setRePassword] = useState<string>('');
-    const [showRePassword, setShowRePassword] = useState<boolean>(false);
+    const [showRePassword, setShowRePassword] = useState<boolean>(true);
     const [fullName, setFullName] = useState<string>('');
     const [date, setDate] = useState(new Date());
     const [openPicker, setOpenPicker] = useState<boolean>(false)
     const [code, setCode] = useState<string>("");
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
+    const [value, setValue] = useState('');
     const [selectedGender, setSelectedGender] = useState<eGender>(eGender.nam);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         getMajors();
@@ -39,7 +42,7 @@ const UserFormScreen = ({ route }: any) => {
         try {
             const res = await _getMajors();
             if (res.data) {
-                setMajors(res.data.data);
+                setMajors(res.data);
             }
         } catch (error: any) {
             console.log(error?.response?.data?.error?.message)
@@ -91,16 +94,42 @@ const UserFormScreen = ({ route }: any) => {
     const handleConfirm = async () => {
         if (!validate()) return;
         try {
-
+            const data:iRegister = {
+                email,
+                password,
+                repassword: rePassword,
+                name: fullName,
+                majors: value,
+                code,
+                dob: date,
+                gender: selectedGender,
+            }
+            const res = await _register(data);
+            if (res.data) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Thành công',
+                    text2: 'Đăng ký tài khoản thành công',
+                    position: 'bottom',
+                });
+            }    
+            navigation.navigate(ScreenName.LoginWithAccount,{userEmail:email,userPassword:password});
         } catch (error: any) {
             console.log(error)
-
+            Toast.show({
+                type: 'error',
+                text1: 'Lỗi',
+                text2: error?.response?.data?.error?.message,
+                position: 'bottom',
+            });
+           
         }
     }
 
 
     return (
         <>
+        { loading ? <Loading /> :
             <ImageBackground className='flex-1' source={MAIN.BACKGROUND}>
                 <SafeAreaView>
                     <View className="flex-row justify-center items-center h-16 px-3 bg-primary-dark">
@@ -242,7 +271,9 @@ const UserFormScreen = ({ route }: any) => {
                     </View>
                 </SafeAreaView>
             </ImageBackground>
+}
         </>
+                        
     )
 }
 

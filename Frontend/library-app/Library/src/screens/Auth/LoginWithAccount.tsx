@@ -20,14 +20,23 @@ import { api } from '../../apis/configAPI'
 import { _login, _postFCMToken, iLogin, iPostFCMToken } from './apis'
 
 
-const LoginWithAccount = ({ navigation }: any) => {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
+const LoginWithAccount = ({ navigation,route }: any) => {
+    const {userEmail ='',userPassword=''} = route?.params ||{};
+    console.log(userEmail,userPassword);
+    const [email, setEmail] = useState<string>(userEmail);
+    const [password, setPassword] = useState<string>(userPassword);
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [loadingLoginMail, setLoadingLoginMail] = useState<boolean>(false);
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [deviceId, setDeviceId] = useState<string>('');
+
+    useEffect(() => {
+        if(userEmail && userPassword){
+            setEmail(userEmail);
+            setPassword(userPassword);
+        }
+    },[userEmail,userPassword]);
 
     useEffect(() => {
         const getDeviceId = async () => {
