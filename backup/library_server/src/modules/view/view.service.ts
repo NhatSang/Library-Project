@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Service } from "typedi";
 import View from "./model/view.model";
+import { eachDayOfInterval, format } from "date-fns";
 
 @Service()
 export class ViewService {
@@ -18,6 +19,52 @@ export class ViewService {
   async getTotalView(bookId: string) {
     const result = await View.aggregate([
       { $match: { book: new mongoose.Types.ObjectId(bookId) } },
+      { $group: { _id: null, totalViews: { $sum: "$count" } } },
+    ]);
+    return result.length > 0 ? result[0].totalViews : 0;
+  }
+
+  async countViewByDate(fromDate: Date, toDate: Date) {
+    const result = await View.aggregate([
+      {
+        $match: {
+          viewDate: { $gte: fromDate, $lte: toDate },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            day: { $dateToString: { format: "%Y-%m-%d", date: "$viewDate" } },
+          },
+          totalViews: { $sum: "$count" },
+        },
+      },
+      {
+        $sort: { "_id.day": 1 },
+      },
+    ]);
+    const allDates = eachDayOfInterval({ start: fromDate, end: toDate }).map(
+      (date) => format(date, "yyyy-MM-dd")
+    );
+
+    const viewCountsByDate = allDates.map((date) => {
+      const dayData = result.find((item) => item._id.day === date);
+      return {
+        date: date,
+        totalViews: dayData ? dayData.totalViews : 0,
+      };
+    });
+
+    return viewCountsByDate;
+  }
+
+  async totalViewsByDate(fromDate: Date, toDate: Date) {
+    const result = await View.aggregate([
+      {
+        $match: {
+          viewDate: { $gte: fromDate, $lte: toDate },
+        },
+      },
       { $group: { _id: null, totalViews: { $sum: "$count" } } },
     ]);
     return result.length > 0 ? result[0].totalViews : 0;

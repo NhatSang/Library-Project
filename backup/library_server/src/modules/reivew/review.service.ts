@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { ReviewCreateReqDTO } from "./dto/review.dto";
 import axios from "axios";
 import { ReviewStatus } from "./types/review.type";
+import { eachDayOfInterval, format } from "date-fns";
 
 @Service()
 export class ReviewService {
@@ -56,4 +57,48 @@ export class ReviewService {
     return result.length > 0 ? result[0].avgRating : 0;
   }
 
+  async countReviewByDate(fromDate: Date, toDate: Date) {
+    const result = await Reviews.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: fromDate, $lte: toDate },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            day: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          },
+          reviewCount: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { "_id.day": 1 },
+      },
+    ]);
+    const allDates = eachDayOfInterval({ start: fromDate, end: toDate }).map((date) =>
+      format(date, "yyyy-MM-dd")
+    );
+    const reviewCountsByDate = allDates.map((date) => {
+      const dayData = result.find((item) => item._id.day === date);
+      return {
+        date: date,
+        reviewCount: dayData ? dayData.reviewCount : 0,
+      };
+    });
+
+    return reviewCountsByDate;
+  }
+
+  async totalReviewByDate(fromDate:Date,toDate:Date){
+    const result = await Reviews.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: fromDate, $lte: toDate },
+        },
+      },
+      { $group: { _id: null, totalReviews: { $sum: 1 } } },
+    ]);
+    return result.length > 0 ? result[0].totalReviews : 0;
+  }
 }
