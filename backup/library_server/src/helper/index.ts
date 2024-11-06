@@ -9,6 +9,7 @@ import {
   generateRefreshToken,
 } from "../modules/auth/auth.utils";
 import { Queues } from "./queue";
+import OpenAI from "openai";
 
 const redisService = new RedisService();
 
@@ -36,7 +37,7 @@ export const generateToken = async (id: string, payload: any) => {
   const accessToken = generateAccessToken(payload);
   const refreshToken = generateRefreshToken(
     payload,
-    convertTime(1, TimeType.d)
+    convertTime(14, TimeType.d)
   );
 
   //Lưu vào hset
@@ -44,13 +45,13 @@ export const generateToken = async (id: string, payload: any) => {
     `accessToken_${id}`,
     accessToken,
     accessToken,
-    convertTime(3, TimeType.d)
+    convertTime(7, TimeType.d)
   );
   await redisService.hSet(
     `refreshToken_${id}`,
     refreshToken,
     refreshToken,
-    convertTime(5, TimeType.m)
+    convertTime(14, TimeType.d)
   );
   return { accessToken, refreshToken };
 };
@@ -65,4 +66,13 @@ export const sendCodeToEmail = (email: string, code: string) => {
 
 export const hashPassword = async (password: string) => {
   return await bcrypt.hash(password, 10);
+};
+
+export const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export const loadPdfJsLib = async () => {
+  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  return pdfjsLib;
 };

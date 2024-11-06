@@ -14,12 +14,7 @@ chapterRouter.get(
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   chapterController._getChapters
 );
-//query : chapterId
-chapterRouter.get(
-  "/book/chapter",
-  authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
-  chapterController._getChapterById
-);
+
 
 chapterRouter.post(
   "/book/chapter",

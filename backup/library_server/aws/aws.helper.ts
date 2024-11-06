@@ -1,10 +1,12 @@
-import multer from "multer";
+import multer, { FileFilterCallback } from "multer";
 import AWS from "aws-sdk";
 import dotenv from "dotenv";
 import path from "path";
+import { Request } from "express";
 
 dotenv.config();
-//cau hinh aws
+
+// Cấu hình AWS
 process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE = "1";
 
 AWS.config.update({
@@ -12,41 +14,42 @@ AWS.config.update({
   accessKeyId: process.env.ACCESS_KEY_ID,
   secretAccessKey: process.env.SECRET_ACCESS_KEY,
 });
-const s3 = new AWS.S3(); //khai bao service S3
+const s3 = new AWS.S3();
 
-const bucketName = process.env.S3_BUCKET_NAME;
+const bucketName = process.env.S3_BUCKET_NAME as string;
 
-const storage = multer.memoryStorage({
-  destination(req, file, callback) {
-    callback(null, "");
-  },
-});
+const storage = multer.memoryStorage();
 
 export const upload = multer({
   storage,
-  //   limits: { fieldSize: 2000000 },
-  fileFilter(req, file, cb) {
+  fileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallback) {
     checkFileType(file, cb);
   },
 });
 
-function checkFileType(file, cb) {
+// Hàm kiểm tra loại file
+function checkFileType(
+  file: Express.Multer.File,
+  cb: FileFilterCallback
+): void {
   const fileTypes = /pdf|jpeg|jpg|png/;
   const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = fileTypes.test(file.mimetype);
   console.log(file.originalname);
 
   if (extname && mimetype) {
-    return cb(null, true);
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid file type!"));
   }
-  return cb("err upload!");
 }
 
-export const saveFile = async (file) => {
+// Hàm lưu file lên S3
+export const saveFile = async (file: Express.Multer.File): Promise<string> => {
   try {
     const filePath = `${Date.now().toString()}_${file.originalname}`;
 
-    const paramsS3 = {
+    const paramsS3: AWS.S3.PutObjectRequest = {
       Bucket: bucketName,
       Key: filePath,
       Body: file.buffer,
@@ -60,12 +63,17 @@ export const saveFile = async (file) => {
     throw new Error("Upload file to AWS S3 failed");
   }
 };
-export const saveFileWithKey = async (file, key) => {
+
+// Hàm lưu file lên S3 với key
+export const saveFileWithKey = async (
+  file: Express.Multer.File,
+  key: string
+): Promise<string> => {
   try {
-    const paramsS3 = {
+    const paramsS3: AWS.S3.PutObjectRequest = {
       Bucket: bucketName,
       Key: key,
-      Body: file,
+      Body: file.buffer,
       ContentType: file.mimetype,
     };
 
@@ -76,27 +84,32 @@ export const saveFileWithKey = async (file, key) => {
     throw new Error("Upload file to AWS S3 failed");
   }
 };
-export const readPdfFromS3 = async (keyName) => {
+
+// Hàm đọc file PDF từ S3
+export const readPdfFromS3 = async (
+  keyName: string
+): Promise<Buffer | undefined> => {
   try {
-    // Tải file từ S3
-    const params = {
+    const params: AWS.S3.GetObjectRequest = {
       Bucket: bucketName,
       Key: keyName,
     };
     const file = await s3.getObject(params).promise();
-    return file.Body;
+    return file.Body as Buffer;
   } catch (error) {
     console.error("Error reading PDF from S3:", error);
   }
 };
-export const deleteFileFromS3 = async (keyName) => {
+
+// Hàm xóa file từ S3
+export const deleteFileFromS3 = async (keyName: string): Promise<void> => {
   try {
-    const params = {
+    const params: AWS.S3.DeleteObjectRequest = {
       Bucket: bucketName,
       Key: keyName,
     };
 
-    const data = await s3.deleteObject(params).promise();
+    await s3.deleteObject(params).promise();
     console.log("File deleted successfully");
   } catch (error) {
     console.error("Error deleting file from S3:", error);

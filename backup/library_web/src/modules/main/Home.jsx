@@ -5,7 +5,14 @@ import { sampleData } from "../../constants";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import ListBooks from "./components/ListBooks";
-import { _getBookByMajorsUser, _getBookNewest, _getBookTopRated, _getBookTopViewed, getHistories } from "./api";
+import {
+  _getBookByMajorsUser,
+  _getBookNewest,
+  _getBookTopRated,
+  _getBookTopViewed,
+  _getRecommendBooks,
+  getHistories,
+} from "./api";
 import ListBooksCustom from "./components/ListBooksCustom";
 const { Meta } = Card;
 
@@ -24,15 +31,24 @@ const Home = () => {
   const [booksNewest, setBooksNewest] = useState([]);
   const [booksTopRated, setBooksTopRated] = useState([]);
   const [booksTopViewed, setBooksTopViewed] = useState([]);
-
+  const [recommendBooks,setRecommendBooks] = useState([])
   useEffect(() => {
     fetchHistories();
     fetchBookByMajorsUser();
     fetchBookNewest();
     fetchBookTopRated();
     fetchBookTopViewed();
+    fetchRecommendBooks();
   }, []);
 
+  const fetchRecommendBooks = async ()=>{
+    try {
+      const response = await _getRecommendBooks();
+      setRecommendBooks(response.data);
+    } catch (error) {
+      
+    }
+  }
   const fetchHistories = async () => {
     try {
       const response = await getHistories();
@@ -49,7 +65,7 @@ const Home = () => {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const fetchBookNewest = async () => {
     try {
@@ -59,7 +75,7 @@ const Home = () => {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const fetchBookTopRated = async () => {
     try {
@@ -68,7 +84,7 @@ const Home = () => {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const fetchBookTopViewed = async () => {
     try {
@@ -77,9 +93,7 @@ const Home = () => {
     } catch (error) {
       console.log(error);
     }
-  }
-
-
+  };
 
   return (
     <div className="w-full px-5 py-2 space-y-3">
@@ -92,7 +106,6 @@ const Home = () => {
               state={{ book: b }}
               type="text"
               className="w-full bg-sky-900 rounded-lg p-3 shadow-md hover:text-white text-white font-medium text-base"
-              
             >
               <div className="flex justify-center space-x-4">
                 <div>
@@ -117,10 +130,30 @@ const Home = () => {
           ))}
         </Carousel>
       </div>
+      <ListBooksCustom title={"demo"} data={sampleData} type={1} />
       <ListBooks title={"Lịch sử"} data={histories} />
-      <ListBooksCustom title={"Đề xuất theo chuyên ngành"} data={booksByMajorsUser} type={1}  />
-      <ListBooksCustom title={"Top sách đánh giá cao"} data={booksTopRated} type={2} />
-      <ListBooksCustom title={"Top sách có lượt đọc cao"} data={booksTopViewed} type={3}  />
+      {recommendBooks.length > 0 ? (
+        <ListBooksCustom
+          title={"Có thể bạn sẽ thích"}
+          data={recommendBooks}
+          type={1}
+        />
+      ) : null}
+      <ListBooksCustom
+        title={"Đề xuất theo chuyên ngành"}
+        data={booksByMajorsUser}
+        type={1}
+      />
+      <ListBooksCustom
+        title={"Top sách đánh giá cao"}
+        data={booksTopRated}
+        type={2}
+      />
+      <ListBooksCustom
+        title={"Top sách có lượt đọc cao"}
+        data={booksTopViewed}
+        type={3}
+      />
     </div>
   );
 };

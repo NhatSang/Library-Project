@@ -5,12 +5,12 @@ import { readFileSync } from 'fs';
 import path from 'path';
 import Book2 from "../models/Book2.js";
 
-const serviceAccountPath = path.resolve('/Users/phamducnhan/Documents/doantotnghiep/Library-Project/Backend/library-server/json-key/serviceAccount.json');
-const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
+// const serviceAccountPath = path.resolve('../json-key/serviceAccount.json');
+// const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount),
+//   });
 
 export const createNotification = async (req, res) => {
     try {

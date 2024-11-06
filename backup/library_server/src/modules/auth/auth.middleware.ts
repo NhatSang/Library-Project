@@ -14,11 +14,10 @@ export class AuthMiddleware {
 
         const token = authHeader && authHeader.split(" ")[1];
 
-        console.log(token);
         
         if (!token) throw Errors.unAuthorized;
         const decoded = verifyAccessToken(token) as {
-          id: number;
+          id: string;
           role: string;
         };
 
@@ -49,7 +48,7 @@ export class AuthMiddleware {
 
         if (!token) throw Errors.unAuthorized;
         const decoded = verifyRefreshToken(token) as {
-          id: number;
+          id: string;
           role: string;
         };
 

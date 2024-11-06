@@ -20,94 +20,37 @@ export const sampleBook = {
 };
 export const sampleData = [
   {
-    _id: "671c890ff5485d1dee966ffd",
-    title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
+    _id: "6723c70115c65b18e58d5e92",
+    title: "Sổ Tay Lập Trình",
     author: "Nguyễn Minh Đức",
     pdfLink:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541443813_laptrinhcanban.pdf",
-    genre: "66ef98096316ce75499684d7",
+      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1730397950247_sotaylaptrinh.pdf",
+    genre: "Công nghệ",
     image:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541446499_laptrinhcanban.jpg",
+      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1730397951237_sotaylaptrinh.jpg",
     pageNumber: 100,
     majors: "66c0ba4b73447b36abb7c636",
-    summary:
-      "Cuốn sách này giới thiệu một cách toàn diện về ngôn ngữ lập trình C++,…",
+    summary: `Quyển sách "Sổ Tay Lập Trình" cung cấp một cái nhìn tổng quát và cụ thể về nghề lập trình, phù hợp cho cả những người mới bắt đầu và những ai đã có kinh nghiệm. 
+
+Chương 1, "Nghề lập trình", mở đầu với khái niệm về lập trình viên, những kỹ năng cần thiết, và vai trò của họ trong ngành công nghệ thông tin hiện tại. Chương 2, "Toàn cảnh ngành CNTT Việt Nam", giới thiệu về sự phát triển của ngành công nghệ thông tin ở Việt Nam, các xu hướng và cơ hội nghề nghiệp trong bối cảnh công nghệ toàn cầu đang thay đổi liên tục.
+
+Tiếp theo, chương 3, "Trở thành lập trình viên", hướng dẫn những ai muốn bước vào nghề lập trình từ những bước đầu tiên, bao gồm việc lựa chọn ngôn ngữ lập trình phù hợp và tìm hiểu các kỹ thuật lập trình cơ bản. Chương 4, "Tổng hợp tài liệu học lập trình cơ bản cho người mới", cung cấp danh sách và nguồn tài liệu hữu ích, từ sách giáo khoa, khóa học trực tuyến đến các diễn đàn học tập giúp người mới có thể tự học một cách hiệu quả.
+
+Chương 5, "Về CODEGYM", trình bày về một nền tảng học tập cho lập trình viên, cung cấp các khóa học chất lượng và môi trường thực hành tốt để sinh viên có thể phát triển kỹ năng lập trình của mình. Cuối cùng, chương 6, "Đăng ký tuyển sinh", hướng dẫn chi tiết về quy trình đăng ký tham gia các khóa học tại CODEGYM, cùng các thông tin cần thiết cho người học.
+
+Từ đó, quyển sách không chỉ là cẩm nang hướng dẫn mà còn là nguồn động lực cho những ai đam mê lập trình và muốn định hướng sự nghiệp trong lĩnh vực công nghệ thông tin.`,
     createdAt: "2024-10-11T04:14:34.672+00:00",
     updatedAt: "2024-10-11T04:14:34.672+00:00",
   },
   {
-    _id: "671c890ff5485d1dee966ffd",
-    title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
+    _id: "6723c8fedb0be7507570d59c",
+    title: "Nhập môn cờ vua",
     author: "Nguyễn Minh Đức",
     pdfLink:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541443813_laptrinhcanban.pdf",
-    genre: "66ef98096316ce75499684d7",
+      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1730398460560_nhapmoncovua.pdf",
+    genre: "Giải trí",
     image:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541446499_laptrinhcanban.jpg",
-    pageNumber: 100,
-    majors: "66c0ba4b73447b36abb7c636",
-    summary:
-      "Cuốn sách này giới thiệu một cách toàn diện về ngôn ngữ lập trình C++,…",
-    createdAt: "2024-10-11T04:14:34.672+00:00",
-    updatedAt: "2024-10-11T04:14:34.672+00:00",
-  },
-  {
-    _id: "671c890ff5485d1dee966ffd",
-    title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
-    author: "Nguyễn Minh Đức",
-    pdfLink:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541443813_laptrinhcanban.pdf",
-    genre: "66ef98096316ce75499684d7",
-    image:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541446499_laptrinhcanban.jpg",
-    pageNumber: 100,
-    majors: "66c0ba4b73447b36abb7c636",
-    summary:
-      "Cuốn sách này giới thiệu một cách toàn diện về ngôn ngữ lập trình C++,…",
-    createdAt: "2024-10-11T04:14:34.672+00:00",
-    updatedAt: "2024-10-11T04:14:34.672+00:00",
-  },
-  {
-    _id: "671c890ff5485d1dee966ffd",
-    title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
-    author: "Nguyễn Minh Đức",
-    pdfLink:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541443813_laptrinhcanban.pdf",
-    genre: "66ef98096316ce75499684d7",
-    image:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541446499_laptrinhcanban.jpg",
-    pageNumber: 100,
-    majors: "66c0ba4b73447b36abb7c636",
-    summary:
-      "Cuốn sách này giới thiệu một cách toàn diện về ngôn ngữ lập trình C++,…aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    createdAt: "2024-10-11T04:14:34.672+00:00",
-    updatedAt: "2024-10-11T04:14:34.672+00:00",
-  },
-  {
-    _id: "671c890ff5485d1dee966ffd",
-    title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
-    author: "Nguyễn Minh Đức",
-    pdfLink:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541443813_laptrinhcanban.pdf",
-    genre: "66ef98096316ce75499684d7",
-    image:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541446499_laptrinhcanban.jpg",
-    pageNumber: 100,
-    majors: "66c0ba4b73447b36abb7c636",
-    summary:
-      "Cuốn sách này giới thiệu một cách toàn diện về ngôn ngữ lập trình C++,…",
-    createdAt: "2024-10-11T04:14:34.672+00:00",
-    updatedAt: "2024-10-11T04:14:34.672+00:00",
-  },
-  {
-    _id: "671c890ff5485d1dee966ffd",
-    title: "Lập Trình C++ Từ Cơ Bản Đến Nâng Cao",
-    author: "Nguyễn Minh Đức",
-    pdfLink:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541443813_laptrinhcanban.pdf",
-    genre: "66ef98096316ce75499684d7",
-    image:
-      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1725541446499_laptrinhcanban.jpg",
+      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1730398461190_nhapmoncovua.jpg",
     pageNumber: 100,
     majors: "66c0ba4b73447b36abb7c636",
     summary: `"Nhập môn cờ vua" là một quyển sách giáo dục dành cho những người mới bắt đầu tìm hiểu về cờ vua, giúp họ nắm vững những kiến thức và kỹ năng cơ bản để có thể tham gia vào trò chơi trí tuệ này. 

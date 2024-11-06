@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request
 from app.recommendation.recommender import  recommend_books_rating 
 from app.recommendation.model.ratingModel import create_rating_model
 
-bp = Blueprint('recommend', __name__, url_prefix='/api/recommend')
+bp = Blueprint('recommend', __name__, url_prefix='/api/v1/recommend')
 
     
 @bp.route('/create_model_rating', methods=['POST'])

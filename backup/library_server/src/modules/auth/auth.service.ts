@@ -158,14 +158,45 @@ export class AuthService {
 
     const payload = { id: existedUser._id.toString(), role: existedUser.role };
 
-    console.log(payload);
-
     const { accessToken, refreshToken } = await generateToken(
       existedUser._id.toString(),
       payload
     );
     return {
       user: UserResponseDTO.transformUser(existedUser),
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    };
+  };
+
+  loginWithMicrosoft = async (params: UserLoginDTO) => {
+    const { email, password } = params;
+
+    let user = await this.userService.getUSerActive(email);
+    if (user) {
+      if (password != user.emailId) throw Errors.wrongPassword;
+    } else {
+      const hashpass = await hashPassword(password);
+  
+      user = await User.findOneAndUpdate(
+        { email: email, status: UserStatus.Pending },
+        { $set: { password: hashpass, emailId: password } },
+        { new: true, upsert: true }
+      );
+    }
+
+    const payload = {
+      id: user._id.toString(),
+      role: user.role,
+    };
+
+    const { accessToken, refreshToken } = await generateToken(
+      user._id.toString(),
+      payload
+    );
+    // user mới có status là pending FE check status để chuyển trang vào home hoặc vào update
+    return {
+      user: UserResponseDTO.transformUser(user),
       accessToken: accessToken,
       refreshToken: refreshToken,
     };
@@ -181,7 +212,7 @@ export class AuthService {
     if (existedUser.password != password) {
       throw Errors.wrongPassword;
     }
-    const payload = { id: existedUser._id.toString(), role: existedUser.role }
+    const payload = { id: existedUser._id.toString(), role: existedUser.role };
     const { accessToken, refreshToken } = await generateToken(
       existedUser._id.toString(),
       payload
@@ -191,7 +222,7 @@ export class AuthService {
       accessToken: accessToken,
       refreshToken: refreshToken,
     };
-  }
+  };
 
   logout = async (params: any) => {
     const { userId, accessToken, refreshToken } = params;

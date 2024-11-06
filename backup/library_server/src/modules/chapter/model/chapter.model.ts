@@ -6,7 +6,6 @@ const chapterSchema = new mongoose.Schema(
     title: { type: String, required: true },
     startPage: { type: Number, required: true },
     endPage: { type: Number, required: true },
-    pdfLink: { type: String, required: true },
   },
   { timestamps: true }
 );

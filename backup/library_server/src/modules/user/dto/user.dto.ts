@@ -33,6 +33,7 @@ export class UserRegisterDTO {
 }
 
 export class UserUpdateDTO {
+  userId: string;
   @IsOptional()
   @IsString()
   name: string;
@@ -48,9 +49,6 @@ export class UserUpdateDTO {
   @IsOptional()
   @IsString()
   code: string;
-  @IsOptional()
-  @IsString()
-  image: string;
 }
 
 export class UserVerifyEmailDTO {

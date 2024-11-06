@@ -1,5 +1,5 @@
-import { Service } from "typedi";
-import { UserResponseDTO } from "./dto/user.dto";
+import { Inject, Service } from "typedi";
+import { UserResponseDTO, UserUpdateDTO } from "./dto/user.dto";
 import User from "./model/user.model";
 import { Errors } from "../../helper/error";
 import { Pagination } from "../../helper/pagination";
@@ -7,9 +7,12 @@ import { Role, UserStatus } from "./types/user.type";
 import mongoose from "mongoose";
 import { FilterQuery } from "mongoose";
 import Majors from "../majors/model/majors.model";
+import { RedisService } from "../../redis/redis.service";
 
 @Service()
 export class UserService {
+  constructor(@Inject() private redisService: RedisService) {}
+
   async getUserById(userId: string) {
     return await User.findOne({
       _id: new mongoose.Types.ObjectId(userId),
@@ -62,6 +65,7 @@ export class UserService {
       { _id: new mongoose.Types.ObjectId(userId) },
       setStage
     );
+    await this.redisService.deleteAllKeyByUserId(userId);
     return true;
   }
 
@@ -101,24 +105,27 @@ export class UserService {
   }
 
   async getUserByFilter(filter: any) {
-    if(filter.type == 'USER'){
+    if (filter.type == "USER") {
       const users = await User.find({
-        _id: {$in: filter.userId},
-      }).populate('majors', 'notifications.notification');
+        _id: { $in: filter.userId },
+      }).populate("majors", "notifications.notification");
       return users;
     }
-    if(filter.type == 'MAJORS'){
+    if (filter.type == "MAJORS") {
       const majors = await Majors.find({
-        _id: {$in: filter.majorsId},
+        _id: { $in: filter.majorsId },
       });
       const users = await User.find({
-        majors: {$in: majors},
-      }).populate('majors', 'notifications.notification');
+        majors: { $in: majors },
+      }).populate("majors", "notifications.notification");
       return users;
     }
 
-    if(filter.type == 'ALL'){
-      const users = await User.find().populate('majors', 'notifications.notification');
+    if (filter.type == "ALL") {
+      const users = await User.find().populate(
+        "majors",
+        "notifications.notification"
+      );
       return users;
     }
   }
@@ -130,4 +137,38 @@ export class UserService {
     const userTransformed = UserResponseDTO.transformUser(user);
     return userTransformed;
   }
+
+  updateUser = async (params: UserUpdateDTO) => {
+    const { userId, name, code, dob, gender, majors } = params;
+    const user = await User.findOneAndUpdate(
+      { _id: new mongoose.Types.ObjectId(userId) },
+      {
+        dob: dob,
+        gender: gender,
+        code: code,
+        majors: new mongoose.Types.ObjectId(majors),
+        name: name,
+        status: UserStatus.Active,
+      },
+      { new: true }
+    );
+    if (!user) {
+      throw Errors.userNotExists;
+    }
+    return user;
+  };
+
+  getAllUsers = async () => {
+    const users = User.find({
+      status: UserStatus.Active,
+      role: Role.User,
+    }).populate("majors");
+    return UserResponseDTO.transformUser(users);
+  };
+
+  updateAvatar = async (params: any) => {
+    const { userId, image } = params;
+    await User.updateOne({ _id: userId }, { image: image });
+    return true;
+  };
 }

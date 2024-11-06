@@ -54,6 +54,7 @@ export const Errors = {
     "ChapterNotExits",
     400
   ),
+  
 };
 export const handleErrors = (
   error: any,

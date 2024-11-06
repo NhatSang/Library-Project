@@ -1,11 +1,10 @@
-import axiosInstance from "../../../axios/axiosConfig";
+import axiosInstance, { axiosInstance2 } from "../../../axios/axiosConfig";
 
 export const getHistories = async () => {
   const url = "/histories";
   return await axiosInstance.get(url);
 };
-export const getRecommendedBooksBySimilarUsers = async () => {};
-export const getRecommendedBooksByHistory = async () => {};
+
 export const getRecommendedBooksByPreference = async () => {};
 export const getGenres = async () => {
   const url = "/genres";
@@ -32,3 +31,17 @@ export const _getBookTopViewed = async()=>{
   return await axiosInstance.get(url);
 }
 
+export const _getRecommendBooks= async () => {
+  const url = "/book/recommend-books";
+  return await axiosInstance.get(url);
+};
+
+export const _getBookContentBypage = async (id, page) => {
+  const url = "/get-book-content-by-page";
+  return axiosInstance2.get(url, {
+    params: {
+      bookId: id,
+      page,
+    },
+  });
+};

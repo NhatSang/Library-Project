@@ -16,22 +16,12 @@ export class ChapterController {
     }
   };
 
-  _getChapterById = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const result = await this.chapterService.getChapterById(req.query.chapterId as string);
-      res.send(new ResponseCustom(result));
-    } catch (error) {
-      next(error);
-    }
-  };
-
   _addChapter = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.chapterService.addChapter(req.body);
       res.send(new ResponseCustom(result));
     } catch (error) {
       next(error);
-      
     }
   };
 }

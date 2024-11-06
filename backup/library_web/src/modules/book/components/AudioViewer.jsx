@@ -5,6 +5,7 @@ const { Option } = Select;
 import { GrChapterNext, GrChapterPrevious } from "react-icons/gr";
 import { CiPause1, CiPlay1 } from "react-icons/ci";
 import { useLocation } from "react-router-dom";
+import { _getBookContentBypage } from "../../main/api";
 const AudioViewer = () => {
   const location = useLocation();
   const book = location.state.book;
@@ -53,8 +54,8 @@ const AudioViewer = () => {
   const fetchContent = async () => {
     setIsLoading(true);
     try {
-      const response = await getBookContentByPage(book._id, pageRef.current);
-      const temp = splitIntoSentences(response.data.content.content);
+      const response = await _getBookContentBypage(book._id, pageRef.current);
+      const temp = splitIntoSentences(response.data.data.content.content);
 
       if (temp.length === 0) {
         await nextPage();

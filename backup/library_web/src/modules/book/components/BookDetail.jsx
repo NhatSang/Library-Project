@@ -1,5 +1,5 @@
 import { Button, Image } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaRegEye } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
@@ -8,14 +8,19 @@ import { useSelector } from "react-redux";
 const BookDetail = () => {
   const location = useLocation();
   const book = location.state.book;
+  const history = location.state.history;
   const navigate = useNavigate();
   const handleReadBook = () => {
-    navigate("/book-content", { state: { book: book, page: 0 } });
     localStorage.setItem("book", JSON.stringify(book));
+    navigate("/book-content", { state: { book: book, page: 0 } });
   };
   const handleContinuteRead = () => {
-    navigate("/book-content");
+    localStorage.setItem("book", JSON.stringify(book));
+    navigate("/book-content", { state: { history: history, book: book } });
   };
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn lên đầu trang
+  }, []);
   return (
     <div className="p-4 bg-white rounded-lg shadow-md flex space-x-4">
       <div className="w-1/5">

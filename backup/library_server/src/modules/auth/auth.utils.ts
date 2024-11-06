@@ -3,7 +3,7 @@ import { convertTime, env, TimeType } from "../../helper";
 
 export const generateAccessToken = (payload: any) => {
   return jwt.sign(payload, env.ACCESS_TOKEN_SECRET, {
-    expiresIn: convertTime(1, TimeType.h),
+    expiresIn: convertTime(7, TimeType.d),
   });
 };
 
