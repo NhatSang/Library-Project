@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -18,8 +18,22 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import './styles.css'
 import logo from '../../assets/images/logo_iuh.png'
+import { _login } from './apis'
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async() => {
+    const response = await _login({ email, password });
+    if(response.data){
+      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      navigate('/dashboard');
+    }
+  }
+
   return (
     <div className="bg-blurred d-flex flex-row align-items-center">
       <CContainer>
@@ -39,13 +53,20 @@ const Login = () => {
                         <CInputGroupText>
                           <CIcon icon={cilUser} />
                         </CInputGroupText>
-                        <CFormInput placeholder="Email" autoComplete="username" />
+                        <CFormInput value={email} 
+                        onChange={(text)=>{
+                          setEmail(text.target.value);
+                        }} placeholder="Email" autoComplete="username" />
                       </CInputGroup>
                       <CInputGroup className="mb-4">
                         <CInputGroupText>
                           <CIcon icon={cilLockLocked} />
                         </CInputGroupText>
                         <CFormInput
+                        value={password}
+                        onChange={(text)=>{
+                          setPassword(text.target.value);
+                        }}
                           type="password"
                           placeholder="Mật khẩu"
                           autoComplete="current-password"
@@ -53,7 +74,7 @@ const Login = () => {
                       </CInputGroup>
                       <CRow>
                         <CCol xs={6}>
-                          <CButton color="primary" className="px-4">
+                          <CButton onClick={handleLogin} color="primary" className="px-4">
                             Đăng nhập
                           </CButton>
                         </CCol>

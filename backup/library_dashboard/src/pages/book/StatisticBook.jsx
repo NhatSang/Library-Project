@@ -1,5 +1,5 @@
 import { CButton, CCol, CFormInput, CFormLabel, CFormSelect, CRow } from "@coreui/react";
-import { _getGenres } from "./apis";
+import { _getGenres, _getMajors } from "./apis";
 import { useEffect, useRef, useState } from "react";
 import { CChartBar } from "@coreui/react-chartjs";
 import { Button, Input } from "antd";
@@ -30,23 +30,23 @@ const StatisticBook = () => {
     const oneWeekAgoFormatted = oneWeekAgo.toISOString().split("T")[0];
     const [startDate, setStartDate] = useState(oneWeekAgoFormatted);
     const [endDate, setEndDate] = useState(today);
-    const [selectedGenre, setSelectedGenre] = useState("");
-    const [genres, setGenres] = useState([]);
     const [loading, setLoading] = useState(false);
     const [limit, setLimit] = useState(10);
     const chartRef = useRef(null);
     const [thongKe, setThongKe] = useState(loaiThongKe[0]);
+    const [majors, setMajors] = useState([]);
+    const [selectedMajors, setSelectedMajors] = useState("");
 
     
 
     useEffect(() => {
-        getGenres();
+        getMajors();
     }, []);
 
-    const getGenres = async () => {
+    const getMajors = async () => {
         try {
-            const res = await _getGenres();
-            setGenres(res.data);
+            const res = await _getMajors();
+            setMajors(res.data);
         } catch (error) {
             console.log(error);
         }
@@ -63,9 +63,8 @@ const StatisticBook = () => {
         setEndDate(e.target.value);
     }
 
-    const handleGenreChange = (e) => {
-        setSelectedGenre(e.target.value);
-        console.log(e.target.value);
+    const handleChangeMajors = (e) => {
+        setSelectedMajors(e.target.value);
     }
 
     const handleChangeLoaiThongKe = (e) => {
@@ -256,7 +255,7 @@ const StatisticBook = () => {
         doc.setFont("Roboto","normal");
         const exportDateRange = `Thống kê được lấy từ ${formatDate(startDate)} đến ${formatDate(endDate)}`;
         const exportLoaiThongKe = `Loại thống kê: Top ${limit} ${thongKe.title} `;
-        const exportGenre = `Thể loại: ${selectedGenre ? genres.find((genre) => genre._id === selectedGenre).name : "Tất cả"}`;
+        const exportGenre = `Chuyên ngành: ${selectedMajors ? majors.find((m) => m._id === selectedGenre).name : "Tất cả"}`;
         doc.text(exportDateRange, 40, 140);
         doc.text(exportLoaiThongKe, 40, 160);
         doc.text(exportGenre, 40, 180);
@@ -333,16 +332,16 @@ const StatisticBook = () => {
             </CCol>
       
             <CCol xs="auto" className="d-flex align-items-center gap-2">
-              <CFormLabel htmlFor="genre-select" className="mb-0 text-base font-medium">Thể loại:</CFormLabel>
+              <CFormLabel htmlFor="genre-select" className="mb-0 text-base font-medium">Chuyên ngành:</CFormLabel>
               <CFormSelect
                 id="genre-select"
                 className="w-40"
-                onChange={handleGenreChange}
+                onChange={handleChangeMajors}
               >
                 <option value="">------</option>
-                {genres.map((genre) => (
-                  <option value={genre._id} key={genre._id}>
-                    {genre.name}
+                {majors.map((m) => (
+                  <option value={m._id} key={m._id}>
+                    {m.name}
                   </option>
                 ))}
               </CFormSelect>

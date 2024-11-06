@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useState } from 'react'
-import { HashRouter, Route, Routes } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { CSpinner, useColorModes } from '@coreui/react'
@@ -42,6 +42,8 @@ const AddMajor = React.lazy(() => import('./pages/majors/AddMajors'))
 const Notifications = React.lazy(() => import('./pages/notification/Notifications'))
 const AddNotification = React.lazy(() => import('./pages/notification/AddNotification'))
 
+import ProtectedRoute from './routers/ProtectedRoute'
+
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -80,6 +82,8 @@ const App = () => {
     setColorMode(storedTheme)
   }, []) 
 
+
+
   return (
     <ConfigProvider theme={{ token: themeTokens }} locale={viVN}>
     <HashRouter>
@@ -95,6 +99,7 @@ const App = () => {
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
           <Route exact path="/500" name="Page 500" element={<Page500 />} />
 
+<Route element={<ProtectedRoute />}>
           <Route path="/" element={<DefaultLayout />}>
             <Route index element={<Dashboard />} /> 
             <Route path="dashboard" element={<Dashboard />} />
@@ -112,6 +117,7 @@ const App = () => {
             <Route path="notifications/list" element={<Notifications />} />
             <Route path="notifications/add" element={<AddNotification />} />
           </Route>  
+</Route>
 
           <Route path="*" element={<Page404 />} />
         </Routes>
