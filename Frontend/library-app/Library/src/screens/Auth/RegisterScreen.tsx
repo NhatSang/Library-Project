@@ -11,6 +11,7 @@ import { Image, ImageBackground, Pressable, ScrollView, View } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { _sendVerifyCode } from './apis';
 
 const RegisterScreen = ({ navigation }: any) => {
     const [email, setEmail] = useState<string>('');
@@ -43,16 +44,16 @@ const RegisterScreen = ({ navigation }: any) => {
         // if (!validate()) return;
         setIsLoading(true);
         try {
-            navigation.navigate(ScreenName.VerifyCodeScreen, { email });
-            // const res = await _sendVerifyCode(email);
-            // if (res.data) {
-            //     Toast.show({
-            //         type: 'success',
-            //         text1: 'Thành công',
-            //         text2: 'Mã xác nhận đã được gửi đến email của bạn',
-            //         position: 'bottom',
-            //     });
-            // }
+            const res = await _sendVerifyCode(email);
+            if (res.data) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Thành công',
+                    text2: 'Mã xác nhận đã được gửi đến email của bạn',
+                    position: 'bottom',
+                });
+                navigation.navigate(ScreenName.VerifyCodeScreen, { email });
+            }
         } catch (error: any) {
             Toast.show({
                 type: 'error',
