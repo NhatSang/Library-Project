@@ -16,13 +16,13 @@ export class StatisticsService {
   ) {}
 
   async getTop10HighestViewsBooks(params: any) {
-    const { startDate, endDate, genreId } = params;
+    const { startDate, endDate, majorsId, limit } = params;
     if (!startDate || !endDate) {
       throw Errors.badRequest;
     }
     const matchStage: any = {};
-    if (genreId) {
-      matchStage.genre = new mongoose.Types.ObjectId(genreId); // Chỉ lọc theo genre nếu genreId tồn tại
+    if (majorsId) {
+      matchStage.genre = new mongoose.Types.ObjectId(majorsId);
     }
 
     const result = await Books.aggregate([
@@ -74,7 +74,7 @@ export class StatisticsService {
         $sort: { totalViews: -1 },
       },
       {
-        $limit: 10,
+        $limit: parseInt(limit),
       },
       {
         $project: {
@@ -88,19 +88,19 @@ export class StatisticsService {
     return resResult;
   }
 
-  async getTop10HighestRatingsBooks(params: any) {
-    const { startDate, endDate, genreId } = params;
+  async getTopHighestRatingsBooks(params: any) {
+    const { startDate, endDate, majorsId, limit } = params;
     if (!startDate || !endDate) {
       throw Errors.badRequest;
     }
     const matchStage: any = {};
-    if (genreId) {
-      matchStage.genre = new mongoose.Types.ObjectId(genreId); // Chỉ lọc theo genre nếu genreId tồn tại
+    if (majorsId) {
+      matchStage.majors = new mongoose.Types.ObjectId(majorsId);
     }
 
     const result = await Books.aggregate([
       {
-        $match: matchStage, // Điều kiện lọc genre hoặc các điều kiện khác
+        $match: matchStage,
       },
       {
         $lookup: {
@@ -127,7 +127,7 @@ export class StatisticsService {
             },
             {
               $match: {
-                reviewCount: { $gte: 1 }, // Chỉ lấy các sách có từ 2 review trở lên
+                reviewCount: { $gte: 0 }, // Chỉ lấy các sách có từ 2 review trở lên
               },
             },
           ],
@@ -149,7 +149,7 @@ export class StatisticsService {
         $sort: { avgRating: -1 }, // Sắp xếp theo rating trung bình giảm dần
       },
       {
-        $limit: 10, // Giới hạn kết quả trả về là top 10
+        $limit: parseInt(limit),
       },
       {
         $project: {
@@ -204,33 +204,49 @@ export class StatisticsService {
     return result;
   }
 
-  statisticsViewsReviews = async (fromDateStr: string, toDateStr: string) => {
+  statisticsViewsReviews = async (
+    fromDateStr: string,
+    toDateStr: string,
+    majorsId?: string
+  ) => {
     const fromDate = new Date(fromDateStr);
     const toDate = new Date(toDateStr);
-    const listViews = await this.viewService.countViewByDate(fromDate, toDate);
+    const listViews = await this.viewService.countViewByDate(
+      fromDate,
+      toDate,
+      majorsId
+    );
     const listReviews = await this.reviewService.countReviewByDate(
       fromDate,
-      toDate
+      toDate,
+      majorsId
     );
     const totalViews = await this.viewService.totalViewsByDate(
       fromDate,
-      toDate
+      toDate,
+      majorsId
     );
     const totalReviews = await this.reviewService.totalReviewByDate(
       fromDate,
-      toDate
+      toDate,
+      majorsId
     );
 
     return { listViews, listReviews, totalViews, totalReviews };
   };
 
-  statisticsUser = async (fromDateStr: string, toDateStr: string) => {
+  statisticsUser = async (
+    fromDateStr: string,
+    toDateStr: string,
+    majorsId?: string
+  ) => {
     const fromDate = new Date(fromDateStr);
     const toDate = new Date(toDateStr);
-    const [result] = await User.aggregate([
+    const pipeline: any[] = [
       {
         $match: {
           createdAt: { $gte: fromDate, $lte: toDate },
+          ...(majorsId && { majorsId: new mongoose.Types.ObjectId(majorsId) }),
         },
       },
       {
@@ -239,8 +255,8 @@ export class StatisticsService {
             {
               $project: {
                 _id: 1,
-                name: 1, 
-                email: 1, 
+                name: 1,
+                email: 1,
                 createdAt: 1,
                 gender: 1,
               },
@@ -271,13 +287,14 @@ export class StatisticsService {
           countMale: { $arrayElemAt: ["$countMale.countMale", 0] },
         },
       },
-    ]);
-  
+    ];
+
+    const [result] = await User.aggregate(pipeline);
+
     return {
       userList: result.userList,
-      countFemale: result.countFemale || 0, 
-      countMale: result.countMale || 0,  
+      countFemale: result.countFemale || 0,
+      countMale: result.countMale || 0,
     };
   };
-  
 }

@@ -28,7 +28,7 @@ export class StatisticsController {
     next: NextFunction
   ) => {
     try {
-      const result = await this.statisticsService.getTop10HighestRatingsBooks(
+      const result = await this.statisticsService.getTopHighestRatingsBooks(
         req.query
       );
       res.send(new ResponseCustom(result));
@@ -56,7 +56,8 @@ export class StatisticsController {
     try {
       const result = await this.statisticsService.statisticsViewsReviews(
         req.query.fromDate as string,
-        req.query.toDate as string
+        req.query.toDate as string,
+        req.query.majorsId as string
       );
       res.send(new ResponseCustom(result));
     } catch (error) {
