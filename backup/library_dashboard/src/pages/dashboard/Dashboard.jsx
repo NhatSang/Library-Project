@@ -94,6 +94,20 @@ const Dashboard = () => {
     { name: 'An toàn thông tin', value: 22 },
     { name: 'Mạng máy tính', value: 43 },
   ]
+  const getCurrentWeekDatesFromAnyDay = (date)=>{
+    const currentDay = date.getDay();
+    const firstDayOfWeek = new Date(date);
+    firstDayOfWeek.setDate(date.getDate() - currentDay + (currentDay === 0 ? -6 : 1)); // Đặt về ngày đầu tuần (Thứ Hai)
+    const weekDates = [];
+    for (let i = 0; i < 7; i++) {
+        const day = new Date(firstDayOfWeek);
+        day.setDate(firstDayOfWeek.getDate() + i);
+        weekDates.push(day.toLocaleDateString("vi-VN")); // Định dạng ngày theo chuẩn Việt Nam
+    }
+    return weekDates;
+  }
+
+  console.log(getCurrentWeekDatesFromAnyDay(new Date("2024-11-12")));
 
   return (
     <>

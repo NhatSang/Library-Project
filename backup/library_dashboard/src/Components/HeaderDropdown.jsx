@@ -25,6 +25,12 @@ import CIcon from '@coreui/icons-react'
 import avatar from '../assets/images/avt-admin.jpg'
 
 const HeaderDropdown = () => {
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('user');
+  }
+
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
@@ -32,7 +38,7 @@ const HeaderDropdown = () => {
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">Account</CDropdownHeader>
-        <CDropdownItem href="#">
+        <CDropdownItem onClick={handleLogout} href='/login'>
           <CIcon icon={cilUser} className="me-2" />
           Đăng xuất
         </CDropdownItem>
