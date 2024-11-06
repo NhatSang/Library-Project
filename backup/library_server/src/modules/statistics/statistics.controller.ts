@@ -48,9 +48,16 @@ export class StatisticsController {
     }
   };
 
-  getSummary = async (req: Request, res: Response, next: NextFunction) => {
+  statisticsViewsReviews = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
-      const result = await this.statisticsService.getSummary(req.query);
+      const result = await this.statisticsService.statisticsViewsReviews(
+        req.query.fromDate as string,
+        req.query.toDate as string
+      );
       res.send(new ResponseCustom(result));
     } catch (error) {
       console.log(error);

@@ -15,13 +15,15 @@ import historyRouter from "./modules/history/history.router";
 import chapterRouter from "./modules/chapter/chapter.router";
 import bookRouter from "./modules/book/book.router";
 import notificationRouter from "./modules/notification/notification.router";
-import cron from 'node-cron';
+import cron from "node-cron";
 import Notification from "./modules/notification/model/notification.model";
 import { Status } from "./modules/notification/types/notification.type";
-import {NotificationService} from "./modules/notification/notification.service";
-import {UserService} from "./modules/user/user.service";
+import { NotificationService } from "./modules/notification/notification.service";
+import { UserService } from "./modules/user/user.service";
 import Container from "typedi";
 import reviewRouter from "./modules/reivew/review.router";
+import viewRouter from "./modules/view/view.router";
+import noteRouter from "./modules/note/note.router";
 
 (async () => {
   const app = express();
@@ -53,6 +55,8 @@ import reviewRouter from "./modules/reivew/review.router";
   app.use("/api/v1", bookRouter);
   app.use("/api/v1", notificationRouter);
   app.use("/api/v1", reviewRouter);
+  app.use("/api/v1", viewRouter);
+  app.use("/api/v1", noteRouter);
   app.use(handleErrors);
   app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`);
@@ -75,5 +79,4 @@ import reviewRouter from "./modules/reivew/review.router";
   //       console.log(error);
   //   }
   // });
-
 })();

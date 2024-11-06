@@ -17,5 +17,5 @@ statisticsRouter.get(
   "/get-num-users",
   statisticsController.getNumOfUser
 );
-statisticsRouter.get("/get-summary", statisticsController.getSummary);
+
 export default statisticsRouter;

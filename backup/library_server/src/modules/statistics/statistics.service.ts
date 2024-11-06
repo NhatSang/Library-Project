@@ -1,13 +1,20 @@
 import { BookAvgRatingDTO, BookTotalViewDTO } from "./../book/dto/book.dto";
-import { Service } from "typedi";
+import { Inject, Service } from "typedi";
 import Books from "../book/model/book.model";
 import { Errors } from "../../helper/error";
 import mongoose from "mongoose";
 import User from "../user/model/user.model";
 import Histories from "../history/model/history.mode";
+import { ViewService } from "../view/view.service";
+import { ReviewService } from "../reivew/review.service";
 
 @Service()
 export class StatisticsService {
+  constructor(
+    @Inject() private viewService: ViewService,
+    @Inject() private reviewService: ReviewService
+  ) {}
+
   async getTop10HighestViewsBooks(params: any) {
     const { startDate, endDate, genreId } = params;
     if (!startDate || !endDate) {
@@ -197,105 +204,23 @@ export class StatisticsService {
     return result;
   }
 
-  async getSummary(params: any) {
-    const { startDate, endDate, genreId } = params;
+  statisticsViewsReviews = async (fromDateStr: string, toDateStr: string) => {
+    const fromDate = new Date(fromDateStr);
+    const toDate = new Date(toDateStr);
+    const listViews = await this.viewService.countViewByDate(fromDate, toDate);
+    const listReviews = await this.reviewService.countReviewByDate(
+      fromDate,
+      toDate
+    );
+    const totalViews = await this.viewService.totalViewsByDate(
+      fromDate,
+      toDate
+    );
+    const totalReviews = await this.reviewService.totalReviewByDate(
+      fromDate,
+      toDate
+    );
 
-    if (!startDate || !endDate) {
-      throw Errors.badRequest;
-    }
-
-    const matchStage: any = {};
-    if (genreId) {
-      matchStage.genre = new mongoose.Types.ObjectId(genreId);
-    }
-
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    // 1. Đếm tổng số sách theo genreId
-    const totalBooksByGenre = await Books.countDocuments(matchStage);
-
-    // 2. Đếm tổng số sách mới từ startDate => enddate theo genreId
-    const newBooksByGenre = await Books.countDocuments({
-      ...matchStage,
-      createdAt: { $gte: start, $lte: end },
-    });
-    //3. tổng người đọc
-    const totalReadersByGenre = await Histories.aggregate([
-      {
-        $match: {
-          updatedDate: { $gte: start, $lte: end },
-        },
-      },
-      {
-        $lookup: {
-          from: "books",
-          localField: "book", 
-          foreignField: "_id", 
-          as: "books", 
-        },
-      },
-      {
-
-        $unwind: "$books",
-      },
-      {
-        $match: genreId
-          ? {
-              "books.genre": new mongoose.Types.ObjectId(genreId), 
-            }
-          : {},
-      },
-      {
-        $group: {
-          _id: "$user",
-        },
-      },
-      {
-        $count: "totalReaders",
-      },
-    ]);
-
-    // 4. Đếm tổng số view từ startDate => enddate theo genreId
-    const totalViewsByGenre = await Books.aggregate([
-      { $match: matchStage },
-      {
-        $lookup: {
-          from: "views",
-          localField: "_id",
-          foreignField: "book",
-          as: "views",
-        },
-      },
-      { $unwind: "$views" },
-      {
-        $match: {
-          "views.viewDate": { $gte: start, $lte: end },
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          totalViews: { $sum: "$views.count" },
-        },
-      },
-    ]);
-
-    // 5. Đếm tổng số người dùng
-    const totalUsers = await User.countDocuments();
-
-    // 6. Đếm số người dùng mới từ startDate => enddate
-    const newUsers = await User.countDocuments({
-      createdAt: { $gte: start, $lte: end },
-    });
-
-    return {
-      totalBooksByGenre,
-      newBooksByGenre,
-      totalReadersByGenre: totalReadersByGenre[0]?.totalReaders || 0, // Ensure safe access to the result
-      totalViewsByGenre: totalViewsByGenre[0]?.totalViews || 0, // Ensure safe access to the result
-      totalUsers,
-      newUsers,
-    };
-  }
+    return { listViews, listReviews, totalViews, totalReviews };
+  };
 }
