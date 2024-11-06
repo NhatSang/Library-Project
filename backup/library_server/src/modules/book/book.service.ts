@@ -222,7 +222,7 @@ export class BookService {
   async getRecommendBooks(userId: string, pagination: Pagination) {
     const { limit, getOffset } = pagination;
     const response = await axios.get(
-      `http://localhost:5002/api/v1/recommend/recommend_books_rating/${userId}`
+      `http://127.0.0.1:5003/api/v1/recommend/recommend_books_rating/${userId}`
     );
     const books = response.data;
     pagination.total = books.length;
@@ -394,13 +394,20 @@ export class BookService {
     return true;
   };
 
-
   getBookDetails = async (bookId: string) => {
-    const book = this.checkPublishedBook(bookId);
+    const book = BookResponseDTO.transformBook(
+      await this.checkPublishedBook(bookId)
+    );
+
     const totalView = await this.viewService.getTotalView(bookId);
     const avgRating = await this.reviewService.getAvgRating(bookId);
-    const bookDetails = { ...book, totalView, avgRating };
-    return BookDetailsResponseDTO.transformBook(bookDetails);
+    const bookDetails = book as BookResponseDTO & {
+      totalView: number;
+      avgRating: number;
+    };
+    bookDetails.totalView = totalView;
+    bookDetails.avgRating = avgRating;
+    return bookDetails;
   };
 
   findBooksByKeyword = async (keyword: string, pagination: Pagination) => {
@@ -463,7 +470,4 @@ export class BookService {
     await book.save();
     return true;
   };
-
 }
-
-

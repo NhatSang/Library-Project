@@ -5,6 +5,7 @@ import { UserController } from "./user.controller";
 import { UserRegisterDTO } from "./dto/user.dto";
 import { AuthMiddleware } from "../auth/auth.middleware";
 import { Role } from "./types/user.type";
+import { upload } from "../../aws/aws.helper";
 
 const userRouter = Router();
 const userMiddleware = new UserMiddleware();
@@ -31,6 +32,13 @@ userRouter.post(
   "/users/update-user",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   userController._updateUser
+);
+
+userRouter.post(
+  "/users/update-avatar",
+  upload.single("image"),
+  authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
+  userController._updateAvatar
 );
 
 userRouter.post("/users", userController._getAllUsers);

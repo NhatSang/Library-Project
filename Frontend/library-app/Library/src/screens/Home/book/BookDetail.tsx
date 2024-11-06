@@ -53,7 +53,6 @@ const BookDetail = ({ navigation, route }: any) => {
         try {
             const response = await _getBookDetail(book._id);
         if(response.data){
-            console.log('book detail: ', response.data);
             setBookDetail(response.data);
         }
         } catch (error) {
@@ -248,7 +247,7 @@ const BookDetail = ({ navigation, route }: any) => {
                                 </View>
                             </View>
                             <View className='justify-center items-center'>
-                                <AppText text={bookDetail?.avgRating} font={fontFamilies.robotoBold} />
+                                <AppText text={parseFloat(bookDetail?.avgRating?.toFixed(1) || '0')} font={fontFamilies.robotoBold} />
                                 <View className='flex-row items-center'>
                                     <AntDesign name='star' color={'yellow'} size={16} />
                                     <AppText styles={{ paddingLeft: 4 }} text='đánh giá' />

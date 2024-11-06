@@ -5,7 +5,7 @@ import { BookController } from "./book.controller";
 import { Role } from "../user/types/user.type";
 import { BookMiddleware } from "./book.middleware";
 import { BookCreateReqDTO, BookUpdateReqDTO } from "./dto/book.dto";
-import { upload } from "../../../aws/aws.helper";
+import { upload } from "../../aws/aws.helper";
 
 const bookRouter = Router();
 const authMiddleware = Container.get(AuthMiddleware);

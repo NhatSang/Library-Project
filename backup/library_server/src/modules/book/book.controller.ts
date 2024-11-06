@@ -2,7 +2,7 @@ import { Inject, Service } from "typedi";
 import { BookService } from "./book.service";
 import { NextFunction, Request, Response } from "express";
 import { ResponseCustom } from "../../helper/response";
-import { saveFile } from "../../../aws/aws.helper";
+import { saveFile } from "../../aws/aws.helper";
 import { Pagination } from "../../helper/pagination";
 
 @Service()

@@ -3,7 +3,7 @@ import { UserService } from "./user.service";
 import { NextFunction, Request, Response } from "express";
 import { ResponseCustom } from "../../helper/response";
 import { Pagination } from "../../helper/pagination";
-import { saveFile } from "../../../aws/aws.helper";
+import { saveFile } from "../../aws/aws.helper";
 
 @Service()
 export class UserController {
@@ -77,7 +77,7 @@ export class UserController {
 
   _updateAvatar = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const imgFile = req.file["image"][0];
+      const imgFile = req.file;
       const image = await saveFile(imgFile);
       req.body.image = image;
       const result = await this.userService.updateAvatar(req.body);
