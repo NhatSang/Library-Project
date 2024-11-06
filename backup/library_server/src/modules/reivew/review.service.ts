@@ -10,28 +10,21 @@ import { eachDayOfInterval, format } from "date-fns";
 export class ReviewService {
   async createReview(params: ReviewCreateReqDTO) {
     const { bookId, userId, content, rating } = params;
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    try {
-      const review = await Reviews.findOneAndUpdate(
-        {
-          book: new mongoose.Types.ObjectId(bookId),
-          user: new mongoose.Types.ObjectId(userId),
-        },
-        { content: content, rating: rating },
-        { new: true, upsert: true }
-      );
 
-      const response = await axios.post(
-        `http://localhost:5002/api/v1/recommend/create_model_rating`,
-        { userId: userId }
-      );
-      return review;
-    } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-      throw error;
-    }
+    const review = await Reviews.findOneAndUpdate(
+      {
+        book: new mongoose.Types.ObjectId(bookId),
+        user: new mongoose.Types.ObjectId(userId),
+      },
+      { content: content, rating: rating },
+      { new: true, upsert: true }
+    );
+
+    const response = await axios.post(
+      `http://localhost:5002/api/v1/recommend/create_model_rating`,
+      { userId: userId }
+    );
+    return review;
   }
 
   async getReviewByBookId(book: string) {
