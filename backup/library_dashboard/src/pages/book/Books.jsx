@@ -14,6 +14,8 @@ const Books = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({});
   const theme = useSelector((state) => state.app.theme);
+  const [page, setPage] = useState(1);
+  const [keyword, setKeyword] = useState("");
   const [themeTokens, setThemeTokens] = useState({
     colorBgContainer: '#ffffff',
     colorText: '#000000',
@@ -34,9 +36,8 @@ const Books = () => {
   }, [theme]);
 
   useEffect(() => {
-    fetchData();
-  }
-  , [])
+    fetchData(page, 5, keyword);
+  }, [page,keyword])
 
   const columns = [
     {
@@ -64,11 +65,12 @@ const Books = () => {
       key: 'pageNumber',
     },
     {
-      title: 'Ngày nhập',
-      key: 'createdAt',
+      title: 'Chuyên ngành',
+      key: 'majors',
+      key: 'majors',
       render: (text, record) => (
         <span>
-          {new Date(record.createdAt).toLocaleDateString()}
+          {record.majors}
         </span>
       )
     },
@@ -93,16 +95,26 @@ const Books = () => {
   ]
 
   const handlePageChange = (page) => {
-    fetchData(page);
+    fetchData(page, 5, keyword);
   }
 
-  const fetchData = async () => {
+  const handleSearch = (keyword) => {
+    setKeyword(keyword);
+  }
+
+  const fetchData = async (page, limit, keyword) => {
+    setLoading(true);
     try {
-      const response = await _getBook()
+      const response = await _getBook(
+        page,
+        limit,
+        keyword
+      )
       setBooks(response.data);
       setPagination(response.pagination);
-      console.log(response.data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   }
@@ -126,9 +138,9 @@ const Books = () => {
       loading={loading} bordered  dataSource={books} columns={columns} pagination={false} />
 
       <CCol xs={12} md={12} style={{marginTop:20,marginBottom:10,justifyContent:'center',alignItems:'center'}}>
-      {/* <ConfigProvider locale={viVN}>  
+      <ConfigProvider locale={viVN}>  
       <Pagination showQuickJumper defaultCurrent={pagination.page} total={pagination.total} onChange={handlePageChange} />
-      </ConfigProvider> */}
+      </ConfigProvider>
       </CCol>
 
     </CCol>

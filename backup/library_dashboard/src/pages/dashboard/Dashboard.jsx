@@ -48,57 +48,32 @@ import {
   cilUserFemale,
 } from '@coreui/icons'
 
-import { _getUsers } from '../user/apis'
+import { _getMajors, _getUsers } from '../user/apis'
 import { formatDate } from '../../utils'
 import { CChartBar, CChartPie } from '@coreui/react-chartjs'
 import { _getStatisticsDashBoard, _getStatisticsDashBoardUser } from './apis'
+import { Table } from 'antd'
 
 const Dashboard = () => {
-  const [major, setMajor] = useState('Tất cả')
-  const [users,setUsers] = useState([]);
+  const [major, setMajor] = useState({
+    name: 'Tất cả',
+    _id: null,
+  });
+  const [majors, setMajors] = useState([]);
   const [statistic, setStatistic] = useState({});
   const [statisticUser, setStatisticUser] = useState({});
 
   useEffect(() => {
+    getMajors();
     handleStatistic();
     handleStatisticUser();
-    // fetchUser(1, 5, '');
   }, []);
 
-  const fetchUser = async (page, limit, keyword) => {
-    const response = await _getUsers(page, limit, keyword);
-    if(!response.error){
-      setUsers(response.data);
-      console.log(response.data[0]);
-    }
-  };
+  useEffect(() => {
+    handleGetAllSatistic();
+  }, [major]);
 
 
-  const progressGroupExample2 = [
-    { title: 'Nam', icon: cilUser, value: 53 },
-    { title: 'Nữ', icon: cilUserFemale, value: 43 },
-  ]
-
-  const majors = [
-    { name: 'Khoa học máy tính', value: 50 },
-    { name: 'Kỹ thuật phần mềm', value: 22 },
-    { name: 'Hệ thống thông tin', value: 74 },
-    { name: 'Công nghệ thông tin', value: 98 },
-    { name: 'An toàn thông tin', value: 22 },
-    { name: 'Mạng máy tính', value: 43 },
-    { name: 'Khoa học máy tính', value: 50 },
-    { name: 'Kỹ thuật phần mềm', value: 22 },
-    { name: 'Hệ thống thông tin', value: 74 },
-    { name: 'Công nghệ thông tin', value: 98 },
-    { name: 'An toàn thông tin', value: 22 },
-    { name: 'Mạng máy tính', value: 43 },
-    { name: 'Khoa học máy tính', value: 50 },
-    { name: 'Kỹ thuật phần mềm', value: 22 },
-    { name: 'Hệ thống thông tin', value: 74 },
-    { name: 'Công nghệ thông tin', value: 98 },
-    { name: 'An toàn thông tin', value: 22 },
-    { name: 'Mạng máy tính', value: 43 },
-  ]
   const getMondayAndSundayFromAnyDay = (date) => {
     const currentDay = date.getDay();
     const monday = new Date(date);
@@ -143,6 +118,84 @@ const handleStatisticUser = async() => {
     console.log(error);
   }
 }
+
+const getMajors = async() => {
+  try {
+    const response = await _getMajors();
+    if(response.data){
+      setMajors(response.data);
+    }
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+const handleGetAllSatistic = async() => {
+  try {
+        // const date = new Date();
+        console.log(major._id);
+  const { monday, sunday } = getMondayAndSundayFromAnyDay(new Date("2024-11-01"));
+    const response1 = await _getStatisticsDashBoard({
+      fromDate: monday,
+      toDate: sunday,
+      majorsId: major.name === 'Tất cả' ? null : major._id,
+    });
+    if(response1.data){
+      console.log('a',response1.data);
+      setStatistic(response1.data);
+    }
+    const response2 = await _getStatisticsDashBoardUser({
+      fromDate: monday,
+      toDate: sunday,
+      majorsId: major.name === 'Tất cả' ? null : major._id,
+    });
+    if(response2.data){
+      console.log('b',response2.data);
+      setStatisticUser(response2.data);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const columns = [
+  {
+    key: "image",
+    title: "Ảnh đại diện",
+    dataIndex: "image",
+    render: (value) => (
+      <CAvatar src={value} size="md" />
+    ),
+  },
+  {
+    title: 'Họ và Tên',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title:'Chuyên ngành',
+    dataIndex: 'majors',
+    key: 'majors',
+  },
+  {
+    title:'Ngày sinh',
+    dataIndex: 'dob',
+    key: 'dob',
+    render: (value) => formatDate(value),
+  },
+  {
+    title:'Giới tính',
+    dataIndex:'gender',
+    key:'gender',
+    render: (value) => value === 'Male' ? 'Nam' : 'Nữ',
+  },
+  {
+    title:"Email",
+    dataIndex:'email',
+    key:'email',
+  },
+]
 
   return (
     <>
@@ -226,15 +279,15 @@ const handleStatisticUser = async() => {
                             paddingLeft: 10,
                             paddingRight: 10,
                             margin: 5,
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: 500,
                             color: "white",
-                          }}>{major}</p>
+                          }}>{major.name}</p>
                         </CDropdownToggle>
                         <CDropdownMenu  className="overflow-auto" style={{ maxHeight: "300px" }}>
                           {majors.map((major, index) => (
                             <CDropdownItem onClick={()=>{
-                              setMajor(major.name)
+                              setMajor(major)
                             }} key={index}>{major.name}</CDropdownItem>
                           ))}
                         </CDropdownMenu>
@@ -279,46 +332,7 @@ const handleStatisticUser = async() => {
               <div className="text-center">
                   <p className="font-weight-bold h4">Danh sách người dùng mới</p>
               </div>
-              <CTable align="middle" className="mb-0 border" hover responsive>
-                <CTableHead className="text-nowrap">
-                  <CTableRow>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      <CIcon icon={cilPeople} />
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary">Người dùng</CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      Giới tính
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      Chuyên ngành
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary">Ngày sinh</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody className='overflow-auto' style={{ height: "300px" }}>
-                  {users.map((item, index) => (
-                    <CTableRow v-for="item in tableItems" key={index}>
-                      <CTableDataCell className="text-center">
-                        <CAvatar size="md" src={item.image} status={"success"} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div>{item.name}</div>
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        {
-                          item.gender === 'Female' ? "Nữ":"Nam"
-                        }
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        {'Công nghệ thông tin'}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {formatDate(item.dob)}
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
+              <Table columns={columns} dataSource={statisticUser?.userList} pagination={{pageSize:5}} />
             </CCardBody>
           </CCard>
         </CCol>

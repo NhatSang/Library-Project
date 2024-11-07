@@ -1,4 +1,4 @@
-import { CButton, CCol, CFormInput, CFormLabel, CFormSelect, CRow } from "@coreui/react";
+import { CButton, CCol, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle, CFormInput, CFormLabel, CFormSelect, CRow } from "@coreui/react";
 import { _getGenres } from "../home/apis";
 import { useEffect, useRef, useState } from "react";
 import { CChartBar, CChartPie } from "@coreui/react-chartjs";
@@ -10,6 +10,7 @@ import {Roboto_Regular}  from "../../assets/fonts/Roboto_Regular";
 import {Roboto_Bold} from "../../assets/fonts/Roboto_Bold";
 import { formatDate } from "../../utils";
 import { useSelector } from "react-redux";
+import { _getStatisticsDashBoardUser } from "../dashboard/apis";
 
 const StatisticUser = () => {
     const today = new Date().toISOString().split("T")[0];
@@ -18,9 +19,11 @@ const StatisticUser = () => {
     const oneWeekAgoFormatted = oneWeekAgo.toISOString().split("T")[0];
     const [startDate, setStartDate] = useState(oneWeekAgoFormatted);
     const [endDate, setEndDate] = useState(today);
-    const [selectedMajors, setSelectedMajors] = useState("");
-    const [genres, setGenres] = useState([]);
-    const [users, setUsers] = useState([]);
+    const [selectedMajors, setSelectedMajors] = useState({
+      _id:null,
+      name: "Tất cả",
+    });
+    const [statisticUser, setStatisticUser] = useState({});
     const [loading, setLoading] = useState(false);
     const [majors, setMajors] = useState([]);
     const chartRef = useRef(null);
@@ -30,6 +33,7 @@ const StatisticUser = () => {
       colorText: '#000000',
       colorBorder: '#d9d9d9'
     });
+    const user = JSON.parse(localStorage.getItem('user'));
   
   
     useEffect(() => {
@@ -49,6 +53,10 @@ const StatisticUser = () => {
         fetchMajors();
         }, []);
 
+    useEffect(() => {
+        fetchUsers();
+    }, [startDate, endDate, selectedMajors]);
+
 
 
     const fetchMajors = async () => {
@@ -60,10 +68,18 @@ const StatisticUser = () => {
         }
       };
     const fetchUsers = async () => {
+      setLoading(true);
         try {
-            const res = await _getUsers(1, 10, "");
-            setUsers(res.data);
+            const res = await _getStatisticsDashBoardUser({
+                fromDate: startDate,
+                toDate: endDate,
+                majorsId: selectedMajors.name === "Tất cả" ? null : selectedMajors._id,
+            });
+            console.log(res.data);
+            setStatisticUser(res.data);
+            setLoading(false);
         } catch (error) {
+          setLoading(false);
             console.log(error);
         }
     }
@@ -79,11 +95,6 @@ const StatisticUser = () => {
         setEndDate(e.target.value);
       };
     
-      const handleMajor = (e) => {
-        console.log(e.target.value);
-        setSelectedMajors(e.target.value);
-        
-      };
 
       const columns = [
         {
@@ -98,6 +109,8 @@ const StatisticUser = () => {
             },
             {
             title: 'Chuyên ngành',
+            dataIndex: 'majors',
+            key: 'majors',
             },
             {
             title: 'Trạng thái',
@@ -121,7 +134,7 @@ const StatisticUser = () => {
         
             doc.setFontSize(12);
     
-            const exporterName = "PHẠM ĐỨC NHÂN";
+            const exporterName = user.name;
             const exportDate = `${new Date().toLocaleString("vi-VN")}`;
 
             doc.setFont("Roboto", "normal"); 
@@ -145,7 +158,7 @@ const StatisticUser = () => {
             doc.setFontSize(14);
             doc.setFont("Roboto","normal");
             const exportDateRange = `Thống kê được lấy từ ${formatDate(startDate)} đến ${formatDate(endDate)}`;
-            const exportMajor = `Chuyên ngành: ${majors.find((m) => m._id === selectedMajors)?.name || "Tất cả"}`;
+            const exportMajor = `Chuyên ngành: ${selectedMajors.name}`;
             doc.text(exportDateRange, 40, 140);
             doc.text(exportMajor, 40, 160);
 
@@ -157,16 +170,24 @@ const StatisticUser = () => {
                 doc.setFont("Roboto", "bold");
                 doc.text("Biểu đồ thống kê người dùng Nam và Nữ", xPosition, 230); 
             }
-        
+            doc.setFont("Roboto", "bold");
+            const female = statisticUser?.countFemale;
+            const male = statisticUser?.countMale;
             doc.setFontSize(12);
-            doc.text("Bảng danh sách người dùng", xPosition + 40, 610); 
+            doc.setFont("Roboto", "normal");
+            doc.text(`Số lượng người dùng nam: ${male}`, xPosition + 200, 570);
+            doc.text(`Số lượng người dùng nữ: ${female}`, xPosition + 200, 590);
+        
+            doc.setFont("Roboto", "bold");
+            doc.setFontSize(12);
+            doc.text("Bảng danh sách người dùng", xPosition + 40, 640); 
             autoTable(doc, {
-                startY: 630, 
+                startY: 660, 
                 head: [["Tên người dùng", "Email", "Chuyên ngành", "Trạng thái"]],
-                body: users.map((user) => [
+                body: statisticUser?.userList?.map((user) => [
                     user.name,
                     user.email,
-                    majors.find((m) => m._id === user.major)?.name || "N/A",
+                    user.majors,
                     user.status === "active" ? "Hoạt động" : "Bị khóa",
                 ]),
                 theme: 'grid', 
@@ -215,30 +236,25 @@ const StatisticUser = () => {
       
             <CCol xs="auto" className="d-flex align-items-center gap-2">
               <CFormLabel htmlFor="genre-select" className="mb-0 text-base font-medium">Chuyên ngành:</CFormLabel>
-              <CFormSelect
-                id="genre-select"
-                className="w-40"
-                onChange={handleMajor}
-              >
-                <option value="">------</option>
-                {majors.map((major) => (
-                  <option value={major._id} key={major._id}>
-                    {major.name}
-                  </option>
-                ))}
-              </CFormSelect>
-            </CCol>
-      
-            <CCol xs="auto">
-              <CButton
-                type="button"
-                onClick={() => {}}
-                color="success"
-                className="px-4 py-2 text-dark font-medium rounded disabled-opacity-50"
-                disabled={!startDate || !endDate}
-              >
-                <span className="text-base text-white">Xem thống kê</span>
-              </CButton>
+              <CDropdown>
+                        <CDropdownToggle className='bg-primary' style={{justifyItems:'center',alignItems:'center',borderRadius:10}} caret={false}>
+                          <p style={{
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            margin: 0,
+                            fontSize: 18,
+                            fontWeight: 500,
+                            color: "white",
+                          }}>{selectedMajors.name}</p>
+                        </CDropdownToggle>
+                        <CDropdownMenu  className="overflow-auto" style={{ maxHeight: "300px" }}>
+                          {majors.map((major, index) => (
+                            <CDropdownItem onClick={()=>{
+                              setSelectedMajors(major);
+                            }} key={index}>{major.name}</CDropdownItem>
+                          ))}
+                        </CDropdownMenu>
+                      </CDropdown>
             </CCol>
           </CRow> 
           <div style={{height:20}} className="mt-4"/>
@@ -251,15 +267,15 @@ const StatisticUser = () => {
                 datasets: [
                     {
                     label: 'Người dùng',
-                    backgroundColor: ['#FF6384', '#36A2EB'],
-                    data: [300, 100]
+                    backgroundColor: ['#36A2EB','#FF6384'],
+                    data: [statisticUser?.countMale, statisticUser?.countFemale]
                     }
                 ]
             }}
             />
             </CCol>
             <CCol xs="12" md="8">
-                <Table columns={columns} dataSource={users} pagination={{pageSize:5}}/>
+                <Table loading={loading} columns={columns} dataSource={statisticUser.userList} pagination={{pageSize:5}}/>
             </CCol>
           </CRow>
           <div style={{height:5}} className="mt-4"/>

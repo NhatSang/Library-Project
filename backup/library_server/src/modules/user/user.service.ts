@@ -82,7 +82,10 @@ export class UserService {
       ];
     }
     const [users, total] = await Promise.all([
-      User.find(matchStage).skip(getOffset()).limit(limit),
+      User.find(matchStage)
+      .populate("majors")
+      .skip(getOffset())
+      .limit(limit),
       User.countDocuments(matchStage),
     ]);
     pagination.total = total;

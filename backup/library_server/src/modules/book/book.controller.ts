@@ -145,7 +145,7 @@ export class BookController {
   ) => {
     try {
       const { books, pagination } = await this.bookservice.findBooksByKeyword(
-        req.query.keyword as string,
+        req.body.keyword,
         Pagination.fromRequest(req)
       );
       res.send(new ResponseCustom(books, null, pagination));

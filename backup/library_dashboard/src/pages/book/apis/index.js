@@ -35,16 +35,20 @@ const _getChapters = async (bookId) => {
     });
 }
 
-const _getBook = async () => {
-    const url = "/book/get-newest";
-    return await api.get(url);
+const _getBook = async (page, limit, keyword) => {
+    const url = "/books/find_books";
+    return await api.post(url,{
+        page,
+        limit,
+        keyword
+    });
 }
 
 const _getBookById = async (id) => {
-    const url = "/book"
+    const url = "/books/book-details"
     return await api.get(url, {
         params: {
-            id
+            bookId: id
         }
     });
 }

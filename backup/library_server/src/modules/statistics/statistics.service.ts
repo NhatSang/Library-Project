@@ -7,6 +7,7 @@ import User from "../user/model/user.model";
 import Histories from "../history/model/history.mode";
 import { ViewService } from "../view/view.service";
 import { ReviewService } from "../reivew/review.service";
+import { UserResponseDTO } from "../user/dto/user.dto";
 
 @Service()
 export class StatisticsService {
@@ -246,7 +247,22 @@ export class StatisticsService {
       {
         $match: {
           createdAt: { $gte: fromDate, $lte: toDate },
-          ...(majorsId && { majorsId: new mongoose.Types.ObjectId(majorsId) }),
+          ...(majorsId ? { majors: new mongoose.Types.ObjectId(majorsId) } : {}),
+        },
+      },
+      {
+        $lookup: {
+          from: "majors", // Name of the Majors collection
+          localField: "majors",
+          foreignField: "_id",
+          as: "majorsInfo",
+        },
+      },
+      // Unwind to flatten the array returned from the lookup
+      {
+        $unwind: {
+          path: "$majorsInfo",
+          preserveNullAndEmptyArrays: true, // To handle cases where majorsInfo might be empty
         },
       },
       {
@@ -259,24 +275,21 @@ export class StatisticsService {
                 email: 1,
                 createdAt: 1,
                 gender: 1,
+                majors: "$majorsInfo.name",
+                image: 1,
+                code: 1,
+                dob: 1,
+                status: 1,
               },
             },
           ],
           countFemale: [
-            {
-              $match: { gender: "Female" },
-            },
-            {
-              $count: "countFemale",
-            },
+            { $match: { gender: "Female" } },
+            { $count: "countFemale" },
           ],
           countMale: [
-            {
-              $match: { gender: "Male" },
-            },
-            {
-              $count: "countMale",
-            },
+            { $match: { gender: "Male" } },
+            { $count: "countMale" },
           ],
         },
       },
