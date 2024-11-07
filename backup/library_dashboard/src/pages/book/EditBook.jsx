@@ -18,6 +18,8 @@ const EditBook = () => {
     author: "",
     genre: "",
     majors: "",
+    yob: "",
+    publisher: "",
   });
   const [selectedPdfFile, setSelectedPdfFile] = useState(null);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
@@ -48,6 +50,8 @@ const EditBook = () => {
         author: response.data.author,
         genre: response.data.genre,
         majors: response.data.majors,
+        yob: response.data.yob,
+        publisher: response.data.publisher,
     });
     setSelectedPdfFile(response.data.pdfLink);
     setExistingImageUrl(response.data.image);
@@ -141,11 +145,24 @@ const EditBook = () => {
         )}
       <CCard className="max-w-3xl mx-auto p-6 mt-8">
         <CCardBody>
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Chỉnh sửa thông tin sách</h2>
+        <CRow xs={12}>
+            <CCol xs={6}>
+            <h2 className="text-2xl mb-4 text-primary">
+              Chỉnh sửa sách
+            </h2>
+            </CCol>
+            <CCol xs={6} className="text-end">
+              <Link to="/books" className="btn btn-primary">
+                <span className="text-white">
+                  Chỉnh sửa chương
+                </span>
+              </Link>
+            </CCol>
+          </CRow>
           <CForm onSubmit={handleSubmit} className="space-y-4">
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">Tiêu đề sách</label>
+                <label className="form-label fw-bold">Tiêu đề sách</label>
                 <CFormInput
                   type="text"
                   name="title"
@@ -159,7 +176,7 @@ const EditBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">Tác giả</label>
+                <label className="form-label fw-bold">Tác giả</label>
                 <CFormInput
                   type="text"
                   name="author"
@@ -173,7 +190,37 @@ const EditBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">PDF File: (Nếu muốn thay đổi thì chọn lại)</label>
+                <label className="form-label fw-bold">Nhà xuất bản</label>
+                <CFormInput
+                  type="text"
+                  name="publisher"
+                  value={formData.publisher}
+                  onChange={handleInputChange}
+                  placeholder="Nhập tên nhà xuất bản"
+                  required
+                />
+              </CCol>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CCol>
+                <label className="form-label fw-bold">Năm xuất bản</label>
+                <CFormInput
+                  type="number"
+                  name="yob"
+                  min="1900"
+                  max="2099"
+                  value={formData.yob}
+                  onChange={handleInputChange}
+                  placeholder="Nhập năm xuất bản"
+                  required
+                />
+              </CCol>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CCol>
+                <label className="form-label fw-bold">PDF File: (Nếu muốn thay đổi thì chọn lại)</label>
                 <input
                   type="file"
                   accept="application/pdf"
@@ -185,7 +232,7 @@ const EditBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">Thể loại</label>
+                <label className="form-label fw-bold">Thể loại</label>
                 <CFormSelect
                   name="genre"
                   value={formData.genre}
@@ -206,7 +253,7 @@ const EditBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">Chuyên ngành</label>
+                <label className="form-label fw-bold">Chuyên ngành</label>
                 <CFormSelect
                   name="majors"
                   value={formData.majors}
@@ -226,7 +273,7 @@ const EditBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">Ảnh bìa sách</label>
+                <label className="form-label fw-bold">Ảnh bìa sách</label>
                 <input
                   type="file"
                   accept="image/jpeg,image/png"

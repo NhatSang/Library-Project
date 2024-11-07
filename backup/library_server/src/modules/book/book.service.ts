@@ -411,6 +411,7 @@ export class BookService {
   };
 
   findBooksByKeyword = async (keyword: string, pagination: Pagination) => {
+    console.log(keyword);
     const { getOffset, limit } = pagination;
     const matchStage: FilterQuery<any> = {
       status: BookStatus.Published,

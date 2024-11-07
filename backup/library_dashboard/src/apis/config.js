@@ -17,17 +17,17 @@ export const api2 = axios.create({
 
 api.interceptors.request.use(
     async function (config) {
-        // const token = await getToken();
-        // if (token) {
-        //     config.headers['Authorization'] = `Bearer ${token}`;
-        // }
+        const token = localStorage.getItem("accessToken");
+        
+        if (token) {
+          config.headers['authorization'] = `Bearer ${token}`;
+        }
         config.params = {
             ...config.params,
         };
         return config;
     },
     function (error) {
-        // Do something with request error
         return Promise.reject(error);
     },
 );

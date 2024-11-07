@@ -70,7 +70,8 @@ export class StatisticsController {
     try {
       const result = await this.statisticsService.statisticsUser(
         req.query.fromDate as string,
-        req.query.toDate as string
+        req.query.toDate as string,
+        req.query.majorsId as string
       );
       res.send(new ResponseCustom(result));
     } catch (error) {
