@@ -51,7 +51,7 @@ export class NotificationController {
 
     _deleteNotification = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const result = await this.notificationService.deleteNotification(req.query.id as string);
+            const result = await this.notificationService.deleteNotification(req.params.bookId);
             res.send(new ResponseCustom(result));
         } catch (error) {
             console.log(error);

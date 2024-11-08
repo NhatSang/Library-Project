@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { _deleteNotification, _getNotifications, _sendNotification } from "./apis";
-import { Button, Col, Space, Table, Tag } from 'antd';
+import { Button, Col, Popconfirm, Space, Table, Tag } from 'antd';
 import { useNavigate } from "react-router-dom";
 import Search from "antd/es/transfer/search";
 import { CCol } from "@coreui/react";
@@ -55,18 +55,15 @@ const Notifications = () => {
   };
   
   const handleDeleteNotification = async (id) => {
-    const confirmed = window.confirm('Bạn có chắc chắn muốn xóa thông báo này không?');
-    if (confirmed) {
-      const response = await _deleteNotification(id);
-      if (response.status === 200) {
-        alert('Xóa thông báo thành công');
+      try {
+        const response = await _deleteNotification(id);
+      if (response.data) {
         getNotifications();
-      } else {
-        alert('Xóa thông báo thất bại');
+      } 
+      } catch (error) {
+        console.log(error);
+        
       }
-    } else {
-      alert('Đã hủy xóa thông báo');
-    }
   };
 
 
@@ -95,7 +92,7 @@ const Notifications = () => {
         let filterCondition = 'Tất cả';
     
         if (item.filterCondition.userId) {
-          filterCondition = 'Theo User';
+          filterCondition = 'Theo người dùng';
         } else if (item.filterCondition.major) {
           filterCondition = 'Theo ngành';
         }
@@ -114,22 +111,30 @@ const Notifications = () => {
       render: (value) => renderStatus(value),
     },
     {
-      title: "Action",
+      title: "Chức năng",
       render: (value, item) => (
         <Space size="middle">
-          <Button onClick={() => {
-            navigate('/notification/edit-notification', { state: { notificationItem: item } });
-          }} >Edit</Button>
-          <Button onClick={()=>{
-            handleDeleteNotification(item._id);
-          }} type="primary" danger>Delete</Button>
+          <Popconfirm
+    title="Xoá thông báo"
+    description="Bạn có chắc chắn muốn xoá thông báo này không?"
+    onConfirm={()=>confirm(item._id)}
+    onCancel={()=>{}}
+    okText="Có"
+    cancelText="Không"
+  >
+    <Button danger>Xoá</Button>
+  </Popconfirm>
           <Button onClick={()=>{
             handleSendNotification(item._id);
-          }} type="primary">Send</Button>
+          }} type="primary">Gửi</Button>
         </Space>
       ),
     }
   ]
+
+  const confirm = (id) => {
+    handleDeleteNotification(id);
+  }
 
   useEffect(() => {
     getNotifications();
@@ -163,7 +168,7 @@ const Notifications = () => {
         <h3>Danh sách thông báo</h3>
       </Col>
     )
-  }}  dataSource={notifications} columns={columns} loading={loading} rowKey="id" pagination={{pageSize:3}}/>
+  }}  dataSource={notifications} columns={columns} loading={loading} rowKey="id" pagination={{pageSize:4}}/>
   </div>
     )
 };

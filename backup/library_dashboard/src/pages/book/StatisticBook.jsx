@@ -1,5 +1,5 @@
 import { CButton, CCol, CFormInput, CFormLabel, CFormSelect, CRow } from "@coreui/react";
-import { _getGenres, _getMajors } from "./apis";
+import { _getGenres, _getMajors, _getTopRating, _getTopView } from "./apis";
 import { useEffect, useRef, useState } from "react";
 import { CChartBar } from "@coreui/react-chartjs";
 import { Button, Input } from "antd";
@@ -8,6 +8,7 @@ import {Roboto_Bold} from "../../assets/fonts/Roboto_Bold";
 import { formatDate } from "../../utils";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import Loading from "../../components/Loading";
 
 
 const loaiThongKe = [
@@ -34,8 +35,10 @@ const StatisticBook = () => {
     const [limit, setLimit] = useState(10);
     const chartRef = useRef(null);
     const [thongKe, setThongKe] = useState(loaiThongKe[0]);
+    const [statisticData, setStatisticData] = useState([]);
     const [majors, setMajors] = useState([]);
     const [selectedMajors, setSelectedMajors] = useState("");
+    const user = JSON.parse(localStorage.getItem('user'));
 
     
 
@@ -89,133 +92,37 @@ const StatisticBook = () => {
         }
     };
 
-
-    const dataFake = [
-        {
-            _id: "1",
-            title: "Bảy thói quen của người thành đạt",
-            total: 10,
-        },
-        {
-            _id: "2",
-            title: "Sách 2",
-            total: 20,
-        },
-        {
-            _id: "3",
-            title: "Sách 3",
-            total: 30,
-        },
-        {
-            _id: "4",
-            title: "Sách 4",
-            total: 40,
-        },
-        {
-            _id: "5",
-            title: "Sách 5",
-            total: 50,
-        },
-        {
-            _id: "6",
-            title: "Sách 6",
-            total: 60,
-        },
-        {
-            _id: "7",
-            title: "Sách 7",
-            total: 70,
-        },
-        {
-            _id: "8",
-            title: "Sách 8",
-            total: 80,
-        },
-        {
-            _id: "9",
-            title: "Sách 9",
-            total: 90,
-        },
-        {
-            _id: "10",
-            title: "Sách 10",
-            total: 100,
+    const handleThongKe = async () => {
+        setLoading(true);
+        const data ={
+            startDate,
+            endDate,
+            limit,
+            majorsId: selectedMajors,
         }
-    ]
+         try {
+            if(thongKe.id === 1){
+                const response = await _getTopView(data);
+                if(response.data){
+                    console.log(response.data);
+                    setStatisticData(response.data);
+                    setLoading(false);
+                }
+             } else {
+                const response = await _getTopRating(data);
+                if(response.data){
+                    console.log(response.data);
+                    setStatisticData(response.data);
+                    setLoading(false);
+                }
+             }
+         } catch (error) {
+            setLoading(false);
+             console.log(error);
+            
+         }
+    }
 
-    const books = [
-        {
-            title: "Nhà giả kim",
-            author: "Paulo Coelho",
-            genre: "Tiểu thuyết",
-            pageNumber: 208,
-            createdAt: "2021-01-15T00:00:00Z"
-        },
-        {
-            title: "Sống như một người thông minh",
-            author: "Dale Carnegie",
-            genre: "Phát triển bản thân",
-            pageNumber: 320,
-            createdAt: "2021-02-10T00:00:00Z"
-        },
-        {
-            title: "Thép đã tôi thế đấy",
-            author: "A. Dostoevsky",
-            genre: "Tiểu thuyết",
-            pageNumber: 368,
-            createdAt: "2021-03-05T00:00:00Z"
-        },
-        {
-            title: "Trí tuệ xúc cảm",
-            author: "Daniel Goleman",
-            genre: "Phát triển bản thân",
-            pageNumber: 400,
-            createdAt: "2021-04-20T00:00:00Z"
-        },
-        {
-            title: "Đắc Nhân Tâm",
-            author: "Dale Carnegie",
-            genre: "Phát triển bản thân",
-            pageNumber: 280,
-            createdAt: "2021-05-15T00:00:00Z"
-        },
-        {
-            title: "Tôi tài giỏi, bạn cũng thế",
-            author: "Adam Khoo",
-            genre: "Phát triển bản thân",
-            pageNumber: 300,
-            createdAt: "2021-06-25T00:00:00Z"
-        },
-        {
-            title: "Một phút cho nhau",
-            author: "Spencer Johnson",
-            genre: "Phát triển bản thân",
-            pageNumber: 120,
-            createdAt: "2021-07-10T00:00:00Z"
-        },
-        {
-            title: "Bảy thói quen của người thành đạt",
-            author: "Stephen R. Covey",
-            genre: "Phát triển bản thân",
-            pageNumber: 400,
-            createdAt: "2021-08-18T00:00:00Z"
-        },
-        {
-            title: "Cách tư duy",
-            author: "Tony Buzan",
-            genre: "Phát triển bản thân",
-            pageNumber: 280,
-            createdAt: "2021-09-05T00:00:00Z"
-        },
-        {
-            title: "Giáo dục sớm",
-            author: "Maria Montessori",
-            genre: "Giáo dục",
-            pageNumber: 250,
-            createdAt: "2021-10-12T00:00:00Z"
-        },
-    ];
-    
 
 
     const exportToPDF = () => {
@@ -230,7 +137,7 @@ const StatisticBook = () => {
     
         doc.setFontSize(12);
 
-        const exporterName = "PHẠM ĐỨC NHÂN";
+        const exporterName = user.name;
         const exportDate = `${new Date().toLocaleString("vi-VN")}`;
 
         doc.setFont("Roboto", "normal"); 
@@ -280,13 +187,13 @@ const StatisticBook = () => {
             doc.text(exportNameTable, xPositionTable, 610); 
             autoTable(doc, {
                 startY: 630, 
-                head: [["Tên sách", "Tác giả", "Thể loại", "Số trang", "Ngày nhập"]],
-                body: books.map((book) => [
+                head: [["Tên sách", "Tác giả", "Chuyên ngành", "Số trang",thongKe.id === 1 ? "Lượt xem" : "Đánh giá trung bình"]],
+                body: statisticData.map((book) => [
                     book.title,
                     book.author,
-                    book.genre,
+                    book.majors,
                     book.pageNumber,
-                    new Date(book.createdAt).toLocaleDateString(),
+                    thongKe.id === 1 ? book.totalViews : book.avgRating,
                 ]),
                 theme: 'grid', 
                 styles: {
@@ -304,6 +211,10 @@ const StatisticBook = () => {
     }
 
     return (
+        <>
+        {
+            loading && <Loading />
+        }
         <CCol>
            <CRow className="d-flex justify-content-center align-items-center gap-4 ">
             
@@ -338,7 +249,7 @@ const StatisticBook = () => {
                 className="w-40"
                 onChange={handleChangeMajors}
               >
-                <option value="">------</option>
+                <option value="">Tất cả</option>
                 {majors.map((m) => (
                   <option value={m._id} key={m._id}>
                     {m.name}
@@ -346,17 +257,7 @@ const StatisticBook = () => {
                 ))}
               </CFormSelect>
             </CCol>
-            <CCol xs="auto">
-              <CButton
-                type="button"
-                onClick={() => {}}
-                color="success"
-                className="px-4 py-2 text-dark font-medium rounded disabled-opacity-50"
-                disabled={!startDate || !endDate}
-              >
-                <span className="text-base text-white">Xem thống kê</span>
-              </CButton>
-            </CCol>
+           
           </CRow> 
           <CCol>
         
@@ -372,7 +273,6 @@ const StatisticBook = () => {
                 className="w-10"
                 onChange={handleChangeLoaiThongKe}
                 >
-                <option value="">------</option>
                 {loaiThongKe.map((a) => (
                   <option value={a._id} key={a._id}>
                     {a.title}
@@ -396,21 +296,37 @@ const StatisticBook = () => {
 
           <div style={{height:30}}/>
 
+          <CCol xs="auto">
+              <CButton
+                type="button"
+                onClick={() => {
+                    handleThongKe();
+                }}
+                color="success"
+                className="px-4 py-2 text-dark font-medium rounded disabled-opacity-50"
+                disabled={!startDate || !endDate}
+              >
+                <span className="text-base text-white">Xem thống kê</span>
+              </CButton>
+            </CCol>
+
+          <div style={{height:30}}/>
+
           <CCol xs={12} md={10} style={{margin:'auto'}}>
             <CChartBar
             ref={chartRef}
             lang="vi"
             data={{
-                labels: dataFake.map((item) => item.title),
+                labels: statisticData.map((item) => item.title),
                 datasets: [
                     {
-                    label: "Số lượng sách",
+                    label: thongKe.title,
                     backgroundColor: "rgba(255,99,132,0.2)",
                     borderColor: "rgba(255,99,132,1)",
                     borderWidth: 1,
                     hoverBackgroundColor: "rgba(255,99,132,0.4)",
                     hoverBorderColor: "rgba(255,99,132,1)",
-                    data: dataFake.map((item) => item.total),
+                    data: statisticData.map((item) => thongKe.id === 1 ? item.totalViews : item.avgRating),
                     },
                 ],
             }}
@@ -446,6 +362,7 @@ const StatisticBook = () => {
 
                 <div style={{height:30}}/>
         </CCol>
+        </>
     );
     }
 export default StatisticBook;

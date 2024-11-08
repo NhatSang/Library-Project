@@ -10,25 +10,25 @@ const _getMajors = async () => {
 }
 
 const _createBook = async (data) => {
-    const resonpse = await api2.post('/add-book', data,{
+    const resonpse = await api.post("/books/add-book", data,{
         headers: {
             'Content-Type': 'multipart/form-data',
         }
         });
-        return resonpse.data
+        return resonpse;
 }
 
 const _createChapter = async (data) => {
-    return await api2.post('/add-chapter', data);
+    return await api.post('/book/chapter', data);
 }
 
 const _createSummary = async (data) => {
-    return await api2.post('/add-summary', data);
+    return await api.post('/books/create-summary', data);
 }
 
 const _getChapters = async (bookId) => {
-    const url = "/get-chapters";
-    return await api2.get(url, {
+    const url = "/book/chapters";
+    return await api.get(url, {
         params: {
             bookId
         }
@@ -53,7 +53,39 @@ const _getBookById = async (id) => {
     });
 }
 
+const _deleteBook = async (bookId) => {
+    const url = `/books/${bookId}`;
+    return await api.delete(url);
+}
 
+const _getTopView = async (data) => {
+    const url = "/get-highest-views-books"
+    return await api.get(url,{
+        params: {
+            startDate: data.startDate,
+            endDate: data.endDate,
+            limit: data.limit,
+            majorsId: data.majorsId
+        }
+    });
+}
+
+const _getTopRating = async (data) => {
+    const url = "/get-highest-rating-books";
+    return await api.get(url,{
+        params: {
+            startDate: data.startDate,
+            endDate: data.endDate,
+            limit: data.limit,
+            majorsId: data.majorsId
+        }
+    });
+}
+
+const _deleteChapter = async (chapterId) => {
+    const url = `/book/chapters/${chapterId}`;
+    return await api.delete(url);
+}
 
 export {
     _getGenres,
@@ -63,5 +95,9 @@ export {
     _createSummary,
     _getChapters,
     _getBook,
-    _getBookById
+    _getBookById,
+    _deleteBook ,
+    _getTopView,
+    _getTopRating,
+    _deleteChapter
 }

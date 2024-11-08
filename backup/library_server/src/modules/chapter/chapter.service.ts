@@ -23,13 +23,13 @@ export class ChapterService {
     const chapter = await this.getChapterById(chapterId);
     if (!chapter) throw Errors.ChapterNotExits;
     const bookId = chapter.book.toString();
-    console.log(bookId);
     await this.bookService.checkPublishedBook(bookId);
     return chapter;
   }
 
   async addChapter(params: ChapterCreateDTO) {
     const { book, title, startPage, endPage } = params;
+    console.log("aaa",book);
     await this.bookService.checkPublishedBook(book);
     const chapter = new Chapter({
       book: new mongoose.Types.ObjectId(book),

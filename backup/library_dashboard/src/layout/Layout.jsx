@@ -1,5 +1,6 @@
 import React from 'react'
 import { Content, Footer, Header, SideBar } from '../components'
+import { notification } from 'antd';
 
 
 const Layout = () => {

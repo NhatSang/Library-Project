@@ -1,13 +1,15 @@
 import { CCard, CCardBody, CCardHeader, CCol, CFormInput, CRow } from "@coreui/react";
-import { Button, Table } from "antd";
+import { Button, notification, Table } from "antd";
 import { useEffect, useState } from "react";
 import { _getGenres } from "../home/apis";
 import { Loading } from "../../components";
+import { _createGenre } from "./apis";
 
 const AddGenrere = () => {
     const [genres, setGenres] = useState([]);
     const [genre, setGenre] = useState({});
     const [loading, setLoading] = useState(false);
+    const [api, contextHolder] = notification.useNotification();
 
     const columns = [
         {
@@ -41,9 +43,34 @@ const AddGenrere = () => {
             setLoading(false);
         }
     }
+    const handleAddGenre = async () => {
+        setLoading(true);
+        try {
+            const res = await _createGenre(genre.name);
+            if(res.data){
+                setGenres(res.data);
+                setLoading(false);
+                openNotification(true,"Thể loại đã được thêm thành công!","Thành công")();
+            }
+        }
+        catch (error) {
+            setLoading(false);
+            openNotification(true,"Đã xảy ra lỗi khi thêm thể loại!","Lỗi")();
+            
+        }
+    }
+    const openNotification = (pauseOnHover,description,title) => () => {
+        api.open({
+          message: title,
+          description:description,
+          showProgress: true,
+          pauseOnHover,
+        });
+      };
 
     return (
         <>
+        {contextHolder}
         {
             loading && <Loading/>
         }
@@ -62,7 +89,7 @@ const AddGenrere = () => {
                     </CCol>
                     <div style={{height:30}}/>
                     <CCol xs="auto">
-                        <Button type="primary" className="px-4 py-2 text-dark font-medium rounded disabled-opacity-50">
+                        <Button onClick={handleAddGenre} type="primary" className="px-4 py-2 text-dark font-medium rounded disabled-opacity-50">
                         <span className="text-base text-white">Thêm thể loại</span>
                         </Button>
                     </CCol>

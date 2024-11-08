@@ -17,7 +17,7 @@ const bookSchema = new mongoose.Schema(
       },
     ],
     summary: { type: String },
-    status: { type: Number, enum: [BookStatus.Deleted, BookStatus.Published] },
+    status: { type: Number, enum: [BookStatus.Deleted, BookStatus.Published],default: BookStatus.Published },
     publisher: { type: String },
     yob: { type: String },
   },
