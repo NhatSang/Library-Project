@@ -11,8 +11,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { _getNotificationById, _markAsRead } from '../apis';
 
 const NotificationDetail = ({ navigation, route }: any) => {
-    const { notification_id } = route.params;
-    console.log('notification_id', notification_id);
+    const { id } = route.params;
     const [notificationDetail, setNotificationDetail] = useState<any>({});
 
     useEffect(() => {
@@ -21,8 +20,8 @@ const NotificationDetail = ({ navigation, route }: any) => {
 
     const getNotificationDetail = async () => {
         try {
-            await _markAsRead(notification_id);
-            const response = await _getNotificationById(notification_id);
+            await _markAsRead(id);
+            const response = await _getNotificationById(id);
             console.log('response', response);
             if (response.data) {
                 setNotificationDetail(response.data);

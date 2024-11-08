@@ -61,7 +61,7 @@ bookRouter.get(
 );
 
 bookRouter.post(
-  "/books/find_books",
+  "/books/find-books",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   bookController.findBookByKeyword
 );

@@ -13,9 +13,14 @@ export class Pagination {
     return (this.page - 1) * this.limit;
   };
 
-  static fromRequest(req: Request) {
+  static fromRequestBody(req: Request) {
     const page = parseInt(req.body.page) || 1;
     const limit = parseInt(req.body.limit) || 50;
+    return new Pagination(page, limit);
+  }
+  static fromRequestQuery(req: Request) {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 50;
     return new Pagination(page, limit);
   }
 }

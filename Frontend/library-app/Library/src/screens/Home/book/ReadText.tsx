@@ -18,7 +18,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { INote } from 'src/types/iNote';
 import { defaultListChapter, IChapter } from '../../../types/iChapter';
-import { _createNote, _deleteNote, _getChapterByIdBook, _getHistoryByBookIdAndUser, _getNoteByBookId } from '../apis';
+import { _createNote, _deleteNote, _getChapters, _getHistories, _getNotes, iCreateNote } from '../apis';
 
 
 const ReadText = ({ navigation, route }: any) => {
@@ -70,8 +70,8 @@ const ReadText = ({ navigation, route }: any) => {
             setSelectedPage(Number(pageReaded));
         } else {
             try {
-                const response = await _getHistoryByBookIdAndUser(id);
-                if (response.status) {
+                const response = await _getHistories(id);
+                if (response.data) {
                     setSelectedPage(response.data.page);
                 }
             } catch (error) {
@@ -89,7 +89,7 @@ const ReadText = ({ navigation, route }: any) => {
         }
         try {
             const response = await _createHistory(data);
-            if (response.status) {
+            if (response.data) {
                 console.log('Save page readed success');
                 await AsyncStorage.setItem(`pageReaded_${id}`, page.toString());
             }
@@ -102,8 +102,8 @@ const ReadText = ({ navigation, route }: any) => {
 
     const getChapterByIdBook = async () => {
         try {
-            const response = await _getChapterByIdBook(id);
-            if (response.status) {
+            const response = await _getChapters(id);
+            if (response.data) {
                 setChapter(response.data);
             }
         } catch (error) {
@@ -113,8 +113,8 @@ const ReadText = ({ navigation, route }: any) => {
 
     const getNoteByBookId = async () => {
         try {
-            const response = await _getNoteByBookId(id);
-            if (response.status) {
+            const response = await _getNotes(id);
+            if (response.data) {
                 setNoteList(response.data);
             }
         } catch (error) {
@@ -127,14 +127,14 @@ const ReadText = ({ navigation, route }: any) => {
     }
 
     const handleCreateNote = async () => {
-        const data = {
-            book: id,
+        const data:iCreateNote = {
+            bookId: id,
             content: note,
             page: page,
         }
         try {
             const response = await _createNote(data);
-            if (response.status) {
+            if (response.data) {
                 setModalNoteVisible(false);
                 setNote('');
                 await getNoteByBookId();
@@ -162,7 +162,7 @@ const ReadText = ({ navigation, route }: any) => {
     const handleDeleteNote = async (id: string) => {
         try {
             const response = await _deleteNote(id);
-            if (response.status) {
+            if (response.data) {
                 await getNoteByBookId();
                 Toast.show({
                     type: 'success',

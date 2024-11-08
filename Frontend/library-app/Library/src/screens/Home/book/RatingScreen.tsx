@@ -11,7 +11,7 @@ import { Animated, Easing, FlatList, Image, Keyboard, Pressable, View } from 're
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { IReview } from 'src/types/iReview'
-import { _createReview, _getAllReviewByBookId } from '../apis'
+import { _createReview, _getReviews } from '../apis'
 import Toast from 'react-native-toast-message'
 
 
@@ -37,7 +37,7 @@ const RatingScreen = ({ navigation, route }: any) => {
     const getReviews = async () => {
         try {
             setLoading(true);
-            const response = await _getAllReviewByBookId(id);
+            const response = await _getReviews(id);
             if (response.data) {
                 setReviews(response.data);
                 const hasUserReviewed = response.data?.some((item: { user: { _id: any } }) => userId === item.user._id);
@@ -45,6 +45,7 @@ const RatingScreen = ({ navigation, route }: any) => {
                 setLoading(false);
             }
         } catch (error) {
+            setLoading(false);
             console.log('error', error);
         }
     }

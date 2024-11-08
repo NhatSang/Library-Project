@@ -32,7 +32,7 @@ noteRouter.put(
 );
 
 noteRouter.delete(
-  "/note",
+  "/note/:noteId",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   noteController.deleteNote
 );

@@ -36,7 +36,7 @@ export class BookController {
       const { books, pagination } =
         await this.bookservice.getBookByMajorsUserId(
           userId,
-          Pagination.fromRequest(req)
+          Pagination.fromRequestQuery(req)
         );
       res.send(new ResponseCustom(books, null, pagination));
     } catch (error) {
@@ -78,7 +78,7 @@ export class BookController {
     try {
       const { books, pagination } = await this.bookservice.getRecommendBooks(
         req.body.userId,
-        Pagination.fromRequest(req)
+        Pagination.fromRequestQuery(req)
       );
       res.send(new ResponseCustom(books, null, pagination));
     } catch (error) {
@@ -146,7 +146,7 @@ export class BookController {
     try {
       const { books, pagination } = await this.bookservice.findBooksByKeyword(
         req.body.keyword,
-        Pagination.fromRequest(req)
+        Pagination.fromRequestBody(req)
       );
       res.send(new ResponseCustom(books, null, pagination));
     } catch (error) {
