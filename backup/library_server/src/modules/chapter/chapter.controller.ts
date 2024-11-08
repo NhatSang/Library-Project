@@ -9,7 +9,7 @@ export class ChapterController {
 
   _getChapters = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.chapterService.getChapters(req.params.bookId as string);
+      const result = await this.chapterService.getChapters(req.query.bookId as string);
       res.send(new ResponseCustom(result));
     } catch (error) {
       next(error);
@@ -19,6 +19,15 @@ export class ChapterController {
   _addChapter = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.chapterService.addChapter(req.body);
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  _deleteChapter = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.chapterService.deleteChapter(req.params.chapterId);
       res.send(new ResponseCustom(result));
     } catch (error) {
       next(error);

@@ -23,7 +23,7 @@ export class StatisticsService {
     }
     const matchStage: any = {};
     if (majorsId) {
-      matchStage.genre = new mongoose.Types.ObjectId(majorsId);
+      matchStage.majors = new mongoose.Types.ObjectId(majorsId);
     }
 
     const result = await Books.aggregate([
@@ -72,6 +72,20 @@ export class StatisticsService {
         },
       },
       {
+        $lookup: {
+          from: "majors",
+          localField: "majors",
+          foreignField: "_id",
+          as: "majorInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$majorInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
         $sort: { totalViews: -1 },
       },
       {
@@ -82,10 +96,14 @@ export class StatisticsService {
           _id: 1,
           title: 1,
           totalViews: 1,
+          author: 1,
+          pageNumber: 1,
+          majors: "$majorInfo.name",
+          createdAt: 1,
         },
       },
     ]);
-    const resResult = BookTotalViewDTO.transformBook(result);
+    const resResult = result;
     return resResult;
   }
 
@@ -147,6 +165,20 @@ export class StatisticsService {
         },
       },
       {
+        $lookup: {
+          from: "majors",
+          localField: "majors",
+          foreignField: "_id",
+          as: "majorInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$majorInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
         $sort: { avgRating: -1 }, // Sắp xếp theo rating trung bình giảm dần
       },
       {
@@ -154,14 +186,18 @@ export class StatisticsService {
       },
       {
         $project: {
-          _id: 1, // Chỉ trả về các trường cần thiết
+          _id: 1,
           title: 1,
           avgRating: 1,
+          author: 1,
+          pageNumber: 1,
+          majors: "$majorInfo.name",
+          createdAt: 1,
         },
       },
     ]);
 
-    const resResult = BookAvgRatingDTO.transformBook(result);
+    const resResult = result;
     return resResult;
   }
 

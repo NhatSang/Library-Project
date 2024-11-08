@@ -37,19 +37,6 @@ const Genres = () => {
             title: "Tên thể loại",
             dataIndex: "name",
             key: "name",
-        },
-        {
-            title:"Hành động",
-            render: (value, item) => (
-                <Space>
-                    <Button onClick={()=>{}} type="primary">
-                      Sửa
-                    </Button>
-                    <Button onClick={()=>{}} type="primary" danger>
-                      Xoá
-                    </Button>
-                </Space>
-              ),
         }
     ]
 

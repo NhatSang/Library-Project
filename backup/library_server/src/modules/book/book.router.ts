@@ -73,4 +73,10 @@ bookRouter.post(
   bookMiddleware.validate(BookUpdateReqDTO),
   bookController.updateBook
 );
+
+bookRouter.delete(
+  "/books/:bookId",
+  authMiddleware.authenticateAccessToken([Role.Admin]),
+  bookController.deleteBook
+);
 export default bookRouter;

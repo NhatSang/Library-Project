@@ -1,4 +1,4 @@
-import { loadPdfJsLib } from "./../../helper/index";
+
 import { Inject, Service } from "typedi";
 import Books from "./model/book.model";
 import mongoose, { FilterQuery } from "mongoose";
@@ -23,6 +23,8 @@ import { ReviewService } from "../reivew/review.service";
 import { GenreService } from "../genre/genre.service";
 import { MajorsService } from "../majors/majors.service";
 
+import * as pdfjs from "pdfjs-dist";
+
 @Service()
 export class BookService {
   constructor(
@@ -33,6 +35,7 @@ export class BookService {
   ) {}
 
   async getPublishedBook(bookId: string) {
+    console.log("cc",bookId);
     return await Books.findOne({
       _id: new mongoose.Types.ObjectId(bookId),
       status: BookStatus.Published,
@@ -232,8 +235,7 @@ export class BookService {
 
   getPageNumber = async (filePath: string) => {
     try {
-      const pdfjsLib = await loadPdfJsLib();
-      const loadingTask = pdfjsLib.getDocument(filePath);
+      const loadingTask = pdfjs.getDocument(filePath);
       const pdfDocument = await loadingTask.promise;
       return pdfDocument.numPages;
     } catch (err) {
@@ -241,8 +243,7 @@ export class BookService {
     }
   };
   getPdfOutline = async (filePath: string) => {
-    const pdfjsLib = await loadPdfJsLib();
-    const loadingTask = pdfjsLib.getDocument(filePath);
+    const loadingTask = pdfjs.getDocument(filePath);
     const pdfDocument = await loadingTask.promise;
     const outline = await pdfDocument.getOutline();
     const list = [];
@@ -443,6 +444,7 @@ export class BookService {
   };
 
   deleteBook = async (bookId: string) => {
+    console.log(bookId);
     const book = await this.checkPublishedBook(bookId);
     book.status = BookStatus.Deleted;
     await book.save();

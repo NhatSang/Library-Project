@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Form, Input, Button, List, Typography, message, Spin } from "antd";
+import { Form, Input, Button, List, Typography, message, Spin, notification, Popconfirm } from "antd";
 import "@react-pdf-viewer/core/lib/styles/index.css"; 
 import { Worker } from '@react-pdf-viewer/core';
 import { Viewer } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-import { _createChapter, _createSummary, _getChapters } from "./apis";
+import { _createChapter, _createSummary, _deleteChapter, _getChapters } from "./apis";
 import { CAlert, CCol, CRow } from "@coreui/react";
 
 const { Title, Text } = Typography;
@@ -16,10 +16,13 @@ export default function AddChapterPage() {
   const location = useLocation();
   const { state } = location || {};
   const { data } = state || {};
+  console.log("a",data);
+  const bookId = useRef(data.bookId);
   const [chapters, setChapters] = useState([]);
-  const [pdfFile, setPdfFile] = useState('https://pdf8888.s3.ap-southeast-1.amazonaws.com/1730397950247_sotaylaptrinh.pdf'); 
+  const [pdfFile, setPdfFile] = useState(data.pdfLink); 
   const [numPages, setNumPages] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     fetchData();
@@ -27,17 +30,16 @@ export default function AddChapterPage() {
 
   const fetchData = async () => {
     try {
-    console.log(data);
-      const response = await _getChapters('6723c70115c65b18e58d5e92');
-      setChapters(response.data.data);
+      const response = await _getChapters(bookId.current);
+      console.log(response);
+      setChapters(response.data);
     } catch (err) {
       console.log(err);
     }
   };
 
   const [formData, setFormData] = useState({
-    bookId: 'a',
-    bookLink: '',
+    book: bookId.current,
     title: "",
     startPage: 0,
     endPage: 0,
@@ -54,47 +56,42 @@ export default function AddChapterPage() {
   const handleSubmit = async () => {
     setIsLoading(true);
     const data = new FormData();
-    data.append("bookId", formData.bookId);
+    data.append("book", formData.book);
     data.append("title", formData.title);
     data.append("startPage", formData.startPage);
     data.append("endPage", formData.endPage);
-    data.append("bookLink", pdfFile);
-
-    console.log(data);
 
     try {
      const response = await _createChapter(data);
       if (response.data) {
-        setFormData({ ...formData, title: "", startPage: 0});
         fetchData();
-        message.success("Thêm chương thành công!");
+        openNotification(true,"Chương đã được thêm thành công!","Thành công")();
+        setFormData({ ...formData, title: "", startPage: 0, endPage: 0 });
         setIsLoading(false);
-      } else {
-        message.error("Đã xảy ra lỗi khi thêm chương.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      message.error("Đã xảy ra lỗi khi gửi yêu cầu.");
+      openNotification(true,"Đã xảy ra lỗi khi thêm chương!","Lỗi")();
       setIsLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
+    setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:5001/api/v1/delete-chapter/${id}`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        setChapters(chapters.filter((c) => c._id !== id));
-        message.success("Chương đã được xóa thành công!");
+      const response = await _deleteChapter(id);
+      if (response.data) {
+        setChapters(chapters.filter((chapter) => chapter._id !== id));
+        openNotification(true,"Chương đã được xóa thành công!","Thành công")();
+        setIsLoading(false);
       }
     } catch (err) {
+      setIsLoading(false);
       console.log(err);
-      message.error("Đã xảy ra lỗi khi xóa chương.");
+      openNotification(true,"Đã xảy ra lỗi khi xóa chương!","Lỗi")();
     }
   };
 
-  // Callback to handle page load for PDF
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
   };
@@ -164,8 +161,10 @@ export default function AddChapterPage() {
   
     if (userConfirmed) {
       try {
-        // await _createSummary({ bookId: data.bookId, title: data.title });
-        // navigate("/books");
+        setIsLoading(true);
+        await _createSummary({ bookId: data.bookId, title: data.title });
+        setIsLoading(false);
+        navigate("/books/list");
        message.success("Bạn đã tạo sách thành công!");
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -176,7 +175,18 @@ export default function AddChapterPage() {
     }
   };
 
+  const openNotification = (pauseOnHover,description,title) => () => {
+    api.open({
+      message: title,
+      description:description,
+      showProgress: true,
+      pauseOnHover,
+    });
+  };
+
   return (
+    <>
+    {contextHolder}
     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
     <div style={{ display: 'flex', padding: '20px' }}>
     {isLoading && (
@@ -198,7 +208,7 @@ export default function AddChapterPage() {
       <div style={{ flex: 1 }}>
         {/* <Title level={3}>Xem PDF</Title> */}
         <div style={{ border: '1px solid #ddd', padding: '10px', height: '600px', overflowY: 'auto' }}>
-        <Viewer 
+        <Viewer
         fileUrl={pdfFile}
         plugins={[defaultLayoutPluginInstance]}
         onDocumentLoadSuccess={onDocumentLoadSuccess}
@@ -267,9 +277,18 @@ export default function AddChapterPage() {
           renderItem={(chapter) => (
             <List.Item
               actions={[
-                <Button type="link" onClick={() => handleDelete(chapter._id)} danger>
-                  Xóa
-                </Button>,
+                <Popconfirm
+    title="Xoá sách"
+    description="Bạn có chắc chắn muốn xóa sách này không?"
+    onConfirm={()=>{
+      handleDelete(chapter._id);
+    }}
+    onCancel={()=>{}}
+    okText="Có"
+    cancelText="Không"
+  >
+    <Button danger>Xoá</Button>
+  </Popconfirm>
               ]}
             >
               <Text strong>{chapter.title}</Text> - Trang {chapter.startPage} đến {chapter.endPage}
@@ -279,5 +298,6 @@ export default function AddChapterPage() {
       </div>
     </div>
     </Worker>
+    </>
   );
 }

@@ -22,4 +22,10 @@ chapterRouter.post(
   chapterController._addChapter
 );
 
+chapterRouter.delete(
+  "/book/chapters/:chapterId",
+  authMiddleware.authenticateAccessToken([Role.Admin]),
+  chapterController._deleteChapter
+);
+
 export default chapterRouter;

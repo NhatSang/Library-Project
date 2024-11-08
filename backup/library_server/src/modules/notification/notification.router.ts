@@ -14,7 +14,7 @@ notificationRouter.get("/notifications", notificationController._getNotification
 //query: id
 notificationRouter.get("/notification", notificationController._getNotificationById);
 //query: id
-notificationRouter.delete("/notification", notificationController._deleteNotification);
+notificationRouter.delete("/notifications/:bookId", notificationController._deleteNotification);
 //query: id
 notificationRouter.put("/notification", notificationController._updateSendingStatus);
 

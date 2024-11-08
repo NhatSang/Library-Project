@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CButton, CForm, CFormInput, CFormSelect, CCol, CRow, CCard, CCardBody, CSpinner } from '@coreui/react';
-import { message, Spin } from "antd"; // Keep Ant Design message for notifications
+import { message, notification, Spin } from "antd"; // Keep Ant Design message for notifications
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { _createBook, _getBook, _getBookById, _getGenres, _getMajors } from "./apis";
 import { Loading } from "../../components";
@@ -25,6 +25,7 @@ const EditBook = () => {
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [existingImageUrl, setExistingImageUrl] = useState("");
+  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     getBook(data.bookId);
@@ -120,26 +121,37 @@ const EditBook = () => {
           },
         });
       } else {
-        message.success("Sách đã được thêm thành công!");
+        openNotification(true,"Sách đã được cập nhật thành công!","Thành công")();
         setFormData({
           title: "",
           author: "",
           genre: "",
           majors: "",
+          yob: "",
+          publisher: "",
         });
         setSelectedPdfFile(null);
         setSelectedImageFile(null);
       }
     } catch (error) {
-      message.error(error.message);
+      openNotification(true,error.response.data.message,"Lỗi")();
       setLoading(false);
     } finally {
       setLoading(false);
     }
   };
+  const openNotification = (pauseOnHover,description,title) => () => {
+    api.open({
+      message: title,
+      description:description,
+      showProgress: true,
+      pauseOnHover,
+    });
+  };
 
   return (
     <>
+    {contextHolder}
       {loading && (
           <Loading/>
         )}
@@ -152,7 +164,7 @@ const EditBook = () => {
             </h2>
             </CCol>
             <CCol xs={6} className="text-end">
-              <Link to="/books" className="btn btn-primary">
+              <Link  className="btn btn-primary">
                 <span className="text-white">
                   Chỉnh sửa chương
                 </span>

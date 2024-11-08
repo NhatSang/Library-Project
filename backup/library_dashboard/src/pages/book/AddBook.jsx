@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CButton, CForm, CFormInput, CFormSelect, CCol, CRow, CCard, CCardBody, CSpinner } from '@coreui/react';
-import { message, Spin } from "antd"; // Keep Ant Design message for notifications
+import { message, notification, Spin } from "antd"; // Keep Ant Design message for notifications
 import { Link, useNavigate } from "react-router-dom";
 import { _createBook, _getGenres, _getMajors } from "./apis";
 import { Loading } from "../../components";
@@ -20,7 +20,8 @@ const AddBook = () => {
   });
   const [selectedPdfFile, setSelectedPdfFile] = useState(null);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     getGenres();
@@ -47,7 +48,7 @@ const AddBook = () => {
     if (file && file.type === "application/pdf") {
       setSelectedPdfFile(file);
     } else {
-      message.error("Bạn chỉ có thể tải lên file PDF!");
+      openNotification(true,"Bạn chỉ có thể tải lên file PDF!","Lỗi tải lên")();
     }
   };
 
@@ -56,7 +57,7 @@ const AddBook = () => {
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       setSelectedImageFile(file);
     } else {
-      message.error("Bạn chỉ có thể tải lên file JPG/PNG!");
+      openNotification(true,"Bạn chỉ có thể tải lên file ảnh!","Lỗi tải lên")();
     }
   };
 
@@ -71,7 +72,7 @@ const AddBook = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedPdfFile || !selectedImageFile) {
-      message.error("Bạn cần tải lên cả file PDF và ảnh bìa!");
+      openNotification(true,"Vui lòng chọn file PDF và ảnh!","Lỗi tải lên")();
       return;
     }
 
@@ -85,24 +86,23 @@ const AddBook = () => {
     data.append("pdf", selectedPdfFile);
     data.append("image", selectedImageFile); 
 
-    setLoading(true); // Set loading state to true
+    setLoading(true);
     try {
       const response = await _createBook(data);
       console.log(response.message);
       console.log(response.data._id);
-      if (response.message === "add_chapter") {
+      if (response.data.chapter == false) {
         navigate("/books/add-chapter", {
           state: {
             data: {
-              bookId: response.data._id,
-              title: response.data.title,
-              startPage: response.data.startPage,
-              pdfLink: response.data.pdfLink,
+              bookId: response.data.book._id,
+              title: response.data.book.title,
+              pdfLink: response.data.book.pdfLink,
             },
           },
         });
       } else {
-        message.success("Sách đã được thêm thành công!");
+        openNotification(true,"Thêm sách thành công!","Thành công")();
         setFormData({
           title: "",
           author: "",
@@ -113,17 +113,29 @@ const AddBook = () => {
         });
         setSelectedPdfFile(null);
         setSelectedImageFile(null);
+        navigate("/books/list");
       }
     } catch (error) {
-      message.error(error.message);
+      console.log(error);
+      openNotification(true,"Có lỗi xảy ra!","Lỗi")();
       setLoading(false);
     } finally {
       setLoading(false);
     }
   };
 
+  const openNotification = (pauseOnHover,description,title) => () => {
+    api.open({
+      message: title,
+      description:description,
+      showProgress: true,
+      pauseOnHover,
+    });
+  };
+
   return (
     <>
+    {contextHolder}
       {loading && (
           <Loading/>
         )}

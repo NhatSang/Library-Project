@@ -157,7 +157,7 @@ export class BookController {
   deleteBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.bookservice.deleteBook(
-        req.query.bookId as string
+        req.params.bookId
       );
       res.send(new ResponseCustom(result));
     } catch (error) {
