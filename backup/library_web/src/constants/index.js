@@ -139,3 +139,36 @@ export const sampleReviews = [
     __v: { $numberInt: "0" },
   },
 ];
+
+export const sampleNote = [
+  {
+    content: "Note 1 contentaaaaa  dà,andf, kfnka fj aldfkj ljf, nạ ạ án flja lfs l",
+    page: 10,
+    user: "userObjectId1",
+    book: "bookObjectId1",
+  },
+  {
+    content: "Note 2 content",
+    page: 20,
+    user: "userObjectId2",
+    book: "bookObjectId2",
+  },
+  {
+    content: "Note 3 content",
+    page: 30,
+    user: "userObjectId3",
+    book: "bookObjectId3",
+  },
+  {
+    content: "Note 4 content",
+    page: 40,
+    user: "userObjectId4",
+    book: "bookObjectId4",
+  },
+  {
+    content: "Note 5 content",
+    page: 50,
+    user: "userObjectId5",
+    book: "bookObjectId5",
+  },
+];

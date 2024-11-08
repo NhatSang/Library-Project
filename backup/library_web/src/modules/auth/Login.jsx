@@ -76,13 +76,13 @@ const Login = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Username!",
+                    message: "Vui lòng nhập email!",
                   },
                 ]}
               >
                 <Input
                   prefix={<UserOutlined />}
-                  placeholder="Username"
+                  placeholder="email"
                   value={email}
                 />
               </Form.Item>
@@ -91,14 +91,14 @@ const Login = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Password!",
+                    message: "Vui lòng nhập mật khẩu!",
                   },
                 ]}
               >
                 <Input.Password
                   prefix={<LockOutlined />}
                   type="password"
-                  placeholder="Password"
+                  placeholder="Mật khẩu"
                 />
               </Form.Item>
               <Form.Item>
@@ -112,7 +112,7 @@ const Login = () => {
 
               <Form.Item className="mb-3">
                 <Button block type="primary" htmlType="submit">
-                  Log in
+                  Đăng nhập
                 </Button>
               </Form.Item>
               <p className="mb-3 font-medium">Hoặc</p>

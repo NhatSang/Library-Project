@@ -41,8 +41,8 @@ const Chapters = () => {
       });
   };
   return (
-    <div className="p-4 bg-white h-svh flex flex-col">
-      <div className="space-x-4 sticky top-4 bg-white z-10 p-3 shadow-lg border border-gray-200 rounded-md flex items-center">
+    <div className="py-2 bg-white h-svh flex flex-col">
+      <div className="space-x-4 sticky top-2 bg-white z-10 p-3 shadow-lg border border-gray-200 rounded-md flex items-center">
         <Button
           style={{ fontSize: 25, color: "#2563EB" }}
           onClick={() => navigate("/book", { state: { book: book } })}
@@ -62,7 +62,7 @@ const Chapters = () => {
 
       <div className="flex-grow overflow-auto bg-white rounded-lg shadow-inner border border-gray-300 mt-4">
         {/* Tiêu đề của danh sách chương */}
-        <div className="p-3 bg-blue-100 border-b border-gray-300 text-gray-700 font-semibold text-lg">
+        <div className="p-3 bg-blue-100 border-b border-gray-300 text-gray-700 font-semibold text-lg text-center">
           Danh sách chương
         </div>
 
@@ -78,7 +78,7 @@ const Chapters = () => {
                 type="link"
                 className="text-gray-700 hover:text-blue-600 font-medium text-lg flex justify-start w-full"
               >
-                {c.title}
+                <p className="text-ellipsis overflow-hidden">{c.title}</p>
               </Button>
             </div>
           ))}

@@ -75,7 +75,7 @@ export default function PdfViewer() {
 
   return (
     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-      <div style={{ height: window.innerHeight }}>
+      <div style={{ height: window.innerHeight }} className="pt-2">
         <Viewer
           key={page}
           fileUrl={book.pdfLink}

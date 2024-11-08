@@ -159,25 +159,13 @@ const AudioViewer = () => {
   };
 
   return (
-    <div className="flex p-5">
-      {isLoading ? (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <Spin size="large" tip="Đang tải..." />
-        </div>
-      ) : (
-        <div className="flex-grow max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6 overflow-hidden">
-          <div className="book-page max-h-[80vh] overflow-y-auto">
-            {sentences.map((item, index) => renderItem(item, index))}
-          </div>
-        </div>
-      )}
-      {/* Cột bên phải chứa các nút */}
-      <div className="flex flex-col items-center ml-4 p-4 bg-white rounded-lg shadow-md border border-gray-200">
+    <div className="flex flex-col py-2">
+      <div className="grid grid-cols-3 items-center p-4 bg-blue-100  rounded-lg shadow-md border border-gray-200 mb-2">
         {" "}
         {/* Flex column cho nút dọc */}
         <Select
           defaultValue={voice.current}
-          className="w-36 mb-4 rounded-md border border-gray-300"
+          className="w-48 rounded-md border border-gray-300"
           onChange={handleVoiceChange}
         >
           {window.responsiveVoice.getVoices().map((v, index) => (
@@ -186,8 +174,8 @@ const AudioViewer = () => {
             </Option>
           ))}
         </Select>
-        <div className="w-full mt-2">
-          <p className="text-center text-sm font-medium text-gray-700 mb-1">
+        <div className="w-48">
+          <p className="text-center text-sm font-medium text-gray-700">
             Tốc độ đọc
           </p>
           <Slider
@@ -198,7 +186,7 @@ const AudioViewer = () => {
             onChange={handleSpeedChange}
           />
         </div>
-        <div className="flex flex-col items-center mt-4 space-y-2">
+        <div className="flex items-center justify-center space-x-2">
           <Button
             onClick={previousPage}
             className="mb-2"
@@ -238,6 +226,18 @@ const AudioViewer = () => {
           </Button>
         </div>
       </div>
+      {isLoading ? (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <Spin size="large" tip="Đang tải..." />
+        </div>
+      ) : (
+        <div className="flex-grow mx-auto w-full bg-white rounded-lg shadow-md p-6 overflow-hidden">
+          <div className="book-page max-h-[80vh] overflow-y-auto ">
+            {sentences.map((item, index) => renderItem(item, index))}
+          </div>
+        </div>
+      )}
+      {/* Cột bên phải chứa các nút */}
     </div>
   );
 };
