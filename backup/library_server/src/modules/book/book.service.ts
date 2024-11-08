@@ -1,4 +1,3 @@
-
 import { Inject, Service } from "typedi";
 import Books from "./model/book.model";
 import mongoose, { FilterQuery } from "mongoose";
@@ -35,7 +34,7 @@ export class BookService {
   ) {}
 
   async getPublishedBook(bookId: string) {
-    console.log("cc",bookId);
+    console.log("cc", bookId);
     return await Books.findOne({
       _id: new mongoose.Types.ObjectId(bookId),
       status: BookStatus.Published,
@@ -472,5 +471,25 @@ export class BookService {
     }
     await book.save();
     return true;
+  };
+
+  getBooksByGenre = async (genreId: string, pagination: Pagination) => {
+    const { limit, getOffset } = pagination;
+    const matchStage = {
+      genre: new mongoose.Types.ObjectId(genreId),
+      status: BookStatus.Published,
+    };
+    const [books, total] = await Promise.all([
+      Books.find(matchStage)
+        .limit(limit)
+        .skip(getOffset())
+        .populate("genre")
+        .populate("majors"),
+      Books.countDocuments(matchStage),
+    ]);
+
+    const transformedBooks = BookResponseDTO.transformBook(books);
+    pagination.total = total;
+    return { books: transformedBooks, pagination };
   };
 }

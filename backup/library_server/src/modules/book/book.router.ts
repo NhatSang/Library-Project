@@ -79,4 +79,9 @@ bookRouter.delete(
   authMiddleware.authenticateAccessToken([Role.Admin]),
   bookController.deleteBook
 );
+bookRouter.get(
+  "/books/get-by-genre",
+  authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
+  bookController.getBooksByGenre
+);
 export default bookRouter;

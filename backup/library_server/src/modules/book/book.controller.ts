@@ -156,9 +156,7 @@ export class BookController {
 
   deleteBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.bookservice.deleteBook(
-        req.params.bookId
-      );
+      const result = await this.bookservice.deleteBook(req.params.bookId);
       res.send(new ResponseCustom(result));
     } catch (error) {
       next(error);
@@ -182,6 +180,17 @@ export class BookController {
 
       const result = await this.bookservice.updateBook(req.body);
       res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  };
+  getBooksByGenre = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { books, pagination } = await this.bookservice.getBooksByGenre(
+        req.query.genreId as string,
+        Pagination.fromRequest(req)
+      );
+      res.send(new ResponseCustom(books, null, pagination));
     } catch (error) {
       next(error);
     }
