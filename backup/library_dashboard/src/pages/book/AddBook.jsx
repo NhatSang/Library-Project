@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CButton, CForm, CFormInput, CFormSelect, CCol, CRow, CCard, CCardBody, CSpinner } from '@coreui/react';
-import { message, Spin } from "antd"; // Keep Ant Design message for notifications
+import { message, notification, Spin } from "antd"; // Keep Ant Design message for notifications
 import { Link, useNavigate } from "react-router-dom";
 import { _createBook, _getGenres, _getMajors } from "./apis";
 import { Loading } from "../../components";
@@ -15,10 +15,13 @@ const AddBook = () => {
     author: "",
     genre: "",
     majors: "",
+    publisher: "",
+    yob: "",
   });
   const [selectedPdfFile, setSelectedPdfFile] = useState(null);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     getGenres();
@@ -45,7 +48,7 @@ const AddBook = () => {
     if (file && file.type === "application/pdf") {
       setSelectedPdfFile(file);
     } else {
-      message.error("Bạn chỉ có thể tải lên file PDF!");
+      openNotification(true,"Bạn chỉ có thể tải lên file PDF!","Lỗi tải lên")();
     }
   };
 
@@ -54,7 +57,7 @@ const AddBook = () => {
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       setSelectedImageFile(file);
     } else {
-      message.error("Bạn chỉ có thể tải lên file JPG/PNG!");
+      openNotification(true,"Bạn chỉ có thể tải lên file ảnh!","Lỗi tải lên")();
     }
   };
 
@@ -69,7 +72,7 @@ const AddBook = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedPdfFile || !selectedImageFile) {
-      message.error("Bạn cần tải lên cả file PDF và ảnh bìa!");
+      openNotification(true,"Vui lòng chọn file PDF và ảnh!","Lỗi tải lên")();
       return;
     }
 
@@ -78,62 +81,77 @@ const AddBook = () => {
     data.append("author", formData.author);
     data.append("genre", formData.genre);
     data.append("majors", formData.majors); 
+    data.append("publisher", formData.publisher);
+    data.append("yob", formData.yob);
     data.append("pdf", selectedPdfFile);
     data.append("image", selectedImageFile); 
 
-    setLoading(true); // Set loading state to true
+    setLoading(true);
     try {
       const response = await _createBook(data);
       console.log(response.message);
       console.log(response.data._id);
-      if (response.message === "add_chapter") {
+      if (response.data.chapter == false) {
         navigate("/books/add-chapter", {
           state: {
             data: {
-              bookId: response.data._id,
-              title: response.data.title,
-              startPage: response.data.startPage,
-              pdfLink: response.data.pdfLink,
+              bookId: response.data.book._id,
+              title: response.data.book.title,
+              pdfLink: response.data.book.pdfLink,
             },
           },
         });
       } else {
-        message.success("Sách đã được thêm thành công!");
+        openNotification(true,"Thêm sách thành công!","Thành công")();
         setFormData({
           title: "",
           author: "",
           genre: "",
           majors: "",
+          publisher: "",
+          yob: "",
         });
         setSelectedPdfFile(null);
         setSelectedImageFile(null);
+        navigate("/books/list");
       }
     } catch (error) {
-      message.error(error.message);
+      console.log(error);
+      openNotification(true,"Có lỗi xảy ra!","Lỗi")();
       setLoading(false);
     } finally {
       setLoading(false);
     }
   };
 
+  const openNotification = (pauseOnHover,description,title) => () => {
+    api.open({
+      message: title,
+      description:description,
+      showProgress: true,
+      pauseOnHover,
+    });
+  };
+
   return (
     <>
+    {contextHolder}
       {loading && (
           <Loading/>
         )}
       <CCard className="max-w-3xl mx-auto p-6 mt-8">
         <CCardBody>
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Thêm Sách Mới</h2>
+          <h2 className="text-2xl mb-4 text-primary">Thêm Sách Mới</h2>
           <CForm onSubmit={handleSubmit} className="space-y-4">
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">Tiêu đề sách</label>
+                <label className="form-label fw-bold">Tiêu tên sách</label>
                 <CFormInput
                   type="text"
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  placeholder="Nhập tiêu đề sách"
+                  placeholder="Nhập tên sách"
                   required
                 />
               </CCol>
@@ -141,7 +159,7 @@ const AddBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">Tác giả</label>
+                <label className="form-label fw-bold">Tác giả</label>
                 <CFormInput
                   type="text"
                   name="author"
@@ -155,7 +173,37 @@ const AddBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">PDF File:</label>
+                <label className="form-label fw-bold">Nhà xuất bản</label>
+                <CFormInput
+                  type="text"
+                  name="publisher"
+                  value={formData.publisher}
+                  onChange={handleInputChange}
+                  placeholder="Nhập tên nhà xuất bản"
+                  required
+                />
+              </CCol>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CCol>
+                <label className="form-label fw-bold">Năm xuất bản</label>
+                <CFormInput
+                  type="number"
+                  name="yob"
+                  min="1900"
+                  max="2099"
+                  value={formData.yob}
+                  onChange={handleInputChange}
+                  placeholder="Nhập năm xuất bản"
+                  required
+                />
+              </CCol>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CCol>
+                <label className="form-label fw-bold">PDF File:</label>
                 <input
                   type="file"
                   accept="application/pdf"
@@ -168,7 +216,7 @@ const AddBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">Thể loại</label>
+                <label className="form-label fw-bold">Thể loại</label>
                 <CFormSelect
                   name="genre"
                   value={formData.genre}
@@ -189,14 +237,14 @@ const AddBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">Khoa</label>
+                <label className="form-label fw-bold">Chuyên ngành</label>
                 <CFormSelect
                   name="majors"
                   value={formData.majors}
                   onChange={(e) => handleMajorChange(e.target.value)}
                 >
                   <option value="" disabled>
-                    Chọn khoa
+                    Chọn chuyên ngành
                   </option>
                   {majors.map((major) => (
                     <option key={major._id} value={major._id}>
@@ -209,7 +257,7 @@ const AddBook = () => {
 
             <CRow className="mb-3">
               <CCol>
-                <label className="form-label">Ảnh bìa sách</label>
+                <label className="form-label fw-bold">Ảnh bìa sách</label>
                 <input
                   type="file"
                   accept="image/jpeg,image/png"
@@ -223,7 +271,7 @@ const AddBook = () => {
             {selectedImageFile && (
               <CRow className="mb-3">
                 <CCol>
-                  <h3 className="text-sm font-medium text-gray-700">Ảnh bìa đã chọn:</h3>
+                  <h3 className="text-sm fw-bold">Ảnh bìa đã chọn:</h3>
                   <img
                     src={URL.createObjectURL(selectedImageFile)}
                     alt="Selected Cover"

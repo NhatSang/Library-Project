@@ -71,8 +71,3 @@ export const hashPassword = async (password: string) => {
 export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-export const loadPdfJsLib = async () => {
-  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
-  return pdfjsLib;
-};

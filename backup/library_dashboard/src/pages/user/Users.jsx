@@ -96,9 +96,9 @@ const Users = () => {
   const fetchUser = async (page, limit, keyword) => {
     setLoading(true);
     const response = await _getUsers(page, limit, keyword);
-    if(!response.error){
+    if(response.data){
+      console.log(response.data);
       setUsers(response.data);
-      console.log(response);
       setPagination(response.pagination);
       setLoading(false);
     }

@@ -2,14 +2,14 @@ import axios from "axios";
 
 export const api = axios.create({
     baseURL: 'http://localhost:6001/api/v1',
-    timeout: 30000,
+    timeout: 60000,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 export const api2 = axios.create({
     baseURL: 'http://localhost:5001/api/v1',
-    timeout: 30000,
+    timeout: 60000,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -17,17 +17,17 @@ export const api2 = axios.create({
 
 api.interceptors.request.use(
     async function (config) {
-        // const token = await getToken();
-        // if (token) {
-        //     config.headers['Authorization'] = `Bearer ${token}`;
-        // }
+        const token = localStorage.getItem("accessToken");
+        
+        if (token) {
+          config.headers['authorization'] = `Bearer ${token}`;
+        }
         config.params = {
             ...config.params,
         };
         return config;
     },
     function (error) {
-        // Do something with request error
         return Promise.reject(error);
     },
 );

@@ -4,6 +4,8 @@ import { _getUsers } from '../user/apis';
 import { _getBook, _getMajors } from '../book/apis';
 import { _createNotification, _updateNotification } from './apis';
 import { useLocation } from 'react-router-dom';
+import { Loading } from '../../components';
+import { notification } from 'antd';
 
 const AddNotification = () => { 
   const location = useLocation(); 
@@ -21,6 +23,8 @@ const AddNotification = () => {
   const [users, setUsers] = useState([]);
   const [majors, setMajors] = useState([]);
   const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     fetchData();
@@ -74,6 +78,7 @@ const AddNotification = () => {
   };
 
   const handleSaveNotification = async () => {
+    setLoading(true);
     const formData = new FormData();
     formData.append('title', title);
     formData.append('content', content);
@@ -105,16 +110,32 @@ const AddNotification = () => {
         response = await _createNotification(formData);
       }
 
-      if (response.status === 200) {
-        alert(notificationItem ? 'Cập nhật thông báo thành công' : 'Thêm thông báo thành công');
-        window.history.back();
+      if (response.data) {
+        openNotification(true,notificationItem ? 'Thông báo đã được cập nhật thành công!' : 'Thông báo đã được thêm thành công!','Thành công')();
+        setTimeout(() => {
+          window.location.href = '/notifications';
+        }, 3000);
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
+  const openNotification = (pauseOnHover,description,title) => () => {
+    api.open({
+      message: title,
+      description:description,
+      showProgress: true,
+      pauseOnHover,
+    });
+  }
   return (
+    <>
+    {contextHolder}
+    {
+      loading && <Loading/>
+    }
     <CCol className="d-flex align-items-center justify-content-center">
       <CCard className="w-100 max-w-2xl shadow-lg border-0">
         <CCardHeader>
@@ -235,6 +256,7 @@ const AddNotification = () => {
         </CModalBody>
       </CModal>
     </CCol>
+    </>
   );
 };
 

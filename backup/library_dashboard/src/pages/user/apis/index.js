@@ -6,8 +6,8 @@ export const _banUser = async (userId) => {
 }
 
 export const _getUsers = async (page, limit, keyword) => {
-    const url = `/find-user?page=${page}&limit=${limit}`;
-    return await api.post(url, {keyword});
+    const url = "/users/find-user";
+    return await api.post(url, {page, limit, keyword}); 
 }
 
 export const _getMajors = async () => {

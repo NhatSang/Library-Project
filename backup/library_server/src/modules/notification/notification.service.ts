@@ -8,6 +8,7 @@ import admin from 'firebase-admin';
 
 import serviceAccount from '../../json-key/serviceAccount.json';
 import { ServiceAccount } from 'firebase-admin';
+import mongoose from 'mongoose';
 
 try {
     admin.initializeApp({
@@ -60,7 +61,7 @@ export class NotificationService {
     }
 
     async updateSendingStatus(id:string){
-        const notification = await Notification.findOne({_id:id});
+        const notification = await Notification.findOne({_id:new mongoose.Types.ObjectId(id)});
         notification.status = Status.SENDING;
         await notification.save();
         return notification;

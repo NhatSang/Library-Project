@@ -7,6 +7,7 @@ import User from "../user/model/user.model";
 import Histories from "../history/model/history.mode";
 import { ViewService } from "../view/view.service";
 import { ReviewService } from "../reivew/review.service";
+import { UserResponseDTO } from "../user/dto/user.dto";
 
 @Service()
 export class StatisticsService {
@@ -22,7 +23,7 @@ export class StatisticsService {
     }
     const matchStage: any = {};
     if (majorsId) {
-      matchStage.genre = new mongoose.Types.ObjectId(majorsId);
+      matchStage.majors = new mongoose.Types.ObjectId(majorsId);
     }
 
     const result = await Books.aggregate([
@@ -71,6 +72,20 @@ export class StatisticsService {
         },
       },
       {
+        $lookup: {
+          from: "majors",
+          localField: "majors",
+          foreignField: "_id",
+          as: "majorInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$majorInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
         $sort: { totalViews: -1 },
       },
       {
@@ -81,10 +96,14 @@ export class StatisticsService {
           _id: 1,
           title: 1,
           totalViews: 1,
+          author: 1,
+          pageNumber: 1,
+          majors: "$majorInfo.name",
+          createdAt: 1,
         },
       },
     ]);
-    const resResult = BookTotalViewDTO.transformBook(result);
+    const resResult = result;
     return resResult;
   }
 
@@ -146,6 +165,20 @@ export class StatisticsService {
         },
       },
       {
+        $lookup: {
+          from: "majors",
+          localField: "majors",
+          foreignField: "_id",
+          as: "majorInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$majorInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
         $sort: { avgRating: -1 }, // Sắp xếp theo rating trung bình giảm dần
       },
       {
@@ -153,14 +186,18 @@ export class StatisticsService {
       },
       {
         $project: {
-          _id: 1, // Chỉ trả về các trường cần thiết
+          _id: 1,
           title: 1,
           avgRating: 1,
+          author: 1,
+          pageNumber: 1,
+          majors: "$majorInfo.name",
+          createdAt: 1,
         },
       },
     ]);
 
-    const resResult = BookAvgRatingDTO.transformBook(result);
+    const resResult = result;
     return resResult;
   }
 
@@ -246,7 +283,22 @@ export class StatisticsService {
       {
         $match: {
           createdAt: { $gte: fromDate, $lte: toDate },
-          ...(majorsId && { majorsId: new mongoose.Types.ObjectId(majorsId) }),
+          ...(majorsId ? { majors: new mongoose.Types.ObjectId(majorsId) } : {}),
+        },
+      },
+      {
+        $lookup: {
+          from: "majors", // Name of the Majors collection
+          localField: "majors",
+          foreignField: "_id",
+          as: "majorsInfo",
+        },
+      },
+      // Unwind to flatten the array returned from the lookup
+      {
+        $unwind: {
+          path: "$majorsInfo",
+          preserveNullAndEmptyArrays: true, // To handle cases where majorsInfo might be empty
         },
       },
       {
@@ -259,24 +311,21 @@ export class StatisticsService {
                 email: 1,
                 createdAt: 1,
                 gender: 1,
+                majors: "$majorsInfo.name",
+                image: 1,
+                code: 1,
+                dob: 1,
+                status: 1,
               },
             },
           ],
           countFemale: [
-            {
-              $match: { gender: "Female" },
-            },
-            {
-              $count: "countFemale",
-            },
+            { $match: { gender: "Female" } },
+            { $count: "countFemale" },
           ],
           countMale: [
-            {
-              $match: { gender: "Male" },
-            },
-            {
-              $count: "countMale",
-            },
+            { $match: { gender: "Male" } },
+            { $count: "countMale" },
           ],
         },
       },

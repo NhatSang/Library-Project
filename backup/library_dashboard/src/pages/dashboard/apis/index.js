@@ -5,7 +5,8 @@ export const _getStatisticsDashBoard = async (data) => {
     return await api.get(url,{
         params: {
             fromDate:data.fromDate,
-            toDate:data.toDate
+            toDate:data.toDate,
+            majorsId:data?.majorsId
         }
     });
 }
@@ -15,7 +16,8 @@ export const _getStatisticsDashBoardUser = async (data) => {
     return await api.get(url,{
         params: {
             fromDate:data.fromDate,
-            toDate:data.toDate
+            toDate:data.toDate,
+            majorsId:data?.majorsId
         }
     });
 }

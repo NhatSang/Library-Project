@@ -60,7 +60,7 @@ bookRouter.get(
   bookController.getBookDetails
 );
 
-bookRouter.get(
+bookRouter.post(
   "/books/find_books",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   bookController.findBookByKeyword
@@ -72,5 +72,11 @@ bookRouter.post(
   upload.fields([{ name: "image" }, { name: "pdf" }]),
   bookMiddleware.validate(BookUpdateReqDTO),
   bookController.updateBook
+);
+
+bookRouter.delete(
+  "/books/:bookId",
+  authMiddleware.authenticateAccessToken([Role.Admin]),
+  bookController.deleteBook
 );
 export default bookRouter;

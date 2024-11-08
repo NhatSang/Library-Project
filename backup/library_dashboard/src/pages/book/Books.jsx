@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, ConfigProvider, Pagination, Table } from 'antd';
+import { Button, Col, ConfigProvider, notification, Pagination, Popconfirm, Space, Table } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { _getBook } from './apis';
+import { _deleteBook, _getBook } from './apis';
 import { CCol, CRow } from '@coreui/react';
 import Search from 'antd/es/transfer/search';
 import viVN from 'antd/lib/locale/vi_VN';
@@ -14,11 +14,14 @@ const Books = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({});
   const theme = useSelector((state) => state.app.theme);
+  const [page, setPage] = useState(1);
+  const [keyword, setKeyword] = useState("");
   const [themeTokens, setThemeTokens] = useState({
     colorBgContainer: '#ffffff',
     colorText: '#000000',
     colorBorder: '#d9d9d9'
   });
+  const [api, contextHolder] = notification.useNotification();
 
 
   useEffect(() => {
@@ -34,9 +37,8 @@ const Books = () => {
   }, [theme]);
 
   useEffect(() => {
-    fetchData();
-  }
-  , [])
+    fetchData(page, 5, keyword);
+  }, [page,keyword])
 
   const columns = [
     {
@@ -64,11 +66,12 @@ const Books = () => {
       key: 'pageNumber',
     },
     {
-      title: 'Ngày nhập',
-      key: 'createdAt',
+      title: 'Chuyên ngành',
+      key: 'majors',
+      key: 'majors',
       render: (text, record) => (
         <span>
-          {new Date(record.createdAt).toLocaleDateString()}
+          {record.majors}
         </span>
       )
     },
@@ -76,7 +79,7 @@ const Books = () => {
       title: 'Hành động',
       key: 'action',
       render: (text, record) => (
-        <div className="flex space-x-2">
+        <Space size="middle">
           <Button onClick={()=>{
             navigate(`/books/edit`,{
               state: {
@@ -86,23 +89,73 @@ const Books = () => {
               }
             })
           }} type="primary">Sửa</Button>
-          <Button type="danger">Xóa</Button>
-        </div>
+          <Popconfirm
+    title="Xoá sách"
+    description="Bạn có chắc chắn muốn xóa sách này không?"
+    onConfirm={()=>{
+      confirm(record._id);
+    }}
+    onCancel={cancel}
+    okText="Có"
+    cancelText="Không"
+  >
+    <Button danger>Xoá</Button>
+  </Popconfirm>
+        </Space>
       ),
     }
-  ]
+  ];
+
+  const confirm = (e) => {
+    console.log(e);
+    handleDelete(e);
+  };
+  const cancel = (e) => {
+    console.log(e);
+  };
 
   const handlePageChange = (page) => {
-    fetchData(page);
+    fetchData(page, 5, keyword);
   }
 
-  const fetchData = async () => {
+  const handleSearch = (keyword) => {
+    setKeyword(keyword);
+  }
+
+  const fetchData = async (page, limit, keyword) => {
+    setLoading(true);
     try {
-      const response = await _getBook()
+      const response = await _getBook(
+        page,
+        limit,
+        keyword
+      )
       setBooks(response.data);
       setPagination(response.pagination);
-      console.log(response.data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  }
+  const openNotification = (pauseOnHover,description,title) => () => {
+    api.open({
+      message: title,
+      description:description,
+      showProgress: true,
+      pauseOnHover,
+    });
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await _deleteBook(id);
+      if(response.data){
+        openNotification(true,"Sách đã được xóa thành công!","Thành công")();
+        fetchData(page, 5, keyword);
+      }
+    } catch (error) {
+      openNotification(true,"Đã xảy ra lỗi khi xóa sách!","Lỗi")();
       console.log(error);
     }
   }
@@ -110,6 +163,8 @@ const Books = () => {
 
 
   return (
+    <>
+    {contextHolder}
     <ConfigProvider locale={viVN} theme={{token:themeTokens}}>
     <CRow>
     <CCol xs>
@@ -126,14 +181,15 @@ const Books = () => {
       loading={loading} bordered  dataSource={books} columns={columns} pagination={false} />
 
       <CCol xs={12} md={12} style={{marginTop:20,marginBottom:10,justifyContent:'center',alignItems:'center'}}>
-      {/* <ConfigProvider locale={viVN}>  
+      <ConfigProvider locale={viVN}>  
       <Pagination showQuickJumper defaultCurrent={pagination.page} total={pagination.total} onChange={handlePageChange} />
-      </ConfigProvider> */}
+      </ConfigProvider>
       </CCol>
 
     </CCol>
   </CRow>
   </ConfigProvider>
+  </>
   );
 }
 

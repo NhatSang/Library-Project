@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { _getGenres } from "../home/apis";
 import { Loading } from "../../components";
 import { _getMajors } from "../user/apis";
+import { _createMajors } from "./apis";
 
 const AddMajors = () => {
     const [majors, setMajors] = useState([]);
@@ -41,6 +42,30 @@ const AddMajors = () => {
         }
     }
 
+    const handleCreateMajor = async () => {
+        setLoading(true);
+        try {
+            const res = await _createMajors(major.name);
+            if(res.data){
+                setMajors(res.data);
+                setLoading(false);
+                openNotification(true,"Chuyên ngành đã được thêm thành công!","Thành công")();
+            }
+        } catch (error) {
+            setLoading(false);
+            openNotification(true,"Đã xảy ra lỗi khi thêm chuyên ngành!","Lỗi")();
+        }
+    }
+
+    const openNotification = (pauseOnHover,description,title) => () => {
+        api.open({
+          message: title,
+          description:description,
+          showProgress: true,
+          pauseOnHover,
+        });
+      }
+
     return (
         <>
         {
@@ -61,7 +86,7 @@ const AddMajors = () => {
                     </CCol>
                     <div style={{height:30}}/>
                     <CCol xs="auto">
-                        <Button type="primary" className="px-4 py-2 text-dark font-medium rounded disabled-opacity-50">
+                        <Button onClick={handleCreateMajor} type="primary" className="px-4 py-2 text-dark font-medium rounded disabled-opacity-50">
                         <span className="text-base text-white">Thêm chuyên ngành</span>
                         </Button>
                     </CCol>

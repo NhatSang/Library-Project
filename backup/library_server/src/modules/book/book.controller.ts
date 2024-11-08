@@ -145,7 +145,7 @@ export class BookController {
   ) => {
     try {
       const { books, pagination } = await this.bookservice.findBooksByKeyword(
-        req.query.keyword as string,
+        req.body.keyword,
         Pagination.fromRequest(req)
       );
       res.send(new ResponseCustom(books, null, pagination));
@@ -157,7 +157,7 @@ export class BookController {
   deleteBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.bookservice.deleteBook(
-        req.query.bookId as string
+        req.params.bookId
       );
       res.send(new ResponseCustom(result));
     } catch (error) {
