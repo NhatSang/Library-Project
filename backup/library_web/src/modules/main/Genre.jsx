@@ -4,6 +4,7 @@ import { Button, Divider, Space, Tooltip } from "antd";
 
 const Genre = () => {
   const [genres, setGenres] = useState([]);
+  const [books, setBooks] = useState([]);
   useEffect(() => {
     fetchGenres();
   }, []);
@@ -15,10 +16,7 @@ const Genre = () => {
       console.log(error);
     }
   };
-  const handleChangeGenres = (genreId) => {
-
-    
-  };
+  const handleChangeGenres = (genreId) => {};
   return (
     <div className="px-5 py-2 space-y-3">
       <div className=" bg-white p-3 rounded-md shadow-md">
