@@ -47,7 +47,7 @@ const UpdateInfo = ({ handleBack, email, setStage }) => {
   const validateInput = (values) => {};
 
   return (
-    <div className="border items-center shadow-2xl rounded-xl p-3">
+    <div className="border items-center shadow-2xl rounded-xl p-3 bg-white">
       <div className="flex justify-end">
         <img src={IMAGES.LOGO} width={90} />
       </div>

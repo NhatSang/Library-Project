@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getGenres } from "./api";
-import { Button } from "antd";
+import { Button, Divider, Space, Tooltip } from "antd";
 
 const Genre = () => {
   const [genres, setGenres] = useState([]);
@@ -21,12 +21,17 @@ const Genre = () => {
   };
   return (
     <div className="px-5 py-2 space-y-3">
-      <div className="grid grid-cols-6 gap-2 bg-white p-3 rounded-md shadow-md">
-        {genres?.map((g) => (
-          <Button type="primary" onClick={() => handleChangeGenres(g._id)}>
-            {g.name}
-          </Button>
-        ))}
+
+      <div className=" bg-white p-3 rounded-md shadow-md">
+        <Space wrap>
+          {genres?.map((g) => (
+            <Tooltip title="prompt text" key={g._id}>
+              <Button onClick={() => handleChangeGenres(g._id)}>
+                {g.name}
+              </Button>
+            </Tooltip>
+          ))}
+        </Space>
       </div>
       <div className="p-3 rounded-md bg-white grid grid-cols-4 gap-4 shadow-md">
         <Button></Button>

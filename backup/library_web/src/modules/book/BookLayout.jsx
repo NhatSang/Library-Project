@@ -1,8 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import BookDetail from "./components/BookDetail";
-import Chapters from "./components/Chapters";
 import Reviews from "./components/Reviews";
-import { useLocation } from "react-router-dom";
 
 const BookLayout = () => {
   return (

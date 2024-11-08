@@ -6,6 +6,8 @@ import { GrChapterNext, GrChapterPrevious } from "react-icons/gr";
 import { CiPause1, CiPlay1 } from "react-icons/ci";
 import { useLocation } from "react-router-dom";
 import { _getBookContentBypage } from "../../main/api";
+import { LuSkipBack, LuSkipForward } from "react-icons/lu";
+
 const AudioViewer = () => {
   const location = useLocation();
   const book = location.state.book;
@@ -170,12 +172,12 @@ const AudioViewer = () => {
         </div>
       )}
       {/* Cột bên phải chứa các nút */}
-      <div className="flex flex-col ml-4">
+      <div className="flex flex-col items-center ml-4 p-4 bg-white rounded-lg shadow-md border border-gray-200">
         {" "}
         {/* Flex column cho nút dọc */}
         <Select
           defaultValue={voice.current}
-          className="w-36 mb-2"
+          className="w-36 mb-4 rounded-md border border-gray-300"
           onChange={handleVoiceChange}
         >
           {window.responsiveVoice.getVoices().map((v, index) => (
@@ -184,8 +186,10 @@ const AudioViewer = () => {
             </Option>
           ))}
         </Select>
-        <div className="mt-4">
-          <p className="text-center mb-1">Tốc độ đọc</p>
+        <div className="w-full mt-2">
+          <p className="text-center text-sm font-medium text-gray-700 mb-1">
+            Tốc độ đọc
+          </p>
           <Slider
             min={0.5}
             max={2}
@@ -194,26 +198,45 @@ const AudioViewer = () => {
             onChange={handleSpeedChange}
           />
         </div>
-        <Button
-          onClick={previousSentence}
-          className="mb-2"
-          disabled={currentSentenceIndex === 0 && pageRef.current === 1}
-        >
-          <GrChapterPrevious />
-        </Button>
-        <Button onClick={togglePlayPause} className="mb-2">
-          {!isPaused ? <CiPause1 /> : <CiPlay1 />}
-        </Button>
-        <Button
-          onClick={nextSentence}
-          className="mb-2"
-          disabled={
-            currentSentenceIndex === sentences.length - 1 &&
-            pageRef.current === 1
-          }
-        >
-          <GrChapterNext />
-        </Button>
+        <div className="flex flex-col items-center mt-4 space-y-2">
+          <Button
+            onClick={previousPage}
+            className="mb-2"
+            disabled={currentSentenceIndex === 0 && pageRef.current === 1}
+          >
+            <GrChapterPrevious />
+          </Button>
+          <Button
+            onClick={previousSentence}
+            className="mb-2"
+            disabled={currentSentenceIndex === 0 && pageRef.current === 1}
+          >
+            <LuSkipBack />
+          </Button>
+          <Button onClick={togglePlayPause} className="mb-2">
+            {!isPaused ? <CiPause1 /> : <CiPlay1 />}
+          </Button>
+          <Button
+            onClick={nextSentence}
+            className="mb-2"
+            disabled={
+              currentSentenceIndex === sentences.length - 1 &&
+              pageRef.current === 1
+            }
+          >
+            <LuSkipForward />
+          </Button>
+          <Button
+            onClick={nextPage}
+            className="mb-2"
+            disabled={
+              currentSentenceIndex === sentences.length - 1 &&
+              pageRef.current === 1
+            }
+          >
+            <GrChapterNext />
+          </Button>
+        </div>
       </div>
     </div>
   );

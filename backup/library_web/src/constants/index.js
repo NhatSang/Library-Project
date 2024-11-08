@@ -69,6 +69,33 @@ Tóm lại, "Nhập môn cờ vua" là một tài liệu học tập bổ ích c
     createdAt: "2024-10-11T04:14:34.672+00:00",
     updatedAt: "2024-10-11T04:14:34.672+00:00",
   },
+  {
+    _id: "6723c8fedb0be7507570d59c",
+    title: "Nhập môn cờ vua",
+    author: "Nguyễn Minh Đức",
+    pdfLink:
+      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1730398460560_nhapmoncovua.pdf",
+    genre: "Giải trí",
+    image:
+      "https://pdf8888.s3.ap-southeast-1.amazonaws.com/1730398461190_nhapmoncovua.jpg",
+    pageNumber: 100,
+    majors: "66c0ba4b73447b36abb7c636",
+    summary: `"Nhập môn cờ vua" là một quyển sách giáo dục dành cho những người mới bắt đầu tìm hiểu về cờ vua, giúp họ nắm vững những kiến thức và kỹ năng cơ bản để có thể tham gia vào trò chơi trí tuệ này. 
+
+Quyển sách bắt đầu với phần giới thiệu về bàn cờ, nơi mà trận đấu diễn ra, cùng với hình thức sắp xếp và các ô vuông bất kỳ. Tiếp theo, tác giả phân tích các quân cờ và cách di chuyển của chúng: quân Tốt, Xe, Tượng, Hậu, Mã và Vua. Mỗi quân cờ có một vai trò riêng biệt và cách di chuyển đặc trưng, rất quan trọng để người chơi hiểu rõ trước khi bắt đầu chơi.
+
+Sách còn đi sâu vào chiến thuật tấn công và phòng thủ, nhấn mạnh tầm quan trọng của việc bảo vệ vua cũng như thực hiện các cuộc tấn công hiệu quả. Đặc biệt, các phần về chiếu và chiếu bí rất thú vị, khi mà người chơi cần biết cách tạo ra các đòn tấn công quyết định để buộc đối thủ rơi vào thế nguy hiểm.
+
+Sách giới thiệu về việc chiếu bí trong một nước và các quy tắc liên quan đến chiếu bí, giúp người chơi hiểu được cách kết thúc một ván cờ. Thêm vào đó, quyển sách cũng giới thiệu về khái niệm nhập thành, một kỹ thuật quan trọng để bảo vệ vua và phát triển quân cờ.
+
+Một phần quan trọng khác là việc đổi quân, hòa cờ, và các tính huống khi vua cô độc không có quân cờ hỗ trợ. Bên cạnh đó, tác giả giải thích về nước đi đặc biệt của Tốt, chẳng hạn như thăng cấp và ăn quân chéo.
+
+Cuối cùng, phần ghi chép lại ván cờ và cách bắt đầu ván cờ được đề cập giúp người chơi có thể rèn luyện và ghi nhớ chiến thuật của mình. Cuốn sách cũng không quên điểm danh những danh thủ cờ vua, những người đã để lại dấu ấn trong lịch sử cờ vua, tạo nguồn cảm hứng cho người đọc. 
+
+Tóm lại, "Nhập môn cờ vua" là một tài liệu học tập bổ ích cho những ai muốn bước vào thế giới của cờ vua, từ những điều cơ bản nhất đến những chiến lược nâng cao hơn.`,
+    createdAt: "2024-10-11T04:14:34.672+00:00",
+    updatedAt: "2024-10-11T04:14:34.672+00:00",
+  },
 ];
 export const sampleChapters = [
   {

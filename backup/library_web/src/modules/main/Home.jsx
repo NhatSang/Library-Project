@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Button, Carousel } from "antd";
-import { Avatar, Card } from "antd";
 import { sampleData } from "../../constants";
-import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+
+import { useSelector } from "react-redux";
 import ListBooks from "./components/ListBooks";
 import {
   _getBookByMajorsUser,
@@ -13,17 +11,13 @@ import {
   _getRecommendBooks,
   getHistories,
 } from "./api";
-import ListBooksCustom from "./components/ListBooksCustom";
-const { Meta } = Card;
+import ListBooksScoll from "./components/ListBooksScoll";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/swiper-bundle.css";
 
-const contentStyle = {
-  height: "260px",
-  color: "#fff",
-  lineHeight: "260px",
-  textAlign: "center",
-  background: "#364d79",
-};
-
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Link } from "react-router-dom";
+import ListBooksGrid from "./components/ListBooksGrid";
 const Home = () => {
   const user = useSelector((state) => state.user.data);
   const [histories, setHistories] = useState([]);
@@ -31,7 +25,7 @@ const Home = () => {
   const [booksNewest, setBooksNewest] = useState([]);
   const [booksTopRated, setBooksTopRated] = useState([]);
   const [booksTopViewed, setBooksTopViewed] = useState([]);
-  const [recommendBooks,setRecommendBooks] = useState([])
+  const [recommendBooks, setRecommendBooks] = useState([]);
   useEffect(() => {
     fetchHistories();
     fetchBookByMajorsUser();
@@ -41,14 +35,12 @@ const Home = () => {
     fetchRecommendBooks();
   }, []);
 
-  const fetchRecommendBooks = async ()=>{
+  const fetchRecommendBooks = async () => {
     try {
       const response = await _getRecommendBooks();
       setRecommendBooks(response.data);
-    } catch (error) {
-      
-    }
-  }
+    } catch (error) {}
+  };
   const fetchHistories = async () => {
     try {
       const response = await getHistories();
@@ -97,63 +89,51 @@ const Home = () => {
 
   return (
     <div className="w-full px-5 py-2 space-y-3">
-      <div className="w-full ">
-        <Carousel autoplay>
-          {booksNewest.map((b, index) => (
-            <Link
-              key={index}
-              to={"/book"}
-              state={{ book: b }}
-              type="text"
-              className="w-full bg-sky-900 rounded-lg p-3 shadow-md hover:text-white text-white font-medium text-base"
-            >
-              <div className="flex justify-center space-x-4">
-                <div>
-                  <img src={b.image} width={150} />
+      <div className="bg-white p-3 rounded-lg">
+        <Swiper
+          modules={[Navigation, Pagination, Autoplay]}
+          spaceBetween={12}
+          slidesPerView={2}
+          pagination={{ clickable: true }}
+          navigation={true}
+          loop={true}
+          autoplay={{
+            delay: 3000,
+          }}
+        >
+          {sampleData.map((d, index) => (
+            <SwiperSlide>
+              <Link
+                key={index}
+                className=" flex items-center justify-center border border-gray-300 rounded-lg bg-cover"
+                style={{
+                  backgroundImage: `url(${d.image})`,
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                }}
+              >
+                <div
+                  className="flex items-center justify-center bg-gray-400  p-5 text-white rounded-lg space-x-3"
+                  style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}
+                >
+                  <img src={d.image} className="w-2/5 rounded-lg" />
+                  <div className="space-y-2">
+                    <p className="font-semibold text-2xl">{d.title}</p>
+                    <p>{d.author}</p>
+                    <p className="text-ellipsis line-clamp-6">{d.summary}</p>
+                  </div>
                 </div>
-                <div className="space-y-3 w-1/2">
-                  <p>
-                    Tiêu đề: <span className=" font-normal">{b.title}</span>
-                  </p>
-                  <p>
-                    Tác giả: <span className=" font-normal">{b.author}</span>
-                  </p>
-                  <p>
-                    Thể loại: <span className=" font-normal">{b.genre}</span>
-                  </p>
-                  <p className="line-clamp-3 text-ellipsis">
-                    Tóm tắt: <span className=" font-normal">{b.summary}</span>
-                  </p>
-                </div>
-              </div>
-            </Link>
+              </Link>
+            </SwiperSlide>
           ))}
-        </Carousel>
+        </Swiper>
       </div>
-      <ListBooksCustom title={"demo"} data={sampleData} type={1} />
       <ListBooks title={"Lịch sử"} data={histories} />
       {recommendBooks.length > 0 ? (
-        <ListBooksCustom
-          title={"Có thể bạn sẽ thích"}
-          data={recommendBooks}
-          type={1}
-        />
+        <ListBooksScoll title={"Có thể bạn sẽ thích"} data={recommendBooks} />
       ) : null}
-      <ListBooksCustom
-        title={"Đề xuất theo chuyên ngành"}
-        data={booksByMajorsUser}
-        type={1}
-      />
-      <ListBooksCustom
-        title={"Top sách đánh giá cao"}
-        data={booksTopRated}
-        type={2}
-      />
-      <ListBooksCustom
-        title={"Top sách có lượt đọc cao"}
-        data={booksTopViewed}
-        type={3}
-      />
+      <ListBooksScoll title={"Đề xuất theo chuyên ngành"} data={sampleData} />
+      <ListBooksGrid title={"Top sách đánh giá cao"} data={sampleData} />
+      <ListBooksGrid title={"Top sách có lượt đọc cao"} data={sampleData} />
     </div>
   );
 };
