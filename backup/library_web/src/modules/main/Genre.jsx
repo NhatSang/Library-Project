@@ -21,11 +21,10 @@ const Genre = () => {
   };
   return (
     <div className="px-5 py-2 space-y-3">
-
       <div className=" bg-white p-3 rounded-md shadow-md">
         <Space wrap>
           {genres?.map((g) => (
-            <Tooltip title="prompt text" key={g._id}>
+            <Tooltip title={g.name} key={g._id}>
               <Button onClick={() => handleChangeGenres(g._id)}>
                 {g.name}
               </Button>
