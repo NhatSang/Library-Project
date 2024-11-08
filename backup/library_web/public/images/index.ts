@@ -1,7 +1,7 @@
 export const SPLASH = {};
 
 export const LOGIN = {
-    BACKGROUND: require('./Login/background.png'),
+    BACKGROUND: require('./Login/thuvienIUH.jpg'),
 };
 
 export const MAIN = {

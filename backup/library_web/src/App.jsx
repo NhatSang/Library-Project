@@ -30,10 +30,10 @@ function App() {
               <Route path="/genre" element={<Genre />} />
               <Route path="/result" element={<Result />} />
               <Route path="/book" element={<BookLayout />} />
-              <Route element={<BookContent />}>
-                <Route path="/book-audio" element={<AudioViewer />} />
-                <Route path="/book-content" element={<PdfViewer />} />
-              </Route>
+            </Route>
+            <Route element={<BookContent />}>
+              <Route path="/book-audio" element={<AudioViewer />} />
+              <Route path="/book-content" element={<PdfViewer />} />
             </Route>
           </Route>
         </Routes>

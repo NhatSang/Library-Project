@@ -55,7 +55,7 @@ const Login = () => {
     <>
       {contextHolder}
       <div className="p-10">
-        <div className="border flex flex-col justify-center items-center space-y-5 shadow-2xl rounded-xl">
+        <div className="border flex flex-col justify-center items-center space-y-5 shadow-2xl rounded-xl bg-white">
           <div>
             <img src={IMAGES.LOGO} width={250} />
           </div>
