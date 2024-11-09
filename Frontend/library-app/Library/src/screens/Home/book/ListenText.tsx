@@ -128,14 +128,14 @@ const ListentText = ({ navigation, route }: any) => {
             page: currentPage.current
         }
         const res: any = await _getBookContent(data);
-        if (res.status) {
-            pages.current = res.data.data.pages;
-            const a = splitIntoSentences(res.data.data.content.content);
+        if (res.data) {
+            pages.current = res.data.page;
+            const a = splitIntoSentences(res.data.content.content);
             if (a.length === 0) {
                 console.log('Page is empty');
                 nextPage();
             }
-            const content = res.data.data.content.content;
+            const content = res.data.content.content;
             setSentences(splitIntoSentences(content));
         }
     };
@@ -184,7 +184,7 @@ const ListentText = ({ navigation, route }: any) => {
         try {
             const response = await _getChapters(bookId);
             if (response.data) {
-                setChapter(response.data.data);
+                setChapter(response.data);
             }
         } catch (error) {
             console.log('Error getChapterByIdBook: ', error);
@@ -335,6 +335,7 @@ const ListentText = ({ navigation, route }: any) => {
                             ref={flatListRef}
                             data={sentences}
                             renderItem={renderItem}
+                            contentContainerStyle={{ padding: 8 }}
                             keyExtractor={(item, index) => index.toString()}
                             getItemLayout={(data, index) => ({
                                 length: 30,

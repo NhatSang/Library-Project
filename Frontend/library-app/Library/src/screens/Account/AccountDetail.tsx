@@ -3,19 +3,19 @@ import AppText from '@components/AppText'
 import Space from '@components/Space'
 import { fontFamilies } from '@constants/fontFamilies'
 import { globalColor } from '@constants/globalColor'
+import { isiOS } from '@constants/index'
 import { Input } from '@rneui/themed'
 import React, { useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Image, ImageBackground, Keyboard, Pressable, View } from 'react-native'
 import ImagePicker from 'react-native-image-crop-picker'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import Toast from 'react-native-toast-message'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
 import { useDispatch } from 'react-redux'
 import { iUser } from 'src/types/iUser'
 import { _getProfile, _updateImage } from './apis'
-import Toast from 'react-native-toast-message'
-import { isiOS } from '@constants/index'
 
 const AccountDetail = ({ navigation }: any) => {
     const dispatch = useDispatch();
@@ -101,7 +101,7 @@ const AccountDetail = ({ navigation }: any) => {
                 text1: 'Thông báo',
                 text2: 'Có lỗi xảy ra, vui lòng thử lại',
             });
-        
+
             console.log('error', error);
         }
     }
@@ -194,12 +194,12 @@ const AccountDetail = ({ navigation }: any) => {
                             </View>
                         ) : (
                             <Pressable onPress={handleChangeImage} >
-                            <Image source={{ uri: user.image }} resizeMode='contain' className='w-32 h-32 rounded-full' />
-                            <Pressable
-                                className='absolute bottom-1 right-1 w-10 h-10 bg-white justify-center items-center rounded-full'>
-                                <Entypo name='camera' size={24} color={globalColor.dark} />
+                                <Image source={{ uri: user.image }} resizeMode='contain' className='w-32 h-32 rounded-full' />
+                                <Pressable
+                                    className='absolute bottom-1 right-1 w-10 h-10 bg-white justify-center items-center rounded-full'>
+                                    <Entypo name='camera' size={24} color={globalColor.dark} />
+                                </Pressable>
                             </Pressable>
-                        </Pressable>
                         )
                     )}
                     <Input
@@ -214,10 +214,8 @@ const AccountDetail = ({ navigation }: any) => {
                     <Input
                         ref={inputEmail}
                         label='Email'
+                        disabled={true}
                         defaultValue={user && user.email}
-                        onChangeText={(text) => setEmail(text)}
-                        onSubmitEditing={handleChangeEmail}
-                        rightIcon={btnEditAndSave(name, handleChangeEmail, loadingName, 'email')}
                         leftIcon={<AntDesign name='mail' size={24} color={globalColor.dark} />}
                     />
                     <Input

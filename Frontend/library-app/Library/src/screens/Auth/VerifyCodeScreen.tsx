@@ -8,10 +8,10 @@ import { ScreenName } from '@constants/ScreenName';
 import React, { useEffect, useRef, useState } from 'react';
 import { ImageBackground, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useCountdown } from '../../hooks/useCountDown';
 import { _sendVerifyCode, _verifyCode, iVerifyCode } from './apis';
-import Toast from 'react-native-toast-message';
 
 const VerifyCodeScreen = ({ navigation, route }: any) => {
     const { email } = route.params;
@@ -57,24 +57,24 @@ const VerifyCodeScreen = ({ navigation, route }: any) => {
     };
 
     const handleVerifyCode = async () => {
-        const data:iVerifyCode = {
+        const data: iVerifyCode = {
             email,
             verificationCode: code.join(""),
         }
-       try {
-        const res = await _verifyCode(data);
-        if (res.data) {
-            navigation.navigate(ScreenName.UserFormScreen, { email });
+        try {
+            const res = await _verifyCode(data);
+            if (res.data) {
+                navigation.navigate(ScreenName.UserFormScreen, { email: email, type: "register" });
+            }
+        } catch (error: any) {
+            console.log(error);
+            Toast.show({
+                type: 'error',
+                text1: 'Lỗi',
+                text2: error?.response?.data?.error?.message,
+                position: 'bottom',
+            });
         }
-       } catch (error:any) {
-        console.log(error);
-        Toast.show({
-            type: 'error',
-            text1: 'Lỗi',
-            text2: error?.response?.data?.error?.message,
-            position: 'bottom',
-        });
-       }
     }
 
     const handleResendCode = async () => {

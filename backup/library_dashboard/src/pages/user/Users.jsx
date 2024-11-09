@@ -142,7 +142,7 @@ const Users = () => {
         loading={loading} bordered  dataSource={users} columns={columns} pagination={false} />
 
         <CCol xs={12} md={12} style={{marginTop:20,marginBottom:10,justifyContent:'center',alignItems:'center'}}>
-        <Pagination showQuickJumper defaultCurrent={pagination.page} total={pagination.total} onChange={handlePageChange} />
+        <Pagination showQuickJumper pageSize={5} defaultCurrent={pagination.page} total={pagination.total} onChange={handlePageChange} />
         </CCol>
 
       </CCol>

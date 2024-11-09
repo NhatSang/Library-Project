@@ -9,6 +9,10 @@ const _login = async (data: iLogin) => {
     return api.post(url, data);
 };
 
+const _loginMS = async (data: iLogin) => {
+    const url = '/auth/login-microsoft';
+    return api.post(url, data);
+}
 
 export type iPostFCMToken = {
     userId: string,
@@ -37,6 +41,19 @@ const _register = async(data:iRegister)=>{
     return api.post(url,data);
 }
 
+export type iUpdateUser = {
+    name: string,
+    dob: Date,
+    code: string,
+    majors: string,
+    gender: string,
+}
+
+const _updateUser = async(data:iUpdateUser)=>{
+    const url = "/users/update-user";
+    return api.post(url,data);
+}
+
 const _sendVerifyCode = async(email:string)=>{
     const url = '/auth/send-code';
     return api.post(url,{email});
@@ -57,4 +74,14 @@ const _getMajors = async()=>{
     return api.get(url);
 }
 
-export { _login, _postFCMToken,_sendVerifyCode,_register,_verifyCode,_getMajors };
+export {
+    _getMajors,
+    _login,
+    _loginMS,
+    _postFCMToken,
+    _register,
+    _sendVerifyCode,
+    _updateUser,
+    _verifyCode
+};
+

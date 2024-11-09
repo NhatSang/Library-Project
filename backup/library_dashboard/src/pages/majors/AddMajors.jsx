@@ -47,7 +47,8 @@ const AddMajors = () => {
         try {
             const res = await _createMajors(major.name);
             if(res.data){
-                setMajors(res.data);
+                setMajors([...majors,res.data]);
+                setMajor({});
                 setLoading(false);
                 openNotification(true,"Chuyên ngành đã được thêm thành công!","Thành công")();
             }

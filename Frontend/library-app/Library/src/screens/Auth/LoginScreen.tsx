@@ -15,7 +15,7 @@ import AzureAuth from 'react-native-azure-auth'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import { setAuth, setMajorId, setUser, setUserId } from '../../redux/authReducer'
-import { _login } from './apis'
+import { _loginMS } from './apis'
 
 
 const azureauth = new AzureAuth({
@@ -68,28 +68,35 @@ const LoginScreen = () => {
       email: userInfo.mail,
       password: userInfo.id,
     }
-    if (isValidStudentEmail(userInfo.mail)) {
-      const res = await _login(user);
-      if (!res.status) {
-        navigation.navigate(ScreenName.UserFormScreen, {
-          email: userInfo.mail,
-          password: userInfo.id,
-        });
-      }
-      if (res.status) {
-        dispatch(setUserId(res.data.user._id));
-        dispatch(setMajorId(res.data.user.majors));
-        dispatch(setUser(res.data.user));
-        dispatch(setAuth(res.data.accessToken));
-        await saveToken(res.data.accessToken);
-        await saveUserLocalStorage(res.data.user);
-        setIsLoading(false);
-      }
+    try {
+      if (isValidStudentEmail(userInfo.mail)) {
+        const res = await _loginMS(user);
+        if (res.data.user.status === 'pending') {
+          navigation.navigate(ScreenName.UserFormScreen, {
+            email: userInfo.mail,
+            type: 'microsoft',
+            accessToken: res.data.accessToken,
+          });
+        }
+        if (res.data.user.status === 'active') {
+          dispatch(setUserId(res.data.user._id));
+          dispatch(setMajorId(res.data.user.majors));
+          dispatch(setUser(res.data.user));
+          dispatch(setAuth(res.data.accessToken));
+          await saveToken(res.data.accessToken);
+          await saveUserLocalStorage(res.data.user);
+          setIsLoading(false);
+        }
 
-    } else {
-      Alert.alert('Thông báo', 'Vui lòng sử dụng email sinh viên hoặc giáo viên để đăng nhập');
+      } else {
+        Alert.alert('Thông báo', 'Vui lòng sử dụng email sinh viên hoặc giáo viên để đăng nhập');
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.log('error', error);
+
     }
-    setIsLoading(false);
   };
 
   return (

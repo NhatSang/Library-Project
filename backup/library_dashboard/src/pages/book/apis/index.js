@@ -36,7 +36,7 @@ const _getChapters = async (bookId) => {
 }
 
 const _getBook = async (page, limit, keyword) => {
-    const url = "/books/find_books";
+    const url = "/books/find-books";
     return await api.post(url,{
         page,
         limit,

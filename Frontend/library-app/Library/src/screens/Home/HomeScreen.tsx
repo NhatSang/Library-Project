@@ -131,11 +131,11 @@ const HomeScreen = ({ navigation }: any) => {
     }
     const getRecommendBook = async () => {
         try {
-                const response = await _getRecommendBooks();
-                console.log('response', response);
-                if (response.data) {
-                    setListRecommendBook(response.data);
-                }
+            const response = await _getRecommendBooks();
+            console.log('response', response);
+            if (response.data) {
+                setListRecommendBook(response.data);
+            }
         } catch (error) {
             console.log('error', error);
         }
@@ -181,7 +181,7 @@ const HomeScreen = ({ navigation }: any) => {
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View className='absolute'>
-                        <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý theo người dùng cùng ngành' />
+                        <AppText size={20} font={fontFamilies.robotoBold} text='Sách theo chuyên ngành của bạn' />
                     </View>
                     <View className='h-72 justify-center items-center'>
                         <Carousel

@@ -29,9 +29,18 @@ historyRouter.get(
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   historyController.getOneHistory
 );
+
 historyRouter.get(
   "/histories/:bookId",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   historyController.getHistory
 );
+
+
+historyRouter.delete(
+  "/historys/:bookId",
+  authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
+  historyController.deleteHistory
+);
+
 export default historyRouter;
