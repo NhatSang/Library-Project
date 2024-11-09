@@ -26,7 +26,16 @@ export const register = async (user) => {
 };
 
 export const loginTemp = async (email, password) => {
-  const url = "/auth/login-temp";
+  const url = "/auth/login";
   return await axiosInstance.post(url, { email, password });
 }
 
+export const loginWithMs = async (email, password) => {
+  const url = "/auth/login-microsoft";
+  return await axiosInstance.post(url, { email, password });
+};
+
+export const updateUser = async(user)=>{
+  const url = "/users/update-user";
+  return await axiosInstance.post(url, user);
+}

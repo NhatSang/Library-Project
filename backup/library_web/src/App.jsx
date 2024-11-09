@@ -13,6 +13,7 @@ import { MsalProvider } from "@azure/msal-react";
 import BookContent from "./modules/book/BookContent";
 import AudioViewer from "./modules/book/components/AudioViewer";
 import PdfViewer from "./modules/book/components/PDFViewer";
+import UpdateInfoMs from "./modules/auth/components/UpdateInfoMs";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/update-user" element={<UpdateInfoMs />} />
           </Route>
 
           <Route element={<PrivateRoute />}>

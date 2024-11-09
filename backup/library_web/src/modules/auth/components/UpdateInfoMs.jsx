@@ -9,14 +9,21 @@ import {
   notification,
 } from "antd";
 import { IMAGES } from "../../../constants";
-import { getMajors, register } from "../api";
+import { getMajors, register, updateUser } from "../api";
 import { openNotificationWithIcon } from "../../../helper";
+import { useLocation, useNavigate } from "react-router-dom";
+import axiosInstance from "../../../axios/axiosConfig";
 
 const { Option } = Select;
 
-const UpdateInfo = ({ handleBack, email, setStage }) => {
+const UpdateInfoMs = () => {
   const [listMajors, setListMajors] = useState([]);
   const [api, contextHolder] = notification.useNotification();
+  const location = useLocation();
+  const { user, accessToken } = location.state;
+  console.log(user);
+  
+  const navigate = useNavigate();
   useEffect(() => {
     fetchData();
   }, []);
@@ -34,20 +41,20 @@ const UpdateInfo = ({ handleBack, email, setStage }) => {
       return;
     }
     try {
-      const user = {
-        name: values.name,
-        password: values.password,
-        repassword: values.comfirmPassword,
-        email: email,
+      const userUpdate = {
+        name: user.name,
+        email: user.email,
         gender: values.gender,
         dob: values.dob,
         majors: values.majors,
         code: values.code,
       };
-      const response = await register(user);
-      console.log(response.data);
-
-      setStage(4);
+      axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+      const response = await updateUser(userUpdate);
+      console.log(accessToken);
+      localStorage.setItem("user", JSON.stringify(response.data));
+      localStorage.setItem("accessToken",accessToken);
+      navigate("/home")
     } catch (error) {
       console.log(error);
 
@@ -58,37 +65,13 @@ const UpdateInfo = ({ handleBack, email, setStage }) => {
       );
     }
   };
+  const handleBack = () => {
+    navigate("/");
+  };
 
   const validateInput = (values) => {
-    const passwordPattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    const namePattern = /^[a-zA-ZÀ-ỹ\s]+$/;
-    const codePattern =/^\d{8}$/
-    if (!passwordPattern.test(values.password)) {
-      openNotificationWithIcon(
-        api,
-        "Đăng ký thất bại!",
-        "Mật khẩu phải chứa ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt!"
-      );
-      return false;
-    }
-    if (values.password != values.comfirmPassword) {
-      openNotificationWithIcon(
-        api,
-        "Đăng ký thất bại!",
-        "Nhập lại mật khẩu không đúng! "
-      );
-      return false;
-    }
-    if (!namePattern.test(values.name)) {
-      openNotificationWithIcon(
-        api,
-        "Đăng ký thất bại!",
-        "Tên không chứ ký tự đặc biệt"
-      );
-      return false;
-    }
-    if(!codePattern.test(values.code)){
+    const codePattern = /^\d{8}$/;
+    if (!codePattern.test(values.code)) {
       openNotificationWithIcon(
         api,
         "Đăng ký thất bại!",
@@ -96,7 +79,7 @@ const UpdateInfo = ({ handleBack, email, setStage }) => {
       );
       return false;
     }
-    return true
+    return true;
   };
 
   return (
@@ -104,8 +87,17 @@ const UpdateInfo = ({ handleBack, email, setStage }) => {
       {contextHolder}
 
       <div className="border items-center shadow-2xl rounded-xl p-3 bg-white">
-        <div className="flex justify-end">
-          <img src={IMAGES.LOGO} width={90} />
+        <div className="flex justify-center mb-4">
+          <img src={IMAGES.LOGO} width={180} />
+        </div>
+        <div className="text-sm">
+          <p className="mb-4">
+            Xin chào{" "}
+            <span className="font-semibold text-base text-blue-600">
+              {user.name}
+            </span>
+          </p>
+          <p className="text-gray-500">Hãy cập nhật thông tin để tiếp tục</p>
         </div>
         <Form
           className="space-y-2 mt-1"
@@ -115,44 +107,6 @@ const UpdateInfo = ({ handleBack, email, setStage }) => {
             maxWidth: 600,
           }}
         >
-          <Form.Item
-            label="Mật khẩu"
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập!",
-              },
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
-
-          <Form.Item
-            label="Nhập lại mật khẩu"
-            name="comfirmPassword"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập!",
-              },
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
-
-          <Form.Item
-            label="Họ tên"
-            name="name"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
           <Form.Item
             label="Mã số sinh viên/ giảng viên"
             name="code"
@@ -228,4 +182,4 @@ const UpdateInfo = ({ handleBack, email, setStage }) => {
   );
 };
 
-export default UpdateInfo;
+export default UpdateInfoMs;

@@ -61,7 +61,8 @@ const Register = () => {
           <div className="border flex flex-col justify-center items-center space-y-5 shadow-2xl rounded-xl p-10 bg-white">
             <p>Đăng ký thành công!</p>
             <Link
-              to={{ pathname: "/", state: { email } }}
+              to={"/"}
+              state={{ email: email }}
               className="font-medium text-blue-500"
             >
               {" "}

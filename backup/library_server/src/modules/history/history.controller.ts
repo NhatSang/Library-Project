@@ -31,15 +31,24 @@ export class HistoryController {
     }
   };
 
-  getOneHistory = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getOneHistory = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.historyService.getOneHistory(
         req.body.userId,
         req.query.bookId as string
+      );
+      res.send(new ResponseCustom(result));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+  getHistory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.historyService.getHistory(
+         req.body.userId,
+        req.params.bookId
       );
       res.send(new ResponseCustom(result));
     } catch (error) {

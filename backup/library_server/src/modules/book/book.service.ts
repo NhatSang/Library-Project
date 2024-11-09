@@ -34,11 +34,10 @@ export class BookService {
   ) {}
 
   async getPublishedBook(bookId: string) {
-    console.log("cc", bookId);
     return await Books.findOne({
       _id: new mongoose.Types.ObjectId(bookId),
       status: BookStatus.Published,
-    });
+    }).populate("genre").populate("majors");
   }
   async checkPublishedBook(bookId: string) {
     const book = await this.getPublishedBook(bookId);

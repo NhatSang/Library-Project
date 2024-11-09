@@ -9,16 +9,16 @@ const ListBooksGrid = ({ title, data }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {data?.map((d, index) => (
           <Link
-            key={index}
+            key={`${d._id}_${index}`}
             to={"/book"}
-            state={{ book: d }}
+            state={{ book: d._id }}
             className=" p-2 hover:text-black hover:bg-gray-200 rounded-md border"
           >
             <div className="flex space-x-2">
-              <img src={d.image} className="w-1/2 rounded-md" />
+              <img src={d.image} className="rounded-md" style={{width:200,height:300,objectFit:"cover"}} />
 
-              <div className="space-y-2">
-                <p className="font-bold text-lg text-blue-600 overflow-hidden whitespace-nowrap text-ellipsis">
+              <div className="space-y-2 w-1/2">
+                <p className="font-bold text-lg text-blue-600 overflow-hidden">
                   {d.title}
                 </p>
                 <p>{d.author}</p>

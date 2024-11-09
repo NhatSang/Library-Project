@@ -3,14 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 export const bookSlice = createSlice({
   name: "book",
   initialState: {
-    data: {},
+    page: 0,
   },
   reducers: {
-    setBookData: (state, action) => {
-      state.data = action.payload;
+    setPageData: (state, action) => {
+      state.page = action.payload;
     },
   },
 });
-export const { setBookData } = bookSlice.actions;
+export const { setPageData } = bookSlice.actions;
 
 export default bookSlice.reducer;

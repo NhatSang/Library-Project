@@ -1,12 +1,34 @@
 import { Button, Modal } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
-import { sampleNote } from "../../../constants";
+import { _getNotes } from "../api";
+import { useLocation } from "react-router-dom";
 const Note = () => {
   const [open1, setOpen1] = useState(false);
   const [open2, setOpen2] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalText, setModalText] = useState("Content of the modal");
+  const [notes, setNotes] = useState([]);
+  const location = useLocation();
+  const book = location.state.book;
+
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+  const fetchNotes = async () => {
+    try {
+      const response = await _getNotes(book._id);
+      setNotes(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+  const createNote = ()=>{
+
+  }
+
   const showModal1 = () => {
     setOpen1(true);
   };
@@ -43,14 +65,17 @@ const Note = () => {
         {/* Tiêu đề của danh sách chương */}
         <div className="p-3 bg-blue-100 border-b border-gray-300 text-gray-700 font-semibold text-lg justify-between items-center flex">
           <p>Ghi chú</p>
-          <Button style={{ fontSize: 25, color: "#2563EB" }} onClick={showModal1}>
+          <Button
+            style={{ fontSize: 25, color: "#2563EB" }}
+            onClick={showModal1}
+          >
             <IoMdAdd />
           </Button>
         </div>
 
         {/* Nội dung danh sách chương */}
         <div className="space-y-2 p-3">
-          {sampleNote?.map((c, index) => (
+          {notes?.map((c, index) => (
             <div
               className="flex justify-between items-center px-4 rounded-md transition-colors duration-200 hover:bg-blue-100"
               key={index}
@@ -67,7 +92,7 @@ const Note = () => {
         </div>
       </div>
       <Modal
-        title="Title"
+        title="Thêm mới"
         open={open1}
         onOk={handleOk1}
         confirmLoading={confirmLoading}

@@ -6,7 +6,13 @@ export class RedisService {
   redisClient: RedisClientType;
 
   constructor() {
-    this.redisClient = createClient();
+    this.redisClient = createClient({
+      socket: {
+        host: "localhost", // or your Redis server IP
+        port: 6379,
+        connectTimeout: 30000, // set timeout to 10 seconds
+      },
+    });
     this.redisClient.on("Error", () =>
       console.log("Error connect redis server")
     );

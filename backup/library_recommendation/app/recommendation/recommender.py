@@ -36,7 +36,7 @@ def recommend_books_rating(userId):
     # Tiến hành xử lý dự đoán
     unread_books_df['predicted_rating'] = new_book_predictions
     recommended_books = unread_books_df[unread_books_df['predicted_rating'] >=3 ]
-    print(recommended_books)
+    
     recommended_books = recommended_books.copy()
     # Loại bỏ các cột dư thừa  
     recommended_books[['_id','genre','majors']] = recommended_books[['_id','genre','majors']].astype(str)
@@ -44,15 +44,19 @@ def recommend_books_rating(userId):
     genre_data = {str(genre['_id']): genre for genre in db['genres'].find()}
     major_data = {str(major['_id']): major for major in db['majors'].find()}
      # Lặp qua từng sách và chèn thông tin genre và major dưới dạng object
+    
     recommended_books['genre'] = recommended_books['genre'].apply(lambda genre_id: genre_data.get(genre_id, {}))
     recommended_books['majors'] = recommended_books['majors'].apply(lambda major_id: major_data.get(major_id, {}))
     # Chuyển đổi _id trong genre_details và major_details thành str
+    
     recommended_books['genre'] = recommended_books['genre'].apply(
         lambda details: {**details, '_id': str(details.get('_id', ''))}
     )
     recommended_books['majors'] = recommended_books['majors'].apply(
         lambda details: {**details, '_id': str(details.get('_id', ''))}
     )
-    recommended_books = recommended_books.drop(columns=['Genre_encoded', 'read_prediction','Majors_encoded'], errors='ignore')  
+    
+    recommended_books = recommended_books.drop(columns=['Genre_encoded','Majors_encoded','contents','predicted_rating'], errors='ignore')  
     recommended_books = recommended_books.to_dict(orient='records')
+    print("rec",recommended_books)
     return recommended_books

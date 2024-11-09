@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Select, Slider, Spin } from "antd";
-import { getBookContentByPage } from "../api";
 const { Option } = Select;
 import { GrChapterNext, GrChapterPrevious } from "react-icons/gr";
 import { CiPause1, CiPlay1 } from "react-icons/ci";
 import { useLocation } from "react-router-dom";
-import { _getBookContentBypage } from "../../main/api";
 import { LuSkipBack, LuSkipForward } from "react-icons/lu";
+import { _getBookContentBypage } from "../api";
+import Loading from "../../../components/Loading";
 
 const AudioViewer = () => {
   const location = useLocation();
@@ -57,9 +57,11 @@ const AudioViewer = () => {
     setIsLoading(true);
     try {
       const response = await _getBookContentBypage(book._id, pageRef.current);
-      const temp = splitIntoSentences(response.data.data.content.content);
-
-      if (temp.length === 0) {
+      pageRef.current = response.data.content.page;
+      const temp = splitIntoSentences(response.data.content.content);
+      console.log("Trang:", pageRef.current, "Nội dung:", temp.length);
+      if (temp.length === 0 && pageRef.current > 1) {
+        console.log("Trang này trống, chuyển sang trang tiếp theo");
         await nextPage();
       } else {
         setCurrentSentenceIndex(0);
@@ -227,9 +229,7 @@ const AudioViewer = () => {
         </div>
       </div>
       {isLoading ? (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <Spin size="large" tip="Đang tải..." />
-        </div>
+        <Loading/>
       ) : (
         <div className="flex-grow mx-auto w-full bg-white rounded-lg shadow-md p-6 overflow-hidden">
           <div className="book-page max-h-[80vh] overflow-y-auto ">

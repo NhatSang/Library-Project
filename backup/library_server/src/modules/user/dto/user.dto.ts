@@ -48,7 +48,7 @@ export class UserUpdateDTO {
   @IsString()
   gender: string;
   @IsOptional()
-  @IsDate()
+  @IsString()
   dob: Date;
   @IsOptional()
   @IsString()

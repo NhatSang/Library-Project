@@ -80,6 +80,7 @@ export default function PdfViewer() {
           key={page}
           fileUrl={book.pdfLink}
           plugins={[defaultLayoutPluginInstance]}
+          on
           initialPage={page}
         />
       </div>
