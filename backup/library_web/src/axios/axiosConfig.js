@@ -8,13 +8,7 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
-export const axiosInstance2 = axios.create({
-  baseURL: "http://localhost:5001/api/v1", // Đặt URL gốc của API
-  timeout: 10000, // Thời gian timeout
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+
 // Thêm interceptor cho request nếu cần
 axiosInstance.interceptors.request.use(
   (config) => {

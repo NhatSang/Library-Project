@@ -1,16 +1,31 @@
-import { Service } from "typedi";
+import { HistoryService } from "./../history/history.service";
+import { Inject, Service } from "typedi";
 import Reviews from "./model/review.model";
 import mongoose from "mongoose";
 import { ReviewCreateReqDTO } from "./dto/review.dto";
 import axios from "axios";
 import { ReviewStatus } from "./types/review.type";
 import { eachDayOfInterval, format } from "date-fns";
+import Histories from "../history/model/history.mode";
 
 @Service()
 export class ReviewService {
+  constructor(@Inject() private historyService: HistoryService) {}
   async createReview(params: ReviewCreateReqDTO) {
     const { bookId, userId, content, rating } = params;
-
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    
+    let history = await this.historyService.getHistory(userId, bookId);
+    console.log(history);
+    
+    if(!history){
+      history = new Histories({
+        user: new mongoose.Types.ObjectId(userId),
+        book: new mongoose.Types.ObjectId(bookId),
+        page: 0,
+      });
+      await history.save();
+    }
     const review = await Reviews.findOneAndUpdate(
       {
         book: new mongoose.Types.ObjectId(bookId),
@@ -31,7 +46,9 @@ export class ReviewService {
     console.log(book);
     const review = await Reviews.find({
       book: new mongoose.Types.ObjectId(book),
-    }).populate("user", "_id name image");
+    })
+      .sort({ createdAt: -1 })
+      .populate("user", "_id name image");
     return review;
   }
 

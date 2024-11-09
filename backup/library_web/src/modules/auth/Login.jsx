@@ -4,12 +4,11 @@ import { Button, Form, Input, Flex } from "antd";
 import { IMAGES } from "../../constants";
 import { PiMicrosoftOutlookLogoFill } from "react-icons/pi";
 import { notification, Space } from "antd";
-import { login, loginTemp } from "./api";
+import { login, loginTemp, loginWithMs } from "./api";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { openNotificationWithIcon } from "../../helper";
 import { MsalProvider, useMsal, useIsAuthenticated } from "@azure/msal-react";
 import { useDispatch } from "react-redux";
-
 
 const Login = () => {
   const [api, contextHolder] = notification.useNotification();
@@ -17,6 +16,7 @@ const Login = () => {
   const email = location.state?.email;
   const navigate = useNavigate();
   const { instance } = useMsal();
+  console.log(email);
 
   const onFinish = async (values) => {
     try {
@@ -24,10 +24,7 @@ const Login = () => {
       console.log(response);
 
       localStorage.setItem("user", JSON.stringify(response.data.user));
-      localStorage.setItem(
-        "accessToken",
-        response.data.accessToken
-      );
+      localStorage.setItem("accessToken", response.data.accessToken);
 
       navigate("/home");
     } catch (error) {
@@ -38,18 +35,35 @@ const Login = () => {
       );
     }
   };
-  const handleLogin = () => {
-    instance
-      .loginPopup({
+  const handleLogin = async () => {
+    try {
+      const response = await instance.loginPopup({
         scopes: ["User.Read"],
         prompt: "select_account",
-      })
-      .then((response) => {
-        console.log("Login successful:", response);
-      })
-      .catch((error) => {
-        console.log("Login failed:", error);
       });
+
+      const loginResponse = await loginWithMs(
+        response.account.username,
+        response.uniqueId
+      );
+      const user = loginResponse.data.user;
+      
+      user.name = response.account.name;
+      console.log(user);
+      if (user.status == "active") {
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("accessToken", loginResponse.data.accessToken);
+        navigate("/home");
+      } else if (user.status == "pending")
+        navigate("/update-user", {
+          state: {
+            user: user,
+            accessToken: loginResponse.data.accessToken,
+          },
+        });
+    } catch (error) {
+      console.log("Login failed:", error);
+    }
   };
   return (
     <>
@@ -73,6 +87,7 @@ const Login = () => {
             >
               <Form.Item
                 name="username"
+                initialValue={email}
                 rules={[
                   {
                     required: true,
@@ -80,11 +95,7 @@ const Login = () => {
                   },
                 ]}
               >
-                <Input
-                  prefix={<UserOutlined />}
-                  placeholder="email"
-                  value={email}
-                />
+                <Input prefix={<UserOutlined />} placeholder="email" />
               </Form.Item>
               <Form.Item
                 name="password"

@@ -9,7 +9,7 @@ export class ViewController {
 
   updateView = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.viewService.updateView(req.query.bookId as string)
+      const result = await this.viewService.updateView(req.body.bookId)
       res.send(new ResponseCustom(result));
     } catch (error) {
       console.log(error);

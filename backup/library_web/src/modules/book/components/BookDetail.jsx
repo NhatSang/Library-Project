@@ -1,26 +1,74 @@
 import { Button, Image } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaRegEye } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import {
+  _createHistory,
+  _createView,
+  _getBookDetails,
+  _getHistory,
+} from "../api";
 
 const BookDetail = () => {
   const location = useLocation();
-  const book = location.state.book;
-  const history = location.state.history;
+  const bookId = location.state.book;
+  const [history, setHistory] = useState({});
+  const [book, setBook] = useState({});
   const navigate = useNavigate();
-  const handleReadBook = () => {
+  const handleReadBook = async () => {
+    await createHistory();
     localStorage.setItem("book", JSON.stringify(book));
     navigate("/book-content", { state: { book: book, page: 0 } });
   };
-  const handleContinuteRead = () => {
-    localStorage.setItem("book", JSON.stringify(book));
-    navigate("/book-content", { state: { history: history, book: book } });
+  const handleContinuteRead = async () => {
+    try {
+      const response2 = await _createView(bookId);
+      localStorage.setItem("book", JSON.stringify(book));
+      navigate("/book-content", {
+        state: { book: book, page: history.page },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
   useEffect(() => {
-    window.scrollTo(0, 0); // Cuộn lên đầu trang
+    fetchBookDetails();
+    fetchHistory();
   }, []);
+
+  const fetchBookDetails = async () => {
+    try {
+      const response = await _getBookDetails(bookId);
+      setBook(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const fetchHistory = async () => {
+    try {
+      const response = await _getHistory(bookId);
+      console.log(response.data);
+
+      setHistory(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const createHistory = async () => {
+    try {
+      const history = {
+        book: bookId,
+        page: 0,
+      };
+      const response1 = await _createHistory(history);
+      const response2 = await _createView(bookId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="p-4 bg-white rounded-lg shadow-md flex space-x-4">
       <div className="w-1/5">
@@ -31,10 +79,11 @@ const BookDetail = () => {
         />
         <div className="flex items-center justify-around">
           <div className="flex items-center space-x-2">
-            <span>4000</span> <FaRegEye />
+            <span>{book?.totalView}</span> <FaRegEye />
           </div>
           <div className="flex items-center space-x-2">
-            <span>4.5</span> <FaStar color="yellow" />
+            <span>{Number(book?.avgRating?.toFixed(1) || 0)}</span>{" "}
+            <FaStar color="yellow" />
           </div>
         </div>
         <div className="flex justify-center items-center space-x-4">

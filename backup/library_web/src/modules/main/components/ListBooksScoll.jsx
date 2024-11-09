@@ -9,21 +9,27 @@ const ListBooksScoll = ({ title, data }) => {
 
       <div className="flex whitespace-nowrap overflow-auto space-x-3 h-full">
         {data?.map((d, index) => (
-          <div key={index} className="h-full p-2 w-1/6 ">
+          <div key={`${d._id}_${index}`} className="h-full p-2 w-1/6 ">
             <Link
               to={"/book"}
-              state={{ book: d }}
+              state={{ book: d._id }}
               className="h-full p-2 hover:text-black hover:bg-gray-200 rounded-md border flex items-center"
             >
               <div>
-                <img src={d.image} className="w-full" />
+                <img
+                  src={d.image}
+                  className=""
+                  style={{ width: 200, height: 250, objectFit: "cover" }}
+                />
                 <div className="flex flex-col">
                   <div className="w-40">
                     <p className="font-bold text-lg text-blue-600 overflow-hidden whitespace-nowrap text-ellipsis w-full">
                       {d.title}
                     </p>
+                    <p className=" overflow-hidden whitespace-nowrap text-ellipsis w-full">
+                      {d.author}
+                    </p>
                   </div>
-                  <p >{d.author}</p>
                 </div>
               </div>
             </Link>

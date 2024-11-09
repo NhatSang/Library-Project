@@ -10,13 +10,13 @@ bp = Blueprint('recommend', __name__, url_prefix='/api/v1/recommend')
 def update_or_create_model_rating():
     data = request.json
     userId = data.get('userId')
-    print(userId)
+    print("a",userId)
     create_rating_model(userId)
     return jsonify({"message": "User model updated or created successfully!"}), 200
 
 @bp.route('/recommend_books_rating/<user_id>', methods=['GET'])
 def recommend_rating_books_route(user_id):
-    print(user_id)
+    print("b",user_id)
     try:
         recommendations = recommend_books_rating(user_id)
         return jsonify(recommendations), 200

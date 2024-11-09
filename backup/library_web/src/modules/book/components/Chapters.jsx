@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Button } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { FaHeadphones } from "react-icons/fa6";
-import { sampleChapters } from "../../../constants";
 import { IoIosBook } from "react-icons/io";
 import { _getChapterByIdBook } from "../api";
 import { MdOutlineArrowBack } from "react-icons/md";
@@ -18,11 +17,13 @@ const Chapters = () => {
 
   const fetchChapters = async () => {
     try {
-      console.log(book._id);
-
       const response = await _getChapterByIdBook(book._id);
-      setChapters(response.data.data);
-    } catch (error) {}
+      console.log(response.data);
+      
+      setChapters(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleAudio = () => {
     setIsAudio(true);
@@ -45,7 +46,7 @@ const Chapters = () => {
       <div className="space-x-4 sticky top-2 bg-white z-10 p-3 shadow-lg border border-gray-200 rounded-md flex items-center">
         <Button
           style={{ fontSize: 25, color: "#2563EB" }}
-          onClick={() => navigate("/book", { state: { book: book } })}
+          onClick={() => navigate("/book", { state: { book: book._id } })}
         >
           <MdOutlineArrowBack />
         </Button>
@@ -68,17 +69,20 @@ const Chapters = () => {
 
         {/* Nội dung danh sách chương */}
         <div className="space-y-2 p-3">
-          {sampleChapters?.map((c, index) => (
+          {chapters?.map((c, index) => (
             <div
-              className="flex justify-between items-center px-4 rounded-md transition-colors duration-200 hover:bg-blue-100"
+              className="px-4 rounded-md transition-colors duration-200 hover:bg-blue-100"
               key={index}
             >
               <Button
                 onClick={() => handleChangeChapter(c)}
                 type="link"
-                className="text-gray-700 hover:text-blue-600 font-medium text-lg flex justify-start w-full"
+                className="text-gray-700 hover:text-blue-600 font-medium text-left inline-block max-w-full"
+                style={{ padding: "0.5rem 1rem", whiteSpace: "normal" }}
               >
-                <p className="text-ellipsis overflow-hidden">{c.title}</p>
+                <p className="whitespace-normal break-words max-w-full">
+                  {c.title}
+                </p>
               </Button>
             </div>
           ))}

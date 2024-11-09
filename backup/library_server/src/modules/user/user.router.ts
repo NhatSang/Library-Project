@@ -2,7 +2,7 @@ import { Router } from "express";
 import { UserMiddleware } from "./user.middleware";
 import Container from "typedi";
 import { UserController } from "./user.controller";
-import { UserRegisterDTO } from "./dto/user.dto";
+import { UserRegisterDTO, UserUpdateDTO } from "./dto/user.dto";
 import { AuthMiddleware } from "../auth/auth.middleware";
 import { Role } from "./types/user.type";
 import { upload } from "../../aws/aws.helper";
@@ -31,6 +31,7 @@ userRouter.post("/users/fcm-token", userController._postFcmtoken);
 userRouter.post(
   "/users/update-user",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
+  userMiddleware.validateUser(UserUpdateDTO),
   userController._updateUser
 );
 

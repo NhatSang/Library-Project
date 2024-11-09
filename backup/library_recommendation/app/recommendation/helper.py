@@ -62,7 +62,6 @@ def get_history_for_user(userId,books_df):
 def get_rating_for_user(userId, books_df):
     # Lấy lịch sử sách đã đọc của người dùng
     histories_df = pd.DataFrame(list(db['histories'].find({'user': ObjectId(userId)})))
-    print(histories_df)
     review_df = pd.DataFrame(list(db['reviews'].find({'user': ObjectId(userId)})))
     
     # Ghép lịch sử sách đã đọc với thông tin sách
@@ -80,9 +79,17 @@ def get_rating_for_user(userId, books_df):
     # Gán rating = 0 cho sách chưa đọc
     selected_books_unread['rating'] = 0
     
-    # Thêm rating cho sách đã đọc từ review (nếu có)
-    user_book_df = pd.merge(user_book_df, review_df[['book', 'rating']], how='left', left_on='book', right_on='book')
-    user_book_df['rating'].fillna(3, inplace=True)  # Gán rating = 3 cho sách đã đọc mà không có review
+    # Kiểm tra nếu có dữ liệu review thì thêm rating cho sách đã đọc
+    if not review_df.empty:
+        # Thêm rating cho sách đã đọc từ review (nếu có)
+        user_book_df = pd.merge(user_book_df, review_df[['book', 'rating']], how='left', left_on='book', right_on='book')
+    
+    # Kiểm tra lại xem cột 'rating' có tồn tại hay không trong user_book_df
+    if 'rating' not in user_book_df.columns:
+        user_book_df['rating'] = 3  # Nếu không có cột rating, thêm vào với giá trị mặc định là 3
+    
+    # Gán rating = 3 cho sách đã đọc mà không có review
+    user_book_df['rating'].fillna(3, inplace=True)
     
     # Chọn các cột cần thiết
     read_books_df = user_book_df[['title', 'genre', 'summary', 'Genre_encoded', 'Majors_encoded', 'rating']].copy()

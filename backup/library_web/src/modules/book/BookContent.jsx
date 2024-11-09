@@ -5,9 +5,6 @@ import Chapters from "./components/Chapters";
 import Note from "./components/Note";
 
 const BookContent = () => {
-  // const location = useLocation();
-  // const book = location.state.book;
-
   return (
     <div className="grid grid-cols-10 gap-4">
       <div className="col-span-2 pl-4">

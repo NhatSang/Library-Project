@@ -1,4 +1,4 @@
-import axiosInstance, { axiosInstance2 } from "../../../axios/axiosConfig";
+import axiosInstance from "../../../axios/axiosConfig";
 
 export const getHistories = async () => {
   const url = "/histories";
@@ -11,37 +11,45 @@ export const getGenres = async () => {
   return await axiosInstance.get(url);
 };
 
-export const _getBookByMajorsUser = async()=>{
+export const _getBookByMajorsUser = async (page, limit) => {
   const url = "/book/get-by-majors-user";
-  return await axiosInstance.get(url);
-}
+  return axiosInstance.get(url, {
+    params: {
+      limit: limit || 10,
+      page: page || 1,
+    },
+  });
+};
 
-export const _getBookNewest = async()=>{
-  const url = "/book/get-newest";
-  return await axiosInstance.get(url);
-}
-
-export const _getBookTopRated = async()=>{
+export const _getBooksTopRated = async (page, limit) => {
   const url = "/book/get-top-rated";
-  return await axiosInstance.get(url);
-}
+  return axiosInstance.get(url, {
+    params: {
+      limit: limit || 10,
+      page: page || 1,
+    },
+  });
+};
 
-export const _getBookTopViewed = async()=>{
+export const _getBooksTopViewed = async (page, limit) => {
   const url = "/book/get-top-viewed";
-  return await axiosInstance.get(url);
-}
+  return axiosInstance.get(url, {
+    params: {
+      limit: limit || 10,
+      page: page || 1,
+    },
+  });
+};
 
-export const _getRecommendBooks= async () => {
+export const _getRecommendBooks = async () => {
   const url = "/book/recommend-books";
   return await axiosInstance.get(url);
 };
 
-export const _getBookContentBypage = async (id, page) => {
-  const url = "/get-book-content-by-page";
-  return axiosInstance2.get(url, {
-    params: {
-      bookId: id,
-      page,
-    },
+export const _findBooks = async (keyword, page, limit) => {
+  const url = "/books/find-books";
+  return await axiosInstance.post(url, {
+    keyword: keyword,
+    params: { page: page, limit: limit },
   });
 };

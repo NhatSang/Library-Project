@@ -188,7 +188,7 @@ export class BookController {
     try {
       const { books, pagination } = await this.bookservice.getBooksByGenre(
         req.query.genreId as string,
-        Pagination.fromRequest(req)
+        Pagination.fromRequestQuery(req)
       );
       res.send(new ResponseCustom(books, null, pagination));
     } catch (error) {
