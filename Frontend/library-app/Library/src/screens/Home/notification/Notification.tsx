@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, Image, ImageBackground, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { _getNotificationByUser } from '../apis';
+import { _getNotifications } from '../apis';
 
 
 const Notification = ({ navigation }: any) => {
@@ -24,7 +24,7 @@ const Notification = ({ navigation }: any) => {
 
     const getNotification = async () => {
         try {
-            const response = await _getNotificationByUser();
+            const response = await _getNotifications();
             if (response.data) {
                 setNotifications(response.data);
             }
@@ -57,7 +57,7 @@ const Notification = ({ navigation }: any) => {
                                     return (
                                         <Pressable
                                             onPress={() => {
-                                                navigation.navigate(ScreenName.NotificationDetail, { notification_id: item.notification._id })
+                                                navigation.navigate(ScreenName.NotificationDetail, { id: item.notification._id })
                                             }}
                                             className='px-5'>
                                             <View className={`px-8 py-2 h-20 flex-row border border-gray-300 mt-2 rounded-xl ${item.isRead == false ? 'bg-green-200' : ''}`}>

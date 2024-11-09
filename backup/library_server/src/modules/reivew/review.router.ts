@@ -18,7 +18,7 @@ reviewRouter.post(
 );
 //query: bookId
 reviewRouter.get(
-  "/review",
+  "/reviews",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   reviewController._getReviewByBookId
 );

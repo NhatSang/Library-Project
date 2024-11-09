@@ -1,223 +1,184 @@
 import { api, api2, api3 } from '../../../apis/configAPI';
 
-const _getNewestBooks = async () => {
-    const url = `/get-newest-books`;
+//book
+
+export const _getBooksMajors = async (page?:number,limit?:number) => {
+    const url = "/book/get-by-majors-user";
+    return api.get(url,{
+        params: {
+            limit: limit || 5,
+            page: page || 1
+        }
+    });
+}
+
+export const _getBooksTopRated = async (page?:number,limit?:number) => {
+    const url = "/book/get-top-rated";
+    return api.get(url,{
+        params: {
+            limit: limit || 5,
+            page: page || 1
+        }
+    });
+}
+
+export const _getBooksTopViewed = async (page?:number,limit?:number) => {
+    const url = "/book/get-top-viewed";
+    return api.get(url,{
+        params: {
+            limit: limit || 5,
+            page: page || 1
+        }
+    });
+}
+
+export const _getRecommendBooks = async (page?:number,limit?:number) => {
+    const url = "/book/recommend-books";
+    return api.get(url,{
+        params: {
+            limit: limit || 5,
+            page: page || 1
+        }
+    });
+}
+
+export const _getBookDetail = async (bookId:string) => {
+    const url ="/books/book-details";
+    return api.get(url,{
+        params: {
+            bookId: bookId
+        }
+    });
+}
+
+export const _findBooks = async (keyword:string,page?:number,limit?:number) => {
+    const url = "/books/find-books";
+    return api.post(url,{
+        keyword: keyword,
+        page: page || 1,
+        limit: limit || 5
+    });
+}
+export type iBookContent = {
+    bookId: string;
+    page: number;
+}
+export const _getBookContent = async (data:iBookContent) => {
+    const url = "/book/get-content";
+    return api.post(url,{
+        params: {
+            bookId: data.bookId,
+            page: data.page
+        }
+    });
+}
+
+//notification
+export const _getNotifications = async () => {
+    const url = "/user/notifications";
     return api.get(url);
-};
+}
 
-const _getChapterByIdBook = async (id: string) => {
-    const url = '/get-chapter-by-book-id';
-    return api2.get(url, {
-        params: {
-            bookId: id,
-        },
+export  const _markAsRead = async (id:string) => {
+    const url = "/notification/mark-as-read";
+    return api.post(url,{
+        id
     });
-};
-
-const _getReviewNewest = async (id: string) => {
-    const url = '/review-newest';
-    return api.get(url, {
-        params: {
-            bookId: id,
-        },
+}
+export const _getNotificationById = async (id:string) => {
+    const url = "/notification";
+    return api.post(url,{
+        id
     });
-};
+}
 
-const _getAllReviewByBookId = async (id: string) => {
-    const url = '/review';
-    return api.get(url, {
+//review 
+export const _getNewReview = (bookId:string)=>{
+    const url = "/review-newest";
+    return api.get(url,{
         params: {
-            bookId: id,
-        },
+            bookId
+        }
     });
-};
+}
 
+export const _getReviews = (bookId:string)=>{
+    const url = "/reviews";
+    return api.get(url,{
+        params: {
+            bookId
+        }
+    });
+}
 export type iCreateReview = {
     bookId: string;
     content: string;
     rating: number;
-};
+}
+export const _createReview = (data:iCreateReview)=>{
+    const url = "/review";
+    return api.post(url,data);
+}
 
-const _createReview = async (data: iCreateReview) => {
-    const url = '/review';
-    return api.post(url, data);
-};
-
-const _createNote = async (data: any) => {
-    const url = '/create-note';
-    return api.post(url, data);
-};
-
-const _getNoteByBookId = async (id: string) => {
-    const url = '/get-note-by-book-id';
-    return api.get(url, {
+//chapter
+export const _getChapters = (bookId:string)=>{
+    const url = "/book/chapters";
+    return api.get(url,{
         params: {
-            bookId: id,
-        },
+            bookId
+        }
     });
-};
+}
 
-const _deleteNote = async (id: string) => {
-    const url = '/delete-note';
+//history
+export const _getHistories = (bookId:string)=>{
+    const url ="/history";
+    return api.get(url,{
+        params: {
+            bookId
+        }
+    });
+}
+
+//note
+
+export const _getNotes = (bookId:string)=>{
+    const url = "/notes";
+    return api.get(url,{
+        params: {
+            bookId
+        }
+    });
+}
+
+export type iCreateNote = {
+    bookId: string;
+    content: string;
+    page: number;
+}
+
+export const _createNote = (data:iCreateNote)=>{
+    const url = "/note";
+    return api.post(url,data);
+}
+
+export type iUpdateNote = {
+    bookId: string;
+    noteId: string;
+    content: string;
+    page: number;
+}
+
+export const _updateNote = (data:iUpdateNote)=>{
+    const url = "/note";
+    return api.put(url,data);
+}
+
+export const _deleteNote = (noteId:string)=>{
+    const url = `/note/${noteId}`;
     return api.delete(url, {
         params: {
-            noteId: id,
-        },
-    });
-};
-
-const _getHistoryByBookIdAndUser = async (bookId: string) => {
-    const url = '/get-history-by-book-id-and-user';
-    return api2.get(url, {
-        params: {
-            bookId,
-        },
-    });
-};
-
-const _getBooksByMayjors = async (id: string) => {
-    const url = '/get-book-by-majors';
-    return api.get(url, {
-        params: {
-            majorsId: id,
-        },
-    });
-};
-
-const _getRecomendBoook = async () => {
-    const url = "/book/recommend-books";
-    return api.get(url);
-};
-
-const _getRecomendBoookByMajor = async (id: string) => {
-    const url = `/recommend_books_by_majors/${id}`;
-    return api2.get(url);
-};
-const _updateModel = async (id: string) => {
-    const url = `/update_model`;
-    return api2.post(url, {
-        userId: id,
-    });
-};
-
-const _getAllBook2 = async () => {
-    const url = '/get-all-book2';
-    return api2.get(url);
-};
-
-const _getBookContentBypage = async (id: string, page: number) => {
-    const url = '/get-book-content-by-page';
-    return api2.get(url, {
-        params: {
-            bookId: id,
-            page,
-        },
-    });
-};
-
-const _getSummaryByBookId = async (id: string) => {
-    const url = '/get-summary-by-book-id';
-    return api.get(url, {
-        params: {
-            bookId: id,
-        },
-    });
-};
-
-const _searchBook = async (stringName: any) => {
-    const url = '/search-book';
-    return api2.get(url, {
-        params: {
-            searchString: stringName,
-        },
-    });
-};
-
-const _getNotificationByUser = async () => {
-    const url = '/user/notifications';
-    return api.get(url);
-};
-
-const _getNotificationById = async (id: string) => {
-    console.log('id', id);
-    const url = '/notification';
-    return api.get(url, {
-        params: {
-            id,
-        },
-    });
-};
-//
-const _getBooksByMajorsUser = () => {
-    const url = '/book/get-by-majors-user';
-    return api.get(url);
-};
-
-const _getBookNewest = async () => {
-    const url = '/book/get-newest';
-    return api.get(url);
-};
-
-const _getBookTopView = async () => {
-    const url = '/book/get-top-viewed';
-    return api.get(url);
-};
-
-const _markAsRead = async (id: string) => {
-    const url = '/notification/mark-as-read';
-    return api.post(url, {
-        id,
-    });
-};
-
-const _getBooksAI = async (id: string) => {
-    const url = `/recommend/recommend_books_rating/${id}`;
-    return api3.get(url);
-};
-
-const _findBook = async (keyword: string) => {
-    const url ="/books/find_books";
-    return api.get(url, {
-        params: {
-            keyword,
-        },
+            noteId
+        }
     });
 }
-
-const _getBookDetail = async (bookId: string) => {
-    const url =  "/books/book-details";
-    return api.get(url, {
-        params: {
-            bookId,
-        },
-    });
-}
-
-export {
-    _createNote,
-    _createReview,
-    _deleteNote,
-    _getAllBook2,
-    _getAllReviewByBookId,
-    _getBookContentBypage,
-    _getBookNewest,
-    _getBooksAI,
-    _getBooksByMajorsUser,
-    _getBooksByMayjors,
-    _getBookTopView,
-    _getChapterByIdBook,
-    _getHistoryByBookIdAndUser,
-    _getNewestBooks,
-    _getNoteByBookId,
-    _getNotificationById,
-    _getNotificationByUser,
-    _getRecomendBoook,
-    _getRecomendBoookByMajor,
-    _getReviewNewest,
-    _getSummaryByBookId,
-    _markAsRead,
-    _searchBook,
-    _updateModel,
-    _findBook,
-    _getBookDetail
-};

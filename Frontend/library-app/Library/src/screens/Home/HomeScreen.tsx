@@ -13,7 +13,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { iBook } from 'src/types/iBook';
-import { _getAllBook2, _getBookNewest, _getBooksAI, _getBooksByMajorsUser, _getBookTopView, _getNotificationByUser, _getRecomendBoook } from './apis';
+import { _getBooksMajors, _getBooksTopRated, _getBooksTopViewed, _getNotifications, _getRecommendBooks } from './apis';
 
 
 const HomeScreen = ({ navigation }: any) => {
@@ -22,7 +22,7 @@ const HomeScreen = ({ navigation }: any) => {
     const [listRecommendBook, setListRecommendBook] = useState<iBook[]>([]);
     const [listRecomendByMajors, setListRecomendByMajors] = useState<iBook[]>([]);
     const [listBookTopView, setListBookTopView] = useState<iBook[]>([]);
-    const [listBook2, setListBook2] = useState<iBook[]>([]);
+    const [listBookTopRate, setListBookTopRate] = useState<iBook[]>([]);
     const [loadImage, setLoadImage] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [notifications, setNotifications] = useState<any>(null);
@@ -47,13 +47,12 @@ const HomeScreen = ({ navigation }: any) => {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            getNewestBooks();
+            getMe();
+            getNotification();
+            getBookTopRate();
             getBookTopView();
             getRecommendBook();
             getRecommendBookByMajors();
-            getNotification();
-            getMe();
-            getBook2();
         });
         return unsubscribe;
     }, [navigation]);
@@ -98,21 +97,9 @@ const HomeScreen = ({ navigation }: any) => {
     }
 
 
-    const getBook2 = async () => {
-        try {
-            const response = await _getAllBook2();
-            console.log('response', response.status);
-            if (response.status) {
-                setListBook2(response.data.data);
-            }
-        } catch (error) {
-            console.log('error', error);
-        }
-    }
-
     const getNotification = async () => {
         try {
-            const response = await _getNotificationByUser();
+            const response = await _getNotifications();
             if (response.data) {
                 const data = response.data.filter((item: any) => item.isRead == false);
                 setNotifications(data);
@@ -121,22 +108,20 @@ const HomeScreen = ({ navigation }: any) => {
             console.log('error', error);
         }
     }
-
-    const getNewestBooks = async () => {
-        setLoading(true);
-        setLoadImage(true);
+    const getBookTopRate = async () => {
         try {
-            const response = await _getBookNewest();
+            const response = await _getBooksTopRated();
             if (response.data) {
-                setListNewBook(response.data);
+                setListBookTopRate(response.data);
             }
         } catch (error) {
             console.log('error', error);
         }
     }
+
     const getBookTopView = async () => {
         try {
-            const response = await _getBookTopView();
+            const response = await _getBooksTopViewed();
             if (response.data) {
                 setListBookTopView(response.data);
             }
@@ -146,7 +131,7 @@ const HomeScreen = ({ navigation }: any) => {
     }
     const getRecommendBook = async () => {
         try {
-                const response = await _getRecomendBoook();
+                const response = await _getRecommendBooks();
                 console.log('response', response);
                 if (response.data) {
                     setListRecommendBook(response.data);
@@ -158,7 +143,7 @@ const HomeScreen = ({ navigation }: any) => {
 
     const getRecommendBookByMajors = async () => {
         try {
-            const response = await _getBooksByMajorsUser();
+            const response = await _getBooksMajors();
             if (response.data) {
                 setListRecomendByMajors(response.data);
                 setLoadImage(false);
@@ -199,7 +184,6 @@ const HomeScreen = ({ navigation }: any) => {
                         <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý theo người dùng cùng ngành' />
                     </View>
                     <View className='h-72 justify-center items-center'>
-                        {/* <SwiperImage /> */}
                         <Carousel
                             loop
                             mode='parallax'
@@ -273,18 +257,15 @@ const HomeScreen = ({ navigation }: any) => {
                                 </>
                             )
                         }
-                        {/* <View className='py-2'>
-                            <AppText size={20} font={fontFamilies.robotoBold} text='Sách theo chuyên ngành của bạn' />
-                        </View> */}
 
                         {
-                            listNewBook.length > 0 && (
+                            listBookTopRate.length > 0 && (
                                 <>
                                     <View className='py-2'>
-                                        <AppText size={20} font={fontFamilies.robotoBold} text='Sách mới nhất' />
+                                        <AppText size={20} font={fontFamilies.robotoBold} text='Sách đánh giá cao' />
                                     </View>
                                     <FlatList
-                                        data={listNewBook}
+                                        data={listBookTopRate}
                                         horizontal={true}
                                         showsHorizontalScrollIndicator={false}
                                         renderItem={({ item }) => (
@@ -362,7 +343,7 @@ const HomeScreen = ({ navigation }: any) => {
                                 </>
                             )
                         }
-                        {
+                        {/* {
                             listBook2.length > 0 && (
                                 <>
                                     <View className='py-2'>
@@ -398,7 +379,7 @@ const HomeScreen = ({ navigation }: any) => {
                                     />
                                 </>
                             )
-                        }
+                        } */}
                     </View>
                 </ScrollView>
             </SafeAreaView >

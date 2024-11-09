@@ -19,7 +19,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Feather from 'react-native-vector-icons/Feather'
 import { iBook } from 'src/types/iBook'
 import { IReview } from 'src/types/iReview'
-import { _getBookDetail, _getReviewNewest } from '../apis'
+import { _getBookDetail, _getNewReview } from '../apis'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import Share from 'react-native-share';
 import ViewShot from 'react-native-view-shot';
@@ -110,7 +110,7 @@ const BookDetail = ({ navigation, route }: any) => {
 
     const getReviewNewest = async () => {
         try {
-            const response = await _getReviewNewest(book._id);
+            const response = await _getNewReview(book._id);
             if (response.data) {
                 setReviews(response.data);
             }
@@ -271,7 +271,7 @@ const BookDetail = ({ navigation, route }: any) => {
                                             <View className='flex-row justify-between '>
                                                 <View className='flex-row'>
                                                     <View className='w-9 h-9 rounded-full border border-red-500 justify-center items-center'>
-                                                        <Image source={{ uri: item?.user?.image }} className='w-8 h-8' />
+                                                        <Image source={{ uri: item?.user?.image }} className='w-8 h-8 rounded-full' />
                                                     </View>
                                                     <View className='pl-3'>
                                                         <AppText text={

@@ -47,7 +47,7 @@ export class NoteController {
     try {
       const result = await this.noteService.deleteNote(
         req.body.userId,
-        req.query.noteId as string
+        req.params.noteId
       );
       res.send(new ResponseCustom(result));
     } catch (error) {

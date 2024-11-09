@@ -10,7 +10,7 @@ import Tts, { Voice } from 'react-native-tts';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { IChapter } from 'src/types/iChapter';
-import { _getBookContentBypage, _getChapterByIdBook } from '../apis';
+import { _getBookContent, _getChapters, iBookContent } from '../apis';
 
 function splitIntoSentences(content: string) {
     const contentWithoutFirstLine = content.split('\n').slice(1);
@@ -123,7 +123,11 @@ const ListentText = ({ navigation, route }: any) => {
     }, [renderTrigger]);
 
     const getContent = async () => {
-        const res: any = await _getBookContentBypage(bookId, currentPage.current);
+        const data:iBookContent = {
+            bookId: bookId,
+            page: currentPage.current
+        }
+        const res: any = await _getBookContent(data);
         if (res.status) {
             pages.current = res.data.data.pages;
             const a = splitIntoSentences(res.data.data.content.content);
@@ -178,7 +182,7 @@ const ListentText = ({ navigation, route }: any) => {
 
     const getChapterByIdBook = async () => {
         try {
-            const response = await _getChapterByIdBook(bookId);
+            const response = await _getChapters(bookId);
             if (response.data) {
                 setChapter(response.data.data);
             }
