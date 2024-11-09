@@ -69,7 +69,7 @@ export type iBookContent = {
 };
 export const _getBookContent = async (data: iBookContent) => {
     const url = '/book/get-content';
-    return api.post(url, {
+    return api.get(url, {
         params: {
             bookId: data.bookId,
             page: data.page,
