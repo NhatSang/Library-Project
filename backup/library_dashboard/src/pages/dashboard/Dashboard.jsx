@@ -87,8 +87,8 @@ const Dashboard = () => {
 
 const handleStatistic = async() => {
   try {
-    // const date = new Date();
-  const { monday, sunday } = getMondayAndSundayFromAnyDay(new Date("2024-11-01"));
+    const date = new Date();
+  const { monday, sunday } = getMondayAndSundayFromAnyDay(date);
   const response = await _getStatisticsDashBoard({
     fromDate: monday,
     toDate: sunday,
@@ -103,8 +103,8 @@ const handleStatistic = async() => {
 
 const handleStatisticUser = async() => {
   try {
-    // const date = new Date();
-  const { monday, sunday } = getMondayAndSundayFromAnyDay(new Date("2024-11-01"));
+    const date = new Date();
+  const { monday, sunday } = getMondayAndSundayFromAnyDay(date);
   const response = await _getStatisticsDashBoardUser({
     fromDate: monday,
     toDate: sunday,
@@ -133,9 +133,8 @@ const getMajors = async() => {
 
 const handleGetAllSatistic = async() => {
   try {
-        // const date = new Date();
-        console.log(major._id);
-  const { monday, sunday } = getMondayAndSundayFromAnyDay(new Date("2024-11-01"));
+        const date = new Date();
+  const { monday, sunday } = getMondayAndSundayFromAnyDay(date);
     const response1 = await _getStatisticsDashBoard({
       fromDate: monday,
       toDate: sunday,

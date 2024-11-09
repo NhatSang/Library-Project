@@ -48,7 +48,8 @@ const AddGenrere = () => {
         try {
             const res = await _createGenre(genre.name);
             if(res.data){
-                setGenres(res.data);
+                setGenres([...genres,res.data]);
+                setGenre({});
                 setLoading(false);
                 openNotification(true,"Thể loại đã được thêm thành công!","Thành công")();
             }

@@ -68,7 +68,6 @@ const Books = () => {
     {
       title: 'Chuyên ngành',
       key: 'majors',
-      key: 'majors',
       render: (text, record) => (
         <span>
           {record.majors}
@@ -182,7 +181,7 @@ const Books = () => {
 
       <CCol xs={12} md={12} style={{marginTop:20,marginBottom:10,justifyContent:'center',alignItems:'center'}}>
       <ConfigProvider locale={viVN}>  
-      <Pagination showQuickJumper defaultCurrent={pagination.page} total={pagination.total} onChange={handlePageChange} />
+      <Pagination pageSize={5} showQuickJumper defaultCurrent={pagination.page} total={pagination.total} onChange={handlePageChange} />
       </ConfigProvider>
       </CCol>
 
