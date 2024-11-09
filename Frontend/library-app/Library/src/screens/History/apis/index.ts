@@ -16,4 +16,9 @@ const _createHistory = async (data: iCreateHistory) => {
     return api.post(url, data);
 };
 
-export { _createHistory, _getHistoryByUser };
+const _deleteHistory = async (bookId: string) => {
+    const url = `/historys/${bookId}`;
+    return api.delete(url);
+};
+
+export { _createHistory, _deleteHistory, _getHistoryByUser };

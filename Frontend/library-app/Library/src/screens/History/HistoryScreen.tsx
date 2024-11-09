@@ -7,11 +7,18 @@ import { ScreenName } from '@constants/ScreenName';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, ImageBackground, View } from 'react-native';
+import { Image, ImageBackground, View } from 'react-native';
 import RNFetchBlob from 'react-native-blob-util';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+    SwipeableFlatList,
+    SwipeableQuickActionButton,
+    SwipeableQuickActions,
+} from 'react-native-swipe-list';
+import Toast from 'react-native-toast-message';
 import { iHistory } from 'src/types/iHistory';
-import { _getHistoryByUser } from './apis';
+import { _deleteHistory, _getHistoryByUser } from './apis';
+
 
 const HistoryScreen = ({ navigation }: any) => {
     const [history, setHistory] = useState<iHistory[]>([]);
@@ -73,7 +80,7 @@ const HistoryScreen = ({ navigation }: any) => {
                     <View className='flex-1 justify-end'>
                         <View className='pb-4'>
                             <AppText onPress={
-                                () => navigation.navigate(ScreenName.BookDetail, { item })
+                                () => navigation.navigate(ScreenName.BookDetail, { item: item.book })
                             } text={'Xem chi tiết'} color={globalColor.primary} />
                         </View>
                         <ButtobnCenter
@@ -95,6 +102,32 @@ const HistoryScreen = ({ navigation }: any) => {
         );
     }
 
+    const handleDelete = async (id: string) => {
+        try {
+            const response = await _deleteHistory(id);
+            if (response.data) {
+                setHistory(history.filter(item => item._id !== id));
+                Toast.show({
+                    type: 'success',
+                    text1: 'Xoá thành công',
+                    visibilityTime: 2000,
+                    autoHide: true,
+                    position: 'bottom',
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            Toast.show({
+                type: 'error',
+                text1: 'Xoá thất bại',
+                visibilityTime: 2000,
+                autoHide: true,
+                position: 'bottom',
+            });
+
+        }
+    }
+
 
     return (
         <ImageBackground source={MAIN.BACKGROUND} style={{ flex: 1 }}>
@@ -107,11 +140,28 @@ const HistoryScreen = ({ navigation }: any) => {
                     />
                 </View>
                 <View className='flex-1'>
-                    <FlatList
+                    {/* <FlatList
                         showsVerticalScrollIndicator={false}
                         data={history}
                         renderItem={itemHistory}
                         keyExtractor={(item: iHistory) => item._id}
+                    /> */}
+                    <SwipeableFlatList
+                        showsVerticalScrollIndicator={false}
+                        data={history}
+                        renderItem={itemHistory}
+                        keyExtractor={(item: iHistory) => item._id}
+                        renderRightActions={({ item }) => (
+                            <SwipeableQuickActions style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <SwipeableQuickActionButton
+                                    onPress={() => handleDelete(item._id)}
+                                    style={{
+                                        padding: 10,
+                                        borderWidth: 1,
+                                        borderRadius: 8,
+                                    }} textStyle={{ fontWeight: 'bold', color: 'red' }} text="Xoá" />
+                            </SwipeableQuickActions>
+                        )}
                     />
                 </View>
             </SafeAreaView>
