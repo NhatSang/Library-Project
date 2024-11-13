@@ -302,6 +302,7 @@ export class AuthService {
       );
       console.log(user._id.toString());
       await this.redisService.deleteAllKeyByUserId(user._id.toString());
+      await session.commitTransaction();
       return true;
     } catch (error) {
       await session.abortTransaction();

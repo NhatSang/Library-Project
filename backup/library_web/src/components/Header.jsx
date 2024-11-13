@@ -20,6 +20,10 @@ const Header = () => {
     localStorage.removeItem("accessToken");
     navigate("/");
   };
+
+  const handleChangePass = () =>{
+    navigate("/update-password");
+  }
   const items = [
     {
       key: "1",
@@ -32,7 +36,7 @@ const Header = () => {
     {
       key: "2",
       label: (
-        <Button type="link" className="text-black">
+        <Button type="link" className="text-black" onClick={handleChangePass}>
           Đổi mật khẩu
         </Button>
       ),

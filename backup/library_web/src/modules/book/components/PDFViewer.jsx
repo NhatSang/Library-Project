@@ -3,16 +3,36 @@ import { Viewer, Worker } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import { useLocation } from "react-router-dom";
+import { useLocation, useOutletContext } from "react-router-dom";
 import { useSelector } from "react-redux";
+import debounce from "lodash/debounce";
+import { _createHistory } from "../api";
 
 export default function PdfViewer() {
-  // Initialize current page from props
   const location = useLocation();
   const book = location.state.book;
   const page = location.state.page;
+  const { cPage, setCPage } = useOutletContext();
 
+  const handlePageChange = async (e) => {
+    // localStorage.setItem("currentPage", e.currentPage);
+    setCPage(e.currentPage);
+    await debouncedSave(e.currentPage);
+  };
 
+  const debouncedSave = debounce(async (cPage) => {
+    console.log("current page", cPage);
+    try {
+      const history = {
+        book: book._id,
+        page: cPage,
+      };
+      const response1 = await _createHistory(history);
+      console.log("đã save");
+    } catch (error) {
+      console.log(error);
+    }
+  }, 2000);
   const renderToolbar = (Toolbar) => (
     <Toolbar>
       {(slots) => {
@@ -52,9 +72,7 @@ export default function PdfViewer() {
                 flexDirection: "row",
               }}
             >
-              <CurrentPageInput
-              />{" "}
-              / <NumberOfPages />
+              <CurrentPageInput /> / <NumberOfPages />
             </div>
             <div style={{ padding: "0px 2px" }}>
               <GoToNextPage />
@@ -77,11 +95,11 @@ export default function PdfViewer() {
     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
       <div style={{ height: window.innerHeight }} className="pt-2">
         <Viewer
-          key={page}
+          key={page }
           fileUrl={book.pdfLink}
           plugins={[defaultLayoutPluginInstance]}
-          on
-          initialPage={page}
+          onPageChange={handlePageChange}
+          initialPage={page }
         />
       </div>
     </Worker>

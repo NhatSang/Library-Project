@@ -2,14 +2,16 @@ import React from "react";
 import { Button, Form, Input, Flex, notification } from "antd";
 import { MailOutlined } from "@ant-design/icons";
 import { IMAGES } from "../../../constants";
-import { sendCode } from "../api";
+import { sendCode, sendCodeUpdate } from "../api";
 import { openNotificationWithIcon } from "../../../helper";
-const SendEmail = ({ setStage, setEmail, email }) => {
+const SendEmail = ({ setStage, setEmail, email, type }) => {
   const [api, contextHolder] = notification.useNotification();
   const onFinish = async (values) => {
     if (!validateInput(values)) return;
     try {
-      const response = await sendCode(values.email);
+      let response;
+      if (type == "register") response = await sendCode(values.email);
+      else response = await sendCodeUpdate(values.email);
       setEmail(response.data);
       setStage(2);
     } catch (error) {

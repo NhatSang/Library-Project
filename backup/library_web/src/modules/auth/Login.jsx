@@ -47,7 +47,7 @@ const Login = () => {
         response.uniqueId
       );
       const user = loginResponse.data.user;
-      
+
       user.name = response.account.name;
       console.log(user);
       if (user.status == "active") {
@@ -114,7 +114,9 @@ const Login = () => {
               </Form.Item>
               <Form.Item>
                 <Flex justify="space-between" align="center">
-                  <Link href="">Quên Mật khẩu?</Link>
+                  <Link to={"/update-password"}>
+                    Quên Mật khẩu?
+                  </Link>
                   <Link to={"/register"} className="font-bold">
                     Đăng ký
                   </Link>

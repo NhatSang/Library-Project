@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button, Input, message, notification, Space } from "antd";
 import { IMAGES } from "../../../constants";
 import { useCountdown } from "../../../hooks/useCountdown";
-import { sendCode, verifyCode } from "../api";
+import { sendCode, sendCodeUpdate, verifyCode } from "../api";
 import { openNotificationWithIcon } from "../../../helper";
-const Verification = ({ handleBack, setStage, email }) => {
+const Verification = ({ handleBack, setStage, email, type }) => {
   const [api, contextHolder] = notification.useNotification();
   const inputsRef = useRef([]);
   const [code, setCode] = useState(["", "", "", ""]);
@@ -42,8 +42,14 @@ const Verification = ({ handleBack, setStage, email }) => {
   const handleResend = async () => {
     try {
       setIsLoading(true);
-      const response = await sendCode(email);
+      let response;
+      if (type == "register") response = await sendCode(email);
+      else response = await sendCodeUpdate(email);
+      console.log(response);
+      
     } catch (error) {
+      console.log(error);
+      
       openNotificationWithIcon(
         api,
         "Email không hợp lệ",
@@ -58,11 +64,11 @@ const Verification = ({ handleBack, setStage, email }) => {
       const response = await verifyCode(email, verificationCode);
       setStage(3);
     } catch (error) {
-        openNotificationWithIcon(
-          api,
-          "Xác thực thất bại!",
-          error.response.data.error.message
-        );
+      openNotificationWithIcon(
+        api,
+        "Xác thực thất bại!",
+        error.response.data.error.message
+      );
     }
   };
 
