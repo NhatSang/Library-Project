@@ -5,16 +5,17 @@ import Chapters from "./components/Chapters";
 import Note from "./components/Note";
 
 const BookContent = () => {
+  const [cPage, setCPage] = useState(1);
   return (
     <div className="grid grid-cols-10 gap-4">
       <div className="col-span-2 pl-4">
-        <Chapters />
+        <Chapters page={cPage} setPage={setCPage} />
       </div>
       <div className="col-span-6 bg-white ">
-        <Outlet />
+        <Outlet context={{cPage,setCPage}}/>
       </div>
       <div className="col-span-2">
-        <Note/>
+        <Note page={cPage} setPage={setCPage} />
       </div>
     </div>
   );

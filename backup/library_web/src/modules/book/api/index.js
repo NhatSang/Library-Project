@@ -54,9 +54,19 @@ export const _getNotes = async (bookId) => {
   return await axiosInstance.get(url, { params: { bookId: bookId } });
 };
 
-export const _createNote = async (bookId) => {
+export const _createNote = async (note) => {
   const url = "/note";
-  return await axiosInstance.post(url, { params: { bookId: bookId } });
+  return await axiosInstance.post(url, note);
+};
+
+export const _updateNote = async (note) => {
+  const url = "/note";
+  return await axiosInstance.put(url, note);
+};
+
+export const _deleteNote = async (noteId) => {
+  const url = `/note/${noteId}`;
+  return await axiosInstance.delete(url);
 };
 
 export const _createView = async (bookId) => {

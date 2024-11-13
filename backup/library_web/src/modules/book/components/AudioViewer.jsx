@@ -7,12 +7,27 @@ import { useLocation } from "react-router-dom";
 import { LuSkipBack, LuSkipForward } from "react-icons/lu";
 import { _getBookContentBypage } from "../api";
 import Loading from "../../../components/Loading";
+import debounce from "lodash/debounce";
+import { _createHistory } from "../api";
 
 const AudioViewer = () => {
   const location = useLocation();
   const book = location.state.book;
   const page = location.state.page;
   console.log(page);
+  const debouncedSave = debounce(async (cPage) => {
+    console.log("current page", cPage);
+    try {
+      const history = {
+        book: book._id,
+        page: cPage,
+      };
+      const response1 = await _createHistory(history);
+      console.log("đã save");
+    } catch (error) {
+      console.log(error);
+    }
+  }, 2000);
 
   const pageRef = useRef(page);
   const [sentences, setSentences] = useState([]);
@@ -58,6 +73,7 @@ const AudioViewer = () => {
     try {
       const response = await _getBookContentBypage(book._id, pageRef.current);
       pageRef.current = response.data.content.page;
+      debouncedSave(pageRef.current - 2);
       const temp = splitIntoSentences(response.data.content.content);
       console.log("Trang:", pageRef.current, "Nội dung:", temp.length);
       if (temp.length === 0 && pageRef.current > 1) {
@@ -106,14 +122,23 @@ const AudioViewer = () => {
       nextPage(); // Move to the next page if the current page is done
       return;
     }
-
-    window.responsiveVoice.speak(sentences[index], voice.current, {
-      rate: rateRef.current,
-      onend: () => {
-        setCurrentSentenceIndex(index + 1);
-        speakSentence(index + 1); // Speak the next sentence
-      },
-    });
+    try {
+      window.responsiveVoice.speak(sentences[index], voice.current, {
+        rate: rateRef.current,
+        onend: () => {
+          setCurrentSentenceIndex(index + 1);
+          speakSentence(index + 1); // Speak the next sentence
+        },
+      });
+    } catch (error) {
+      window.responsiveVoice.speak(sentences[index], voice.current, {
+        rate: rateRef.current,
+        onend: () => {
+          setCurrentSentenceIndex(index + 1);
+          speakSentence(index + 1); // Speak the next sentence
+        },
+      });
+    }
   };
 
   const start = () => {
@@ -229,7 +254,7 @@ const AudioViewer = () => {
         </div>
       </div>
       {isLoading ? (
-        <Loading/>
+        <Loading />
       ) : (
         <div className="flex-grow mx-auto w-full bg-white rounded-lg shadow-md p-6 overflow-hidden">
           <div className="book-page max-h-[80vh] overflow-y-auto ">

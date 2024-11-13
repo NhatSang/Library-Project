@@ -1,27 +1,14 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Cascader,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Mentions,
-  Select,
-  TreeSelect,
-  Segmented,
-  Radio,
-} from "antd";
-import UpdateInfo from "./components/UpdateInfo";
 import SendEmail from "./components/SendEmail";
 import Verification from "./components/Verification";
+import ResetPass from "./components/ResetPass";
 import { Link } from "react-router-dom";
-const { Option } = Select;
 
-const Register = () => {
+
+const ForgetPass = () => {
   const [stage, setStage] = useState(1);
   const [email, setEmail] = useState("");
-  console.log(email);
+
 
   const handleBack = () => {
     setStage(stage - 1);
@@ -35,7 +22,7 @@ const Register = () => {
             setStage={setStage}
             setEmail={setEmail}
             email={email}
-            type={"register"}
+            type={"update"}
           />
         </>
       );
@@ -47,14 +34,14 @@ const Register = () => {
             setStage={setStage}
             setEmail={setEmail}
             email={email}
-            type={"register"}
+            type={"update"}
           />
         </>
       );
     case 3:
       return (
         <>
-          <UpdateInfo
+          <ResetPass
             handleBack={handleBack}
             email={email}
             setStage={setStage}
@@ -65,7 +52,7 @@ const Register = () => {
       return (
         <>
           <div className="border flex flex-col justify-center items-center space-y-5 shadow-2xl rounded-xl p-10 bg-white">
-            <p>Đăng ký thành công!</p>
+            <p>Mật khẩu đã được thay đổi!</p>
             <Link
               to={"/"}
               state={{ email: email }}
@@ -80,4 +67,4 @@ const Register = () => {
   }
 };
 
-export default Register;
+export default ForgetPass;

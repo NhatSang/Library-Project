@@ -6,7 +6,7 @@ import { IoIosBook } from "react-icons/io";
 import { _getChapterByIdBook } from "../api";
 import { MdOutlineArrowBack } from "react-icons/md";
 
-const Chapters = () => {
+const Chapters = ({ page, setPage }) => {
   const [chapters, setChapters] = useState([]);
   const [isAudio, setIsAudio] = useState(false);
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Chapters = () => {
     try {
       const response = await _getChapterByIdBook(book._id);
       console.log(response.data);
-      
+
       setChapters(response.data);
     } catch (error) {
       console.log(error);
@@ -27,19 +27,26 @@ const Chapters = () => {
   };
   const handleAudio = () => {
     setIsAudio(true);
-    navigate("/book-audio", { state: { book: book, page: 2 } });
+    // navigate("/book-audio", { state: { book: book, page: 2 } });
+    navigate("/book-audio", { state: { book: book, page: page + 2 } });
   };
   const handleText = () => {
     setIsAudio(false);
-    navigate("/book-content", { state: { book: book, page: 0 } });
+    // navigate("/book-content", { state: { book: book, page: 0 } });
+    navigate("/book-content", { state: { book: book, page: page } });
   };
   const handleChangeChapter = (c) => {
-    if (isAudio)
+    if (isAudio) {
+      setPage(c.startPage - 1);
+      console.log(page);
       navigate("/book-audio", { state: { book: book, page: c.startPage + 1 } });
-    else
+    } else {
+      setPage(c.startPage);
+      console.log("page", page);
       navigate("/book-content", {
         state: { book: book, page: c.startPage - 1 },
       });
+    }
   };
   return (
     <div className="py-2 bg-white h-svh flex flex-col">

@@ -9,7 +9,10 @@ export const sendCode = async (email) => {
   const url = "auth/send-code";
   return await axiosInstance.post(url, { email });
 };
-
+export const sendCodeUpdate = async (email) => {
+  const url = "/auth/send-code-update";
+  return await axiosInstance.post(url, { email });
+};
 export const verifyCode = async (email, verificationCode) => {
   const url = "auth/verify-code";
   return await axiosInstance.post(url, { email, verificationCode });
@@ -39,3 +42,8 @@ export const updateUser = async(user)=>{
   const url = "/users/update-user";
   return await axiosInstance.post(url, user);
 }
+
+export const updatePassword = async(email, password) => {
+  const url = "/auth/reset-password";
+  return await axiosInstance.post(url, { email, password });
+};
