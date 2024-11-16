@@ -43,10 +43,10 @@ const Sidebar = () => {
       </CSidebarHeader>
       <SidebarNav items={navigation} />
       <CSidebarFooter className="border-top d-none d-lg-flex">
-        <CButton color="primary" variant="ghost" size="sm">
+        {/* <CButton color="primary" variant="ghost" size="sm">
           <span className="me-2">Hỗ trợ</span>
           <CIcon icon={cilPhone} />
-        </CButton>
+        </CButton> */}
       </CSidebarFooter>
     </CSidebar>
   )

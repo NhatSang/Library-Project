@@ -4,10 +4,8 @@ import AppText from '@components/AppText';
 import Loading from '@components/Loading';
 import { fontFamilies } from '@constants/fontFamilies';
 import { globalColor } from '@constants/globalColor';
-import { ScreenName } from '@constants/ScreenName';
-import { setAuth } from '@redux/authReducer';
 import { Input } from '@rneui/themed';
-import { saveToken, saveUserLocalStorage } from '@utils/storage';
+import { _getMajors } from '@screens/Auth/apis';
 import React, { useEffect, useState } from 'react';
 import { ImageBackground, Pressable, ScrollView, View } from 'react-native';
 import DatePicker from 'react-native-date-picker';
@@ -15,27 +13,21 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Entypo from 'react-native-vector-icons/Entypo';
 import { useDispatch } from 'react-redux';
-import { api } from '../../apis/configAPI';
 import { eGender } from '../../types/iUser';
-import { _getMajors, _register, _updateUser } from './apis';
+import { _updateUser } from './apis';
 
 
-const UserFormScreen = ({ navigation, route }: any) => {
-    const { email, type, accessToken } = route?.params;
+const UpdateInfoUser = ({ navigation, route }: any) => {
+    const { user } = route?.params;
+    const [name, setName] = useState(user?.name);
     const [majors, setMajors] = useState<any[]>([]);
-    const [password, setPassword] = useState<string>('');
-    const [showPassword, setShowPassword] = useState<boolean>(true);
-    const [rePassword, setRePassword] = useState<string>('');
-    const [showRePassword, setShowRePassword] = useState<boolean>(true);
-    const [fullName, setFullName] = useState<string>('');
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(user?.dob ? new Date(user?.dob) : new Date());
     const [openPicker, setOpenPicker] = useState<boolean>(false)
-    const [code, setCode] = useState<string>("");
+    const [code, setCode] = useState<string>(user?.code);
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState('');
-    const [selectedGender, setSelectedGender] = useState<eGender>(eGender.nam);
+    const [value, setValue] = useState(null);
+    const [selectedGender, setSelectedGender] = useState<string>(user?.gender);
     const [loading, setLoading] = useState<boolean>(false);
     const dispatch = useDispatch();
 
@@ -55,43 +47,16 @@ const UserFormScreen = ({ navigation, route }: any) => {
     }
 
     const validate = () => {
-        if (type === 'register' && !password) {
+        if (!name || !code) {
             Toast.show({
                 type: 'error',
                 text1: 'Lỗi',
-                text2: 'Vui lòng nhập mật khẩu',
+                text2: 'Vui lòng điền đầy đủ thông tin',
                 position: 'bottom',
             });
             return false;
         }
-        if (password !== rePassword && type === 'register') {
-            Toast.show({
-                type: 'error',
-                text1: 'Lỗi',
-                text2: 'Mật khẩu không trùng khớp',
-                position: 'bottom',
-            });
-            return false;
-        }
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W\_])[A-Za-z\d\W\_]{8,}$/;
-        if (type === 'register' && !regex.test(password)) {
-            Toast.show({
-                type: 'error',
-                text1: 'Lỗi',
-                text2: 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 kí tự đặc biệt',
-                position: 'bottom',
-            });
-            return false;
-        }
-        if (!fullName || !value || !selectedGender) {
-            Toast.show({
-                type: 'error',
-                text1: 'Lỗi',
-                text2: 'Vui lòng nhập đầy đủ thông tin',
-                position: 'bottom',
-            });
-            return false;
-        }
+
         const now = new Date();
         const age = now.getFullYear() - date.getFullYear();
         if (age < 18) {
@@ -118,53 +83,24 @@ const UserFormScreen = ({ navigation, route }: any) => {
     const handleConfirm = async () => {
         if (!validate()) return;
         try {
-            let data: any
-            if (type === 'register') {
-                data = {
-                    email,
-                    password,
-                    repassword: rePassword,
-                    name: fullName,
-                    majors: value,
-                    code,
-                    dob: date,
-                    gender: selectedGender,
-                }
-            } else {
-                data = {
-                    email,
-                    name: fullName,
-                    majors: value,
-                    code,
-                    dob: date,
-                }
-            }
-            if (type === 'microsoft' && accessToken) {
-                api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-                const res = await _updateUser(data);
-                console.log(res)
-                dispatch(setAuth(accessToken));
-                await saveToken(accessToken);
-                await saveUserLocalStorage(res.data);
+            const _id = majors.find(item => item.name === user.majors)?._id || null;
+            const data = {
+                name,
+                code,
+                dob: date,
+                gender: selectedGender,
+                majors: value || _id
+            };
+            const res = await _updateUser(data);
+            if (res.data) {
                 Toast.show({
                     type: 'success',
                     text1: 'Thành công',
-                    text2: 'Đăng nhập thành công',
+                    text2: 'Cập nhật thông tin thành công',
                     position: 'bottom',
                 });
-            } else {
-                const res = await _register(data);
-                if (res.data) {
-                    Toast.show({
-                        type: 'success',
-                        text1: 'Thành công',
-                        text2: 'Đăng ký tài khoản thành công',
-                        position: 'bottom',
-                    });
-                }
-                navigation.navigate(ScreenName.LoginWithAccount, { userEmail: email, userPassword: password });
+                navigation.goBack();
             }
-
         }
         catch (error: any) {
             console.log(error)
@@ -185,52 +121,22 @@ const UserFormScreen = ({ navigation, route }: any) => {
                 <ImageBackground className='flex-1' source={MAIN.BACKGROUND}>
                     <SafeAreaView>
                         <View className="flex-row justify-center items-center h-16 px-3 bg-primary-dark">
-                            <AppText color={globalColor.white} size={24} font={fontFamilies.robotoBold} text='Nhập thông tin cá nhân' />
+                            <Pressable
+                                onPress={() => navigation.goBack()}
+                                className="absolute left-2 z-10"
+                            >
+                                <AntDesign name='left' size={30} color={globalColor.text_light} />
+                            </Pressable>
+                            <AppText color={globalColor.white} size={24} font={fontFamilies.robotoBold} text='Chỉnh sửa thông tin cá nhân' />
                         </View>
-                        <ScrollView className='px-2'>
-                            {
-                                type === 'register' &&
-                                <> 
-                                  <View className='pt-4'>
-                                    <Input
-                                        leftIcon={<AntDesign name='lock' size={24} color={globalColor.dark} />}
-                                        rightIcon={<Entypo onPress={
-                                            () => setShowPassword(!showPassword)
-                                        } name={
-                                            showPassword ? 'eye' : 'eye-with-line'
-                                        } size={24} color={globalColor.dark} />}
-                                        label='Mật khẩu'
-                                        value={password}
-                                        onChangeText={setPassword}
-                                        placeholder='Nhập mật khẩu'
-                                        secureTextEntry={showPassword}
-                                    />
-                                    </View>
-                                    <View>
-                                        <Input
-                                            leftIcon={<AntDesign name='lock' size={24} color={globalColor.dark} />}
-                                            rightIcon={<Entypo onPress={
-                                                () => setShowRePassword(!showRePassword)
-                                            } name={
-                                                showRePassword ? 'eye' : 'eye-with-line'
-                                            } size={24} color={globalColor.dark} />}
-                                            label='Nhập lại mật khẩu'
-                                            value={rePassword}
-                                            onChangeText={setRePassword}
-                                            placeholder='Nhập lại mật khẩu'
-                                            secureTextEntry={showRePassword}
-                                        />
-                                    </View>
-                                </>
-
-                            }
+                        <ScrollView className='p-2'>
                             <View>
                                 <Input
-                                    leftIcon={<AntDesign name='user' size={24} color={globalColor.dark} />}
+
+                                    leftIcon={<AntDesign name='idcard' size={24} color={globalColor.dark} />}
                                     label='Họ và tên'
-                                    placeholder='Nhập họ và tên'
-                                    value={fullName}
-                                    onChangeText={setFullName}
+                                    value={name}
+                                    onChangeText={setName}
                                 />
                             </View>
                             <View>
@@ -244,9 +150,10 @@ const UserFormScreen = ({ navigation, route }: any) => {
                                 />
                             </View>
                             <View className='px-2'>
+                                <AppText text='Ngày sinh' className='mb-' />
                                 <Pressable
                                     onPress={() => setOpenPicker(true)}
-                                    className='h-[50px] rounded-lg border border-primary-dark justify-center px-2'>
+                                    className='h-[50px] rounded-lg border border-primary-dark justify-center px-2 mt-2'>
                                     <AppText
                                         text={date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                                         size={16}
@@ -274,6 +181,7 @@ const UserFormScreen = ({ navigation, route }: any) => {
 
                         </ScrollView>
                         <View className='p-4 pt-6'>
+                            <AppText text='Chọn lại nếu muốn thay đổi' color={globalColor.warning} font={fontFamilies.robotoBold} styles={{ paddingBottom: 5 }} />
                             <DropDownPicker
                                 listMode='MODAL'
                                 open={open}
@@ -328,11 +236,11 @@ const UserFormScreen = ({ navigation, route }: any) => {
                             />
                         </View>
                     </SafeAreaView>
-                </ImageBackground>
+                </ImageBackground >
             }
         </>
 
     )
 }
 
-export default UserFormScreen
+export default UpdateInfoUser;

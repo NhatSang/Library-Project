@@ -1,9 +1,11 @@
 import { MAIN } from '@assets/images'
 import AppText from '@components/AppText'
+import Loading from '@components/Loading'
 import Space from '@components/Space'
 import { fontFamilies } from '@constants/fontFamilies'
 import { globalColor } from '@constants/globalColor'
 import { isiOS } from '@constants/index'
+import { ScreenName } from '@constants/ScreenName'
 import { Input } from '@rneui/themed'
 import React, { useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Image, ImageBackground, Keyboard, Pressable, View } from 'react-native'
@@ -15,55 +17,41 @@ import Entypo from 'react-native-vector-icons/Entypo'
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
 import { useDispatch } from 'react-redux'
 import { iUser } from 'src/types/iUser'
-import { _getProfile, _updateImage } from './apis'
+import { _getProfile, _updateImage, _updateUser } from './apis'
 
 const AccountDetail = ({ navigation }: any) => {
     const dispatch = useDispatch();
     const [user, setUser] = useState<iUser>();
     const [loadingName, setLoadingName] = useState<boolean>(false);
     const [name, setName] = useState<string>('');
-    const [loadingEmail, setLoadingEmail] = useState<boolean>(false);
-    const [email, setEmail] = useState<string>('');
     const inputName: any = useRef(null);
     const inputEmail: any = useRef(null);
     const [loadingImage, setLoadingImage] = useState<boolean>(false);
+    const [loadingUser, setLoadingUser] = useState<boolean>(false);
 
     useEffect(() => {
-        const fetchDate = async () => {
-            await getUser();
+        const unsubscribe = navigation.addListener('focus', () => {
+            getUser();
         }
-        fetchDate();
+        );
+        return unsubscribe;
     }, [])
 
     const getUser = async () => {
+        setLoadingUser(true);
         try {
             const response = await _getProfile();
             if (response.data) {
                 setUser(response.data);
+                console.log('user', response.data);
+                setLoadingUser(false);
             }
         } catch (error) {
+            setLoadingUser(false);
             console.log('error', error);
         }
     }
 
-    const handleChangeName = async () => {
-        try {
-            setLoadingName(true);
-            Keyboard.dismiss();
-        } catch (error) {
-            console.log('error', error);
-
-        }
-    };
-    const handleChangeEmail = async () => {
-        try {
-            setLoadingEmail(true);
-            Keyboard.dismiss();
-        } catch (error) {
-            console.log('error', error);
-
-        }
-    };
     const handleChangeImage = async () => {
         ImagePicker.openPicker({
             width: 300,
@@ -106,25 +94,32 @@ const AccountDetail = ({ navigation }: any) => {
         }
     }
 
-    // const handleChangeName = async () => {
-    //     try {
-    //         setLoadingName(true);
-    //         Keyboard.dismiss();
-    //         const response = await _updateName(name);
-    //         if (response.data) {
-    //             setUser(response.data);
-    //             setLoadingName(false);
-    //         }
-    //     } catch (error) {
-    //         setLoadingName(false);
-    //         Toast.show({
-    //             type: 'error',
-    //             text1: 'Thông báo',
-    //             text2: 'Có lỗi xảy ra, vui lòng thử lại',
-    //         });
-    //         console.log('error', error);
-    //     }
-    // }
+    const handleChangeName = async () => {
+        try {
+            setLoadingName(true);
+            Keyboard.dismiss();
+            const data = {
+                name: name,
+                dob: user?.dob,
+                code: user?.code,
+                gender: user?.gender,
+                majors: user?.majors,
+            }
+            const response = await _updateUser(data);
+            if (response.data) {
+                setUser(response.data);
+                setLoadingName(false);
+            }
+        } catch (error) {
+            setLoadingName(false);
+            Toast.show({
+                type: 'error',
+                text1: 'Thông báo',
+                text2: 'Có lỗi xảy ra, vui lòng thử lại',
+            });
+            console.log('error', error);
+        }
+    }
 
     const btnEditAndSave = (
         value: string,
@@ -175,76 +170,81 @@ const AccountDetail = ({ navigation }: any) => {
     };
 
     return (
-        <ImageBackground className='flex-1' source={MAIN.BACKGROUND}>
-            <SafeAreaView className='flex-1'>
-                <View className='flex-row justify-between h-16 items-center px-3'>
-                    <Pressable onPress={() => {
-                        navigation.goBack()
-                    }}>
-                        <AntDesign name='left' size={30} color={globalColor.text_dark} />
-                    </Pressable>
-                    <AppText size={20} color={globalColor.dark} text='Thông tin cá nhân' font={fontFamilies.robotoBold} />
-                    <Space width={30} />
-                </View>
-                <View className='flex-1 justify-center items-center'>
-                    {user && (
-                        loadingImage ? (
-                            <View className='w-32 h-32 rounded-full bg-gray-300 justify-center items-center'>
-                                <ActivityIndicator size={28} color={globalColor.primary} />
-                            </View>
-                        ) : (
-                            <Pressable onPress={handleChangeImage} >
-                                <Image source={{ uri: user.image }} resizeMode='contain' className='w-32 h-32 rounded-full' />
-                                <Pressable
-                                    className='absolute bottom-1 right-1 w-10 h-10 bg-white justify-center items-center rounded-full'>
-                                    <Entypo name='camera' size={24} color={globalColor.dark} />
+        loadingUser ? <Loading /> :
+            <ImageBackground className='flex-1' source={MAIN.BACKGROUND}>
+                <SafeAreaView className='flex-1'>
+                    <View className='flex-row justify-between h-16 items-center px-3'>
+                        <Pressable onPress={() => {
+                            navigation.goBack()
+                        }}>
+                            <AntDesign name='left' size={30} color={globalColor.text_dark} />
+                        </Pressable>
+                        <AppText size={20} color={globalColor.dark} text='Thông tin cá nhân' font={fontFamilies.robotoBold} />
+                        <Space width={30} />
+                    </View>
+                    <View className='flex-1 justify-center items-center'>
+                        {user && (
+                            loadingImage ? (
+                                <View className='w-32 h-32 rounded-full bg-gray-300 justify-center items-center'>
+                                    <ActivityIndicator size={28} color={globalColor.primary} />
+                                </View>
+                            ) : (
+                                <Pressable onPress={handleChangeImage} >
+                                    <Image source={{ uri: user.image }} resizeMode='contain' className='w-32 h-32 rounded-full' />
+                                    <Pressable
+                                        className='absolute bottom-1 right-1 w-10 h-10 bg-white justify-center items-center rounded-full'>
+                                        <Entypo name='camera' size={24} color={globalColor.dark} />
+                                    </Pressable>
                                 </Pressable>
-                            </Pressable>
-                        )
-                    )}
-                    <Input
-                        ref={inputName}
-                        label='Họ và tên'
-                        defaultValue={user && user.name}
-                        onChangeText={(text) => setName(text)}
-                        onSubmitEditing={handleChangeName}
-                        rightIcon={btnEditAndSave(name, handleChangeName, loadingName, 'name')}
-                        leftIcon={<AntDesign name='idcard' size={24} color={globalColor.dark} />}
-                    />
-                    <Input
-                        ref={inputEmail}
-                        label='Email'
-                        disabled={true}
-                        defaultValue={user && user.email}
-                        leftIcon={<AntDesign name='mail' size={24} color={globalColor.dark} />}
-                    />
-                    <Input
-                        label='Mã sinh viên / giáo viên'
-                        defaultValue={user && user.code}
-                        editable={false}
-                        leftIcon={<AntDesign name='idcard' size={24} color={globalColor.dark} />}
-                    />
-                    <Input
-                        label='Chuyên ngành'
-                        defaultValue={user && user.majors}
-                        editable={false}
-                        leftIcon={<AntDesign name='profile' size={24} color={globalColor.dark} />}
-                    />
-                    <Input
-                        label='Ngày sinh'
-                        defaultValue={user && new Date(user.dob).toLocaleDateString()}
-                        editable={false}
-                        leftIcon={<FontAwesome6 name='cake-candles' size={24} color={globalColor.dark} />}
-                    />
-                    <Input
-                        label='Giới tính'
-                        defaultValue={user && user.gender}
-                        editable={false}
-                        leftIcon={<AntDesign name='user' size={24} color={globalColor.dark} />}
-                    />
-                </View>
-            </SafeAreaView>
-        </ImageBackground>
+                            )
+                        )}
+                        <Input
+                            editable={false}
+                            label='Họ và tên'
+                            value={user && user.name}
+                            leftIcon={<AntDesign name='idcard' size={24} color={globalColor.dark} />}
+                        />
+                        <Input
+                            label='Email'
+                            editable={false}
+                            defaultValue={user && user.email}
+                            leftIcon={<AntDesign name='mail' size={24} color={globalColor.dark} />}
+                        />
+                        <Input
+                            label='Mã sinh viên / giáo viên'
+                            defaultValue={user && user.code}
+                            editable={false}
+                            leftIcon={<AntDesign name='idcard' size={24} color={globalColor.dark} />}
+                        />
+                        <Input
+                            label='Chuyên ngành'
+                            defaultValue={user && user.majors}
+                            editable={false}
+                            leftIcon={<AntDesign name='profile' size={24} color={globalColor.dark} />}
+                        />
+                        <Input
+                            label='Ngày sinh'
+                            defaultValue={user && new Date(user.dob).toLocaleDateString()}
+                            editable={false}
+                            leftIcon={<FontAwesome6 name='cake-candles' size={24} color={globalColor.dark} />}
+                        />
+                        <Input
+                            label='Giới tính'
+                            defaultValue={user && user.gender}
+                            editable={false}
+                            leftIcon={<AntDesign name='user' size={24} color={globalColor.dark} />}
+                        />
+                    </View>
+                    <Pressable
+                        className='h-12 justify-center items-center mb-2'
+                        onPress={() => {
+                            navigation.navigate(ScreenName.UpdateInfoUser, { user: user })
+                        }
+                        }>
+                        <AppText size={20} text='Chỉnh sửa chi tiết cá nhân' color={globalColor.success} font={fontFamilies.robotoBold} />
+                    </Pressable>
+                </SafeAreaView>
+            </ImageBackground>
     )
 }
 
