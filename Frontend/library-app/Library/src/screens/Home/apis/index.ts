@@ -186,3 +186,9 @@ export const _deleteNote = (noteId: string) => {
         },
     });
 };
+
+//view 
+export const _createView = async (bookId:string) => {
+    const url = "/view/update";
+    return await api.post(url, { bookId: bookId });
+  };

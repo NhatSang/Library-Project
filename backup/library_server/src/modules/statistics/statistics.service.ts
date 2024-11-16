@@ -339,6 +339,7 @@ export class StatisticsService {
     ];
 
     const [result] = await User.aggregate(pipeline);
+    console.log(result.userList[0]);
 
     return {
       userList: result.userList,

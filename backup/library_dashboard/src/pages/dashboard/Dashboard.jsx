@@ -141,7 +141,6 @@ const handleGetAllSatistic = async() => {
       majorsId: major.name === 'Tất cả' ? null : major._id,
     });
     if(response1.data){
-      console.log('a',response1.data);
       setStatistic(response1.data);
     }
     const response2 = await _getStatisticsDashBoardUser({
@@ -150,8 +149,8 @@ const handleGetAllSatistic = async() => {
       majorsId: major.name === 'Tất cả' ? null : major._id,
     });
     if(response2.data){
-      console.log('b',response2.data);
       setStatisticUser(response2.data);
+      console.log(response2.data);
     }
   } catch (error) {
     console.log(error);
@@ -299,7 +298,7 @@ const columns = [
                     <div className="progress-group mb-4" key={'nam'}>
                       <div className="progress-group-header">
                         <CIcon className="me-2" icon={cilUser} size="lg" />
-                        <span>Nam</span>
+                        <span>Nữ</span>
                         <span className="ms-auto fw-semibold">
                           {statisticUser.countFemale}
                         </span>
@@ -313,7 +312,7 @@ const columns = [
                     <div className="progress-group mb-4" key={'nu'}>
                       <div className="progress-group-header">
                         <CIcon className="me-2" icon={cilUserFemale} size="lg" />
-                        <span>Nữ</span>
+                        <span>Nam</span>
                         <span className="ms-auto fw-semibold">
                           {statisticUser.countMale}
                         </span>

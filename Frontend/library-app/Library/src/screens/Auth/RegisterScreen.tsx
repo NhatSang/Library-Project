@@ -41,7 +41,7 @@ const RegisterScreen = ({ navigation }: any) => {
     }
 
     const handleRegister = async () => {
-        // if (!validate()) return;
+        if (!validate()) return;
         setIsLoading(true);
         try {
             const res = await _sendVerifyCode(email);

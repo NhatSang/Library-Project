@@ -1,6 +1,6 @@
 import { ScreenName } from '@constants/ScreenName';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AccountDetail, AudioBook, BookDetail, ChapterAudio, ListenText, Notification, NotificationDetail, RatingScreen, ReadText, SearchScreen, SummaryBook } from '@screens/index';
+import { AccountDetail, AudioBook, BookDetail, ChangePassword, ChapterAudio, ListenText, Notification, NotificationDetail, RatingScreen, ReadText, SearchScreen, SummaryBook, UpdateInfoUser } from '@screens/index';
 import React from 'react';
 import TabRouter from './TabRouter';
 
@@ -23,6 +23,8 @@ const MainRouter = () => {
       <Stack.Screen name={ScreenName.AccountDetail} component={AccountDetail} />
       <Stack.Screen name={ScreenName.Notification} component={Notification} />
       <Stack.Screen name={ScreenName.NotificationDetail} component={NotificationDetail} />
+      <Stack.Screen name={ScreenName.UpdateInfoUser} component={UpdateInfoUser} />
+      <Stack.Screen name={ScreenName.ChangePassword} component={ChangePassword} />
     </Stack.Navigator>
   )
 }
