@@ -5,12 +5,12 @@ import { _createView } from "../../book/api";
 
 const ListBooks = ({ title, data }) => {
   const navigate = useNavigate();
-  const handleContinuteRead = async (book) => {
+  const handleContinuteRead = async (book,page) => {
     try {
       const response = await _createView(book._id);
       localStorage.setItem("book", JSON.stringify(book));
       navigate("/book-content", {
-        state: { book: book, page: history.page },
+        state: { book: book, page: page },
       });
     } catch (error) {
       console.log(error);
@@ -46,7 +46,7 @@ const ListBooks = ({ title, data }) => {
               </div>
             </Link>
             <Button
-              onClick={() => handleContinuteRead(d.book)}
+              onClick={() => handleContinuteRead(d.book,d.page)}
               className="hover:text-blue-700 z-20"
             >
               Đọc tiếp
