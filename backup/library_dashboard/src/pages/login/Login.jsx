@@ -19,22 +19,38 @@ import { cilLockLocked, cilUser } from '@coreui/icons'
 import './styles.css'
 import logo from '../../assets/images/logo_iuh.png'
 import { _login } from './apis'
+import { notification } from 'antd'
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [api, contextHolder] = notification.useNotification();
 
   const handleLogin = async() => {
-    const response = await _login({ email, password });
+    try {
+      const response = await _login({ email, password });
     if(response.data){
       localStorage.setItem('accessToken', response.data.accessToken);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       navigate('/dashboard');
     }
+    } catch (error) {
+      openNotification(true,`${error.response.data.error.message}`,"Đăng nhập thất bại! ")();
+    }
   }
+  const openNotification = (pauseOnHover,description,title) => () => {
+    api.open({
+      message: title,
+      description:description,
+      showProgress: true,
+      pauseOnHover,
+    });
+  };
 
   return (
+    <>
+        {contextHolder}
     <div className="bg-blurred d-flex flex-row align-items-center">
       <CContainer>
         <CRow className="justify-content-center">
@@ -88,6 +104,7 @@ const Login = () => {
         </CRow>
       </CContainer>
     </div>
+    </>
   )
 }
 
