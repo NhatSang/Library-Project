@@ -1,5 +1,6 @@
 // src/axiosInstance.ts
 import axios from "axios";
+import { Modal } from "antd";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:6001/api/v1", // Đặt URL gốc của API
@@ -28,13 +29,26 @@ axiosInstance.interceptors.request.use(
 // Thêm interceptor cho response nếu cần
 axiosInstance.interceptors.response.use(
   (response) => response.data,
-  // (error) => {
-  //   // Xử lý lỗi như kiểm tra 401 Unauthorized
-  //   if (error.response && error.response.status === 401) {
-  //     // Thực hiện xử lý khi gặp lỗi 401
-  //   }
-  //   return Promise.reject(error);
-  // }
+  (error) => {
+    // Xử lý lỗi như kiểm tra 401 Unauthorized
+    console.log(error.response.status);
+    
+    if (error.response && error.response.status === 401) {
+      console.log(error);
+      
+      Modal.confirm({
+        title: "Phiên đăng nhập đã hết hạn",
+        content: "Vui lòng đăng nhập lại để tiếp tục.",
+        okText: "Đăng nhập",
+        cancelText: "Hủy",
+        onOk: () => {
+          // Chuyển hướng về trang login sau khi nhấn OK
+          window.location.href = "/login";
+        },
+      });
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default axiosInstance;

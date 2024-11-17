@@ -6,12 +6,13 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { Button, Dropdown, Image, Input, Space } from "antd";
 import { useSelector } from "react-redux";
+import UserProfileSidebar from "./UserProfileSidebar";
 const { Search } = Input;
 
 const Header = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.data);
-
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const onSearch = (value, _e, info) => {
     if (value) navigate("/result", { state: { value } });
   };
@@ -21,9 +22,17 @@ const Header = () => {
     navigate("/");
   };
 
-  const handleChangePass = () =>{
+  const handleChangePass = () => {
     navigate("/update-password");
-  }
+  };
+  const handleAvatarClick = () => {
+    setSidebarOpen(true);
+  };
+
+  const handleCloseSidebar = () => {
+    setSidebarOpen(false);
+  };
+
   const items = [
     {
       key: "1",
@@ -93,7 +102,25 @@ const Header = () => {
             {user?.name}
           </p>
         </div>
-        <Space wrap>
+        <div>
+          <div className="relative">
+            {/* Avatar */}
+            <img
+              src={user.image}
+              alt="Avatar"
+              className="w-12 h-12 rounded-full cursor-pointer"
+              onClick={handleAvatarClick}
+            />
+
+            {/* Sidebar */}
+            <UserProfileSidebar
+              user={user}
+              isOpen={isSidebarOpen}
+              onClose={handleCloseSidebar}
+            />
+          </div>
+        </div>
+        {/* <Space wrap>
           <Dropdown
             menu={{
               items,
@@ -106,7 +133,7 @@ const Header = () => {
               <img src={user?.image} width={40} height={40} />
             </div>
           </Dropdown>
-        </Space>
+        </Space> */}
       </div>
     </div>
   );
