@@ -21,7 +21,7 @@ export type iPostFCMToken = {
     platform: string,
 };
 const _postFCMToken = async (data: iPostFCMToken) => {
-    const url = '/user/fcm-token';
+    const url = '/users/fcm-token';
     return api.post(url, data);
 };
 

@@ -22,7 +22,6 @@ const NotificationDetail = ({ navigation, route }: any) => {
         try {
             await _markAsRead(id);
             const response = await _getNotificationById(id);
-            console.log('response', response);
             if (response.data) {
                 setNotificationDetail(response.data);
             }
@@ -54,7 +53,6 @@ const NotificationDetail = ({ navigation, route }: any) => {
                                     showsHorizontalScrollIndicator={false}
                                     data={notificationDetail}
                                     renderItem={({ item }) => {
-                                        console.log('item', item);
                                         return (
                                             <Pressable
                                                 onPress={() => navigation.navigate(ScreenName.BookDetail, { item })}

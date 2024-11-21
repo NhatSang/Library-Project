@@ -43,7 +43,7 @@ const Notifications = () => {
     const confirmed = window.confirm('Bạn có chắc chắn muốn gửi thông báo này không?');
     if (confirmed) {
       const response = await _sendNotification(id);
-      if (response.status === 200) {
+      if (response.data) {
         alert('Gửi thông báo thành công');
         getNotifications();
       } else {

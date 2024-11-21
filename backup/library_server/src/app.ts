@@ -62,21 +62,22 @@ import noteRouter from "./modules/note/note.router";
     return console.log(`Express is listening at http://localhost:${port}`);
   });
 
-  // cron.schedule('*/1 * * * * ', async () => {
-  //   try {
-  //     console.log('Cron job running');
-  //       const notifications = await Notification.find({status: Status.SENDING});
-  //       for (const notification of notifications) {
-  //           const users = await userService.getUserByFilter(notification.filterCondition);
-  //           for(const user of users){
-  //             console.log('Send notification to user:', user.name);
-  //               await notificationService.sendNotification(user._id.toString(), notification._id.toString());
-  //           }
-  //           notification.status = Status.SENDED;
-  //           await notification.save();
-  //       }
-  //   } catch (error) {
-  //       console.log(error);
-  //   }
-  // });
+  cron.schedule('*/1 * * * * ', async () => {
+    try {
+      console.log('Cron job running');
+        const notifications = await Notification.find({status: Status.SENDING});
+        for (const notification of notifications) {
+            const users = await userService.getUserByFilter(notification.filterCondition);
+            for(const user of users){
+              console.log('Send notification to user:', user.name);
+                await notificationService.sendNotification(user._id.toString(), notification._id.toString());
+            }
+            notification.status = Status.SENDED;
+            await notification.save();
+            console.log('Send notification success',notification.status);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+  });
 })();

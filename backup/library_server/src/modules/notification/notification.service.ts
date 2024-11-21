@@ -91,6 +91,9 @@ export class NotificationService {
         const devices = user.devices;
         const fcm_tokens = devices.map((item:any)=>item.fcm_token);
         console.log("tokens",fcm_tokens);
+        if(fcm_tokens.length == 0){
+            return;
+        }
         const message = {
             notification:{
                 title:notification.title,
