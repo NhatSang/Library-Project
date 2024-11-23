@@ -2,9 +2,9 @@ import { CCard, CCardBody, CCardHeader, CCol, CFormInput, CRow } from "@coreui/r
 import { Button, Table } from "antd";
 import { useEffect, useState } from "react";
 import { _getGenres } from "../home/apis";
-import { Loading } from "../../components";
 import { _getMajors } from "../user/apis";
 import { _createMajors } from "./apis";
+import Loading from "../../components/Loading";
 
 const AddMajors = () => {
     const [majors, setMajors] = useState([]);

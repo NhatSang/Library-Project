@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { _banUser, _getUsers } from "./apis";
+import { _banUser, _getUserPage, _getUsers } from "./apis";
 import { Button, Col, ConfigProvider, Pagination, Space, Table } from 'antd';
 import { CCol, CRow, useColorModes } from "@coreui/react";
 import Search from "antd/es/transfer/search";
@@ -95,7 +95,7 @@ const Users = () => {
 
   const fetchUser = async (page, limit, keyword) => {
     setLoading(true);
-    const response = await _getUsers(page, limit, keyword);
+    const response = await _getUserPage(page, limit, keyword);
     if(response.data){
       console.log(response.data);
       setUsers(response.data);

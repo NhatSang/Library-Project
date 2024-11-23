@@ -79,6 +79,18 @@ const Books = () => {
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
+          <Button
+          onClick={()=>{
+            navigate(`/books/detail`,{
+              state: {
+                data: {
+                  bookId: record._id,
+                }
+              }
+            })
+          }}
+          type="primary">Xem</Button>
+
           <Button onClick={()=>{
             navigate(`/books/edit`,{
               state: {
@@ -87,7 +99,7 @@ const Books = () => {
                 }
               }
             })
-          }} type="primary">Sửa</Button>
+          }} >Sửa</Button>
           <Popconfirm
     title="Xoá sách"
     description="Bạn có chắc chắn muốn xóa sách này không?"

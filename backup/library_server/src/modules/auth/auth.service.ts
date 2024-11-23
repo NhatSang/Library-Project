@@ -174,6 +174,7 @@ export class AuthService {
       user: UserResponseDTO.transformUser(existedUser),
       accessToken: accessToken,
       refreshToken: refreshToken,
+      role: existedUser.role,
     };
   };
 

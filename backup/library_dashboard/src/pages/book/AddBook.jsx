@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { CButton, CForm, CFormInput, CFormSelect, CCol, CRow, CCard, CCardBody, CSpinner } from '@coreui/react';
-import { message, notification, Spin } from "antd"; // Keep Ant Design message for notifications
+import { Button, message, Modal, notification, Spin } from "antd"; // Keep Ant Design message for notifications
 import { Link, useNavigate } from "react-router-dom";
 import { _createBook, _getGenres, _getMajors } from "./apis";
-import { Loading } from "../../components";
+import  Loading  from "../../components/Loading";
 
 
 const AddBook = () => {
@@ -22,6 +22,8 @@ const AddBook = () => {
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [api, contextHolder] = notification.useNotification();
+  const [isVisible, setIsVisible] = useState(false);
+  const [bookId, setBookId] = useState("");
 
   useEffect(() => {
     getGenres();
@@ -102,7 +104,7 @@ const AddBook = () => {
           },
         });
       } else {
-        openNotification(true,"Thêm sách thành công!","Thành công")();
+        setBookId(response.data.book._id);
         setFormData({
           title: "",
           author: "",
@@ -113,7 +115,9 @@ const AddBook = () => {
         });
         setSelectedPdfFile(null);
         setSelectedImageFile(null);
-        navigate("/books/list");
+        setIsVisible(true);
+        
+        
       }
     } catch (error) {
       console.log(error);
@@ -132,9 +136,37 @@ const AddBook = () => {
       pauseOnHover,
     });
   };
+  const handleOk = () => {
+    setIsVisible(false);
+    navigate("/books/detail",{
+      state: {
+        id: bookId,
+      },
+    });
+  };
+  const handleCancel = () => {
+    setIsVisible(false);
+  };
 
   return (
     <>
+      <Modal 
+      wrapStyle={{padding: "50px"}}
+      title="Thông báo"
+       open={isVisible}
+        onOk={handleOk}
+         onCancel={handleCancel}
+          footer={[
+            <Button key="back" onClick={handleCancel}>
+            Thêm sách khác
+          </Button>,
+            <Button key="submit" type="primary" onClick={handleOk}>
+              Xem chi tiết
+            </Button>,
+          ]}
+         >
+        <p>Thêm sách thành công. Bạn có thể xem chi tiết sách đã thêm </p>
+      </Modal>
     {contextHolder}
       {loading && (
           <Loading/>

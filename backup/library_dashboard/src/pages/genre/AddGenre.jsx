@@ -2,8 +2,8 @@ import { CCard, CCardBody, CCardHeader, CCol, CFormInput, CRow } from "@coreui/r
 import { Button, notification, Table } from "antd";
 import { useEffect, useState } from "react";
 import { _getGenres } from "../home/apis";
-import { Loading } from "../../components";
 import { _createGenre } from "./apis";
+import Loading from "../../components/Loading";
 
 const AddGenrere = () => {
     const [genres, setGenres] = useState([]);
