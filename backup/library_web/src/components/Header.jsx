@@ -120,20 +120,6 @@ const Header = () => {
             />
           </div>
         </div>
-        {/* <Space wrap>
-          <Dropdown
-            menu={{
-              items,
-            }}
-            placement="bottom"
-
-            trigger={["click"]}
-          >
-            <div className="flex space-x-2 items-center hover:bg-slate-500 rounded-full overflow-hidden">
-              <img src={user?.image} width={40} height={40} />
-            </div>
-          </Dropdown>
-        </Space> */}
       </div>
     </div>
   );

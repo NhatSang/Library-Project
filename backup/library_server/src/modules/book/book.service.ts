@@ -223,7 +223,7 @@ export class BookService {
   async getRecommendBooks(userId: string, pagination: Pagination) {
     const { limit, getOffset } = pagination;
     const response = await axios.get(
-      `http://127.0.0.1:5003/api/v1/recommend/recommend_books_rating/${userId}`
+      `http://flask:5000/api/v1/recommend/recommend_books_rating/${userId}`
     );
     const books = response.data;
     pagination.total = books.length;
