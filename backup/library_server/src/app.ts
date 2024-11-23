@@ -62,7 +62,7 @@ import noteRouter from "./modules/note/note.router";
     return console.log(`Express is listening at http://localhost:${port}`);
   });
 
-  cron.schedule('*/1 * * * * ', async () => {
+  cron.schedule('*/30 * * * * ', async () => {
     try {
       console.log('Cron job running');
         const notifications = await Notification.find({status: Status.SENDING});

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TbUsersGroup, TbBooks } from "react-icons/tb";
 import { _getGenres, _getListNumUsers, _getSummary, _getTopRatings, _getTopViews } from "./apis";
-import { Chart } from "../../components";
+import Chart from "./Chart";
 
 const Home = () => {
   const [top10Views, setTop10Views] = useState([]);

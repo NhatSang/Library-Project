@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { CButton, CForm, CFormInput, CFormSelect, CCol, CRow, CCard, CCardBody, CSpinner } from '@coreui/react';
-import { message, notification, Spin } from "antd"; // Keep Ant Design message for notifications
+import { Button, message, notification, Spin } from "antd"; // Keep Ant Design message for notifications
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { _createBook, _getBook, _getBookById, _getGenres, _getMajors } from "./apis";
-import { Loading } from "../../components";
+import Loading from "../../components/Loading";
 
 
 const EditBook = () => {
@@ -164,11 +164,21 @@ const EditBook = () => {
             </h2>
             </CCol>
             <CCol xs={6} className="text-end">
-              <Link  className="btn btn-primary">
-                <span className="text-white">
+              <Button 
+              type="primary"
+              onClick={()=>{
+                 navigate("/books/add-chapter", {
+                  state: {
+                    data: {
+                      bookId: data.bookId,
+                      title: formData.title,
+                      pdfLink: selectedPdfFile,
+                    },
+                  },
+                });
+              }}  className="btn btn-primary">
                   Chỉnh sửa chương
-                </span>
-              </Link>
+              </Button>
             </CCol>
           </CRow>
           <CForm onSubmit={handleSubmit} className="space-y-4">

@@ -31,6 +31,11 @@ const Login = () => {
     try {
       const response = await _login({ email, password });
     if(response.data){
+      console.log(response.data);
+      if(response.data.role !== 'admin'){
+        openNotification(true,"Bạn không có quyền truy cập!","Đăng nhập thất bại!")();
+        return;
+      }
       localStorage.setItem('accessToken', response.data.accessToken);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       navigate('/dashboard');
