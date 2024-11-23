@@ -1,7 +1,8 @@
 version: '3'
 services:
   nodejs:
-    image: nhatsang25/backup-nodejs:v1
+    # image: nhatsang25/backup-nodejs:v1
+    build: ./library_server
     ports:
       - "3000:3000"  # Đúng định dạng "host_port:container_port"
     environment:
@@ -12,7 +13,8 @@ services:
       - flask
 
   flask:
-    image: nhatsang25/backup-flask:v1
+    # image: nhatsang25/backup-flask:v1
+    build: ./library_recommendation
     ports:
       - "5000:5000"  # Đúng định dạng "host_port:container_port"
     environment:

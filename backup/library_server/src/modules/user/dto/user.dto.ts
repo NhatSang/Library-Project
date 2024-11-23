@@ -86,8 +86,12 @@ export class UserResponseDTO {
   @Expose()
   code: string;
   @Expose()
-  @Transform(({ obj }) => obj.majors?.name || null)
-  majors: string | null;
+  @Transform(({ obj }) =>
+    obj.majors
+      ? { _id: obj.majors._id.toString(), name: obj.majors.name }
+      : null
+  )
+  majors: { _id: string; name: string } | null;
   @Expose()
   image: string;
   static transformUser(params: any | any[]) {

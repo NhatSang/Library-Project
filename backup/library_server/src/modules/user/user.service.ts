@@ -158,7 +158,8 @@ export class UserService {
     if (!user) {
       throw Errors.userNotExists;
     }
-    return user;
+    const userTransformed = UserResponseDTO.transformUser(user);
+    return userTransformed;
   };
 
   getAllUsers = async () => {
