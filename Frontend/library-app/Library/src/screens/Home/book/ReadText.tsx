@@ -18,7 +18,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { INote } from 'src/types/iNote';
 import { defaultListChapter, IChapter } from '../../../types/iChapter';
-import { _createNote, _deleteNote, _getChapters, _getHistories, _getNotes, iCreateNote } from '../apis';
+import { _createNote, _createReview, _createView, _deleteNote, _getChapters, _getHistories, _getNotes, iCreateNote } from '../apis';
 
 
 const ReadText = ({ navigation, route }: any) => {
@@ -42,8 +42,11 @@ const ReadText = ({ navigation, route }: any) => {
             await getChapterByIdBook();
             await getNoteByBookId();
             await handleGetPageReaded();
+            await _createView(id);
             setLoading(false);
         }
+
+        
         fetchData();
     }, []);
 

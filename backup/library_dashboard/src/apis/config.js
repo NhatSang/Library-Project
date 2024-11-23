@@ -1,4 +1,5 @@
 import axios from "axios";
+import { clearLocalStorage } from "../utils";
 
 export const api = axios.create({
     baseURL: 'http://localhost:6001/api/v1',
@@ -40,16 +41,10 @@ api.interceptors.response.use(
     function (error) {
         if (error.response) {
             if (error.response.status === 403) {
-                //logout
+                clearLocalStorage();
             }
             if (error.response.status === 401) {
-                // _retrieveData('login_data').then(data => {
-                //     if (data) {
-                //         error.config.headers.Authorization =
-                //             'Bearer ' + data.token;
-                //         return api(error.config);
-                //     }
-                // });
+                clearLocalStorage();
             }
         }
 

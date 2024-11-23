@@ -10,6 +10,7 @@ const AddBook = React.lazy(() => import('../pages/book/AddBook'))
 const AddChapter = React.lazy(() => import('../pages/book/AddChapter'))
 const EditBook = React.lazy(() => import('../pages/book/EditBook'))
 const StatisticBook = React.lazy(() => import('../pages/book/StatisticBook'))
+const BookDetail = React.lazy(() => import('../pages/book/BookDetail'))
 
 const Genres = React.lazy(() => import('../pages/genre/Genres'))
 const AddGenre = React.lazy(() => import('../pages/genre/AddGenre'))
@@ -32,6 +33,7 @@ const routes = [
   {path:'/books/add-chapter', name:'Thêm chương', element: AddChapter},
   {path:'/books/edit', name:'Sửa sách', element: EditBook},
   {path:'/books/statistic', name:'Thống kê sách', element: StatisticBook},
+  {path:'/books/detail', name:'Chi tiết sách', element: BookDetail},
   {path:'/genres/list', name:'Thể loại', element: Genres},
   {path:'/genres/add', name:'Thêm thể loại', element: AddGenre},
   {path:'/majors/list', name:'Ngành học', element: Majors},

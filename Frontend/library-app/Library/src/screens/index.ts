@@ -1,5 +1,7 @@
 import AccountDetail from './Account/AccountDetail';
 import AccountScreen from './Account/AccountScreen';
+import ChangePassword from './Account/ChangePassword';
+import UpdateInfoUser from './Account/UpdateInfoUser';
 import LoginScreen from './Auth/LoginScreen';
 import UserFormScreen from './Auth/UserFormScreen';
 import HistoryScreen from './History/HistoryScreen';
@@ -22,6 +24,7 @@ export {
     AccountScreen,
     AudioBook,
     BookDetail,
+    ChangePassword,
     ChapterAudio,
     HistoryScreen,
     HomeScreen,
@@ -35,5 +38,6 @@ export {
     SplashScreen,
     SummaryBook,
     SwiperImage,
+    UpdateInfoUser,
     UserFormScreen,
 };

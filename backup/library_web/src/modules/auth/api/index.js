@@ -40,7 +40,16 @@ export const loginWithMs = async (email, password) => {
 
 export const updateUser = async(user)=>{
   const url = "/users/update-user";
-  return await axiosInstance.post(url, user);
+  return await axiosInstance.post(url, user)
+}
+
+export const updateAvatar = async(user)=>{
+  const url = "/users/update-avatar";
+  return await axiosInstance.post(url, user, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 }
 
 export const updatePassword = async(email, password) => {

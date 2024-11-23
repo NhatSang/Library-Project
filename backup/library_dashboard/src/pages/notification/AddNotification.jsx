@@ -4,8 +4,8 @@ import { _getUsers } from '../user/apis';
 import { _getBook, _getMajors } from '../book/apis';
 import { _createNotification, _updateNotification } from './apis';
 import { useLocation } from 'react-router-dom';
-import { Loading } from '../../components';
 import { notification } from 'antd';
+import Loading from '../../components/Loading';
 
 const AddNotification = () => { 
   const location = useLocation(); 

@@ -56,6 +56,13 @@ const AccountScreen = ({ navigation }: any) => {
             }
         },
         {
+            title: 'Đổi mật khẩu',
+            icon: <AntDesign name="lock" size={24} color="black" />,
+            onPress: () => {
+                navigation.navigate(ScreenName.ChangePassword)
+            }
+        },
+        {
             title: 'Phiên bản: 0.0.1',
             icon: <MaterialIcons name="info" size={24} color="black" />,
             onPress: () => { }

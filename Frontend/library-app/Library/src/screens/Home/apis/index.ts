@@ -91,8 +91,10 @@ export const _markAsRead = async (id: string) => {
 };
 export const _getNotificationById = async (id: string) => {
     const url = '/notification';
-    return api.post(url, {
-        id,
+    return api.get(url, {
+        params: {
+            id,
+        },
     });
 };
 
@@ -186,3 +188,9 @@ export const _deleteNote = (noteId: string) => {
         },
     });
 };
+
+//view 
+export const _createView = async (bookId:string) => {
+    const url = "/view/update";
+    return await api.post(url, { bookId: bookId });
+  };

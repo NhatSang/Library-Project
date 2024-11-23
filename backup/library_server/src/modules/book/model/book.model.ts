@@ -16,7 +16,7 @@ const bookSchema = new mongoose.Schema(
         content: { type: String },
       },
     ],
-    summary: { type: String },
+    summary: { type: String,default: "Tóm tắt đang được cập nhật." },
     status: { type: Number, enum: [BookStatus.Deleted, BookStatus.Published],default: BookStatus.Published },
     publisher: { type: String },
     yob: { type: String },

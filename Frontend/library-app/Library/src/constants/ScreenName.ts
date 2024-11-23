@@ -21,4 +21,6 @@ export const ScreenName = {
     RegisterScreen: 'RegisterScreen',
     ForgetScreen: 'ForgetScreen',
     VerifyCodeScreen: 'VerifyCodeScreen',
+    UpdateInfoUser: 'UpdateInfoUser',
+    ChangePassword: 'ChangePassword',
 };

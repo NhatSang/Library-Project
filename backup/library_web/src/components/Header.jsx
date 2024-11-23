@@ -111,12 +111,13 @@ const Header = () => {
               className="w-12 h-12 rounded-full cursor-pointer"
               onClick={handleAvatarClick}
             />
-
             {/* Sidebar */}
             <UserProfileSidebar
               user={user}
               isOpen={isSidebarOpen}
               onClose={handleCloseSidebar}
+              logout = {handleLogout}
+              changePassword = {handleChangePass}
             />
           </div>
         </div>

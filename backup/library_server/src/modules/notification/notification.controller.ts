@@ -21,7 +21,7 @@ export class NotificationController {
 
     _updateSendingStatus = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const result = await this.notificationService.updateSendingStatus(req.query.id as string);
+            const result = await this.notificationService.updateSendingStatus(req.body.id);
             res.send(new ResponseCustom(result));
         } catch (error) {
             console.log(error);

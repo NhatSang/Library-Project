@@ -30,9 +30,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // Xử lý lỗi như kiểm tra 401 Unauthorized
-    console.log(error.response);
-    
+    // Xử lý lỗi như kiểm tra 401 Unauthorized 
     if (error.response && error.response.status === 401) {
       console.log(error);
       

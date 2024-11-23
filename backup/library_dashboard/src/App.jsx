@@ -29,6 +29,7 @@ const AddBook = React.lazy(() => import('./pages/book/AddBook'))
 const AddChapter = React.lazy(() => import('./pages/book/AddChapter'))
 const EditBook = React.lazy(() => import('./pages/book/EditBook'))
 const StatisticBook = React.lazy(() => import('./pages/book/StatisticBook'))
+const BookDetail = React.lazy(() => import('./pages/book/BookDetail'))
 
 // Genres
 const Genres = React.lazy(() => import('./pages/genre/Genres'))
@@ -110,6 +111,7 @@ const App = () => {
             <Route path="books/add-chapter" element={<AddChapter />} />
             <Route path="books/edit" element={<EditBook />} />
             <Route path="books/statistic" element={<StatisticBook />} />
+            <Route path="books/detail" element={<BookDetail />} />
             <Route path="genres/list" element={<Genres />} />
             <Route path="genres/add" element={<AddGenre />} />
             <Route path="majors/list" element={<Majors />} />

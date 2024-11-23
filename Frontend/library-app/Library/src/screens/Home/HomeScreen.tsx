@@ -132,7 +132,6 @@ const HomeScreen = ({ navigation }: any) => {
     const getRecommendBook = async () => {
         try {
             const response = await _getRecommendBooks();
-            console.log('response', response);
             if (response.data) {
                 setListRecommendBook(response.data);
             }
