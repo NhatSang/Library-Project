@@ -28,7 +28,7 @@ import noteRouter from "./modules/note/note.router";
 (async () => {
   const app = express();
 
-  const port = 6001;
+  const port = 3000;
 
   app.use(cors());
 
@@ -59,7 +59,7 @@ import noteRouter from "./modules/note/note.router";
   app.use("/api/v1", noteRouter);
   app.use(handleErrors);
   app.listen(port, () => {
-    return console.log(`Express is listening at http://localhost:${port}`);
+    return console.log(`Express is running`);
   });
 
   cron.schedule('*/30 * * * * ', async () => {

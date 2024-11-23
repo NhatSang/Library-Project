@@ -10,22 +10,28 @@ import {
   _getBookDetails,
   _getHistory,
 } from "../api";
+import Loading from "../../../components/Loading";
 
 const BookDetail = () => {
   const location = useLocation();
   const bookId = location.state.book;
   const [history, setHistory] = useState({});
   const [book, setBook] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const handleReadBook = async () => {
+    setIsLoading(true);
     await createHistory();
     localStorage.setItem("book", JSON.stringify(book));
+    setIsLoading(false);
     navigate("/book-content", { state: { book: book, page: 0 } });
   };
   const handleContinuteRead = async () => {
     try {
+      setIsLoading(true);
       const response2 = await _createView(bookId);
       localStorage.setItem("book", JSON.stringify(book));
+      setIsLoading(false);
       navigate("/book-content", {
         state: { book: book, page: history.page },
       });
@@ -113,6 +119,7 @@ const BookDetail = () => {
         </p>
         <p className="text-sm text-gray-600">Tóm tắt: {book?.summary}</p>
       </div>
+      {isLoading && <Loading />}
     </div>
   );
 };

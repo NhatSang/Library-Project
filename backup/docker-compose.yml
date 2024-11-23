@@ -1,0 +1,31 @@
+version: '3'
+services:
+  nodejs:
+    image: nhatsang25/backup-nodejs:v1
+    ports:
+      - "3000:3000"  # Đúng định dạng "host_port:container_port"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+      - flask
+
+  flask:
+    image: nhatsang25/backup-flask:v1
+    ports:
+      - "5000:5000"  # Đúng định dạng "host_port:container_port"
+    environment:
+      - FLASK_APP=run.py
+
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379" 
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 5s
+

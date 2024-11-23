@@ -3,7 +3,7 @@ import axios from "axios";
 import { Modal } from "antd";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:6001/api/v1", // Đặt URL gốc của API
+  baseURL: "http://localhost:3000/api/v1", // Đặt URL gốc của API
   timeout: 10000, // Thời gian timeout
   headers: {
     "Content-Type": "application/json",
@@ -30,9 +30,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // Xử lý lỗi như kiểm tra 401 Unauthorized
-    console.log(error.response.status);
-    
+    // Xử lý lỗi như kiểm tra 401 Unauthorized 
     if (error.response && error.response.status === 401) {
       console.log(error);
       

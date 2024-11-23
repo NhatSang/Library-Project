@@ -19,7 +19,7 @@ export class HistoryService {
       });
       await history.save();
       const response = await axios.post(
-        `http://localhost:5003/api/v1/recommend/create_model_rating`,
+        `http://flask:5000/api/v1/recommend/create_model_rating`,
         { userId: userId }
       );
     } else {

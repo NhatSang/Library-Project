@@ -21,7 +21,7 @@ const Login = () => {
   const onFinish = async (values) => {
     try {
       const response = await loginTemp(values.username, values.password);
-      console.log(response);
+      console.log(response.data.user);
 
       localStorage.setItem("user", JSON.stringify(response.data.user));
       localStorage.setItem("accessToken", response.data.accessToken);
@@ -48,8 +48,6 @@ const Login = () => {
       );
       const user = loginResponse.data.user;
 
-      user.name = response.account.name;
-      console.log(user);
       if (user.status == "active") {
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("accessToken", loginResponse.data.accessToken);

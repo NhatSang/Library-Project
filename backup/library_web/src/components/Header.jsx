@@ -111,29 +111,16 @@ const Header = () => {
               className="w-12 h-12 rounded-full cursor-pointer"
               onClick={handleAvatarClick}
             />
-
             {/* Sidebar */}
             <UserProfileSidebar
               user={user}
               isOpen={isSidebarOpen}
               onClose={handleCloseSidebar}
+              logout = {handleLogout}
+              changePassword = {handleChangePass}
             />
           </div>
         </div>
-        {/* <Space wrap>
-          <Dropdown
-            menu={{
-              items,
-            }}
-            placement="bottom"
-
-            trigger={["click"]}
-          >
-            <div className="flex space-x-2 items-center hover:bg-slate-500 rounded-full overflow-hidden">
-              <img src={user?.image} width={40} height={40} />
-            </div>
-          </Dropdown>
-        </Space> */}
       </div>
     </div>
   );
