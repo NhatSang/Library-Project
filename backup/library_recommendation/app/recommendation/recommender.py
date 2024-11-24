@@ -58,5 +58,4 @@ def recommend_books_rating(userId):
     
     recommended_books = recommended_books.drop(columns=['Genre_encoded','Majors_encoded','contents','predicted_rating'], errors='ignore')  
     recommended_books = recommended_books.to_dict(orient='records')
-    print("rec",recommended_books)
     return recommended_books

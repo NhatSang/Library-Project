@@ -38,7 +38,7 @@ historyRouter.get(
 
 
 historyRouter.delete(
-  "/historys/:bookId",
+  "/histories/:historyId",
   authMiddleware.authenticateAccessToken([Role.Admin, Role.User]),
   historyController.deleteHistory
 );

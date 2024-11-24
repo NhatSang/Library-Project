@@ -3,7 +3,7 @@ import axios from "axios";
 import { Modal } from "antd";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api/v1", // Đặt URL gốc của API
+  baseURL: "http://47.129.185.35:3000/api/v1", // Đặt URL gốc của API
   timeout: 10000, // Thời gian timeout
   headers: {
     "Content-Type": "application/json",
@@ -16,9 +16,9 @@ axiosInstance.interceptors.request.use(
     // Thêm token vào headers nếu có
     const token = localStorage.getItem("accessToken");
     console.log(token);
-    
+
     if (token) {
-      config.headers['authorization'] = `Bearer ${token}`;
+      config.headers["authorization"] = `Bearer ${token}`;
     }
     config.params = { ...config.params };
     return config;
@@ -30,10 +30,13 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // Xử lý lỗi như kiểm tra 401 Unauthorized 
-    if (error.response && error.response.status === 401) {
+    // Xử lý lỗi như kiểm tra 401 Unauthorized
+    if (
+      (error.response && error.response.status === 401) ||
+      error.response.status === 403
+    ) {
       console.log(error);
-      
+
       Modal.confirm({
         title: "Phiên đăng nhập đã hết hạn",
         content: "Vui lòng đăng nhập lại để tiếp tục.",
@@ -41,7 +44,7 @@ axiosInstance.interceptors.response.use(
         cancelText: "Hủy",
         onOk: () => {
           // Chuyển hướng về trang login sau khi nhấn OK
-          window.location.href = "/login";
+          window.location.href = "/";
         },
       });
     }

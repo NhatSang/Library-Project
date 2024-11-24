@@ -59,8 +59,7 @@ export class HistoryController {
   deleteHistory = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.historyService.deleteHistory(
-        req.body.userId,
-        req.params.bookId
+        req.params.historyId
       );
       res.send(new ResponseCustom(result));
     } catch (error) {

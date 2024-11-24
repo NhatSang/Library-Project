@@ -58,7 +58,7 @@ export class HistoryService {
     return histories;
   }
 
-  async deleteHistory(historyId: string, p0: string) {
+  async deleteHistory(historyId: string) {
     await Histories.updateOne(
       { _id: new mongoose.Types.ObjectId(historyId) },
       { $set: { status: HistoryStatus.Deleted } }
