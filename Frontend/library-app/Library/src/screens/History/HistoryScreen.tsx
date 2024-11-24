@@ -106,6 +106,7 @@ const HistoryScreen = ({ navigation }: any) => {
         try {
             const response = await _deleteHistory(id);
             if (response.data) {
+                console.log(response.data);
                 setHistory(history.filter(item => item._id !== id));
                 Toast.show({
                     type: 'success',

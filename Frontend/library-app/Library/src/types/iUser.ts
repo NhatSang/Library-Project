@@ -2,7 +2,7 @@ export interface iUser {
     _id?: string;
     name: string;
     gender:eGender;
-    majors: string;
+    majors: any;
     email: string;
     password: string;
     role: string;

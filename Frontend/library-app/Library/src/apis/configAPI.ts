@@ -5,7 +5,7 @@ import RNRestart from 'react-native-restart';
 import { isIOS } from '@rneui/base';
 
 export const api = axios.create({
-    baseURL: 'http://192.168.2.34:6001/api/v1',
+    baseURL: 'http://192.168.2.34:3000/api/v1',
     timeout: 6000,
     headers: {
         'Content-Type': 'application/json',

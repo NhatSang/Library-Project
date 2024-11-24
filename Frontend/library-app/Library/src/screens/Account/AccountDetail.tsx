@@ -218,7 +218,7 @@ const AccountDetail = ({ navigation }: any) => {
                         />
                         <Input
                             label='Chuyên ngành'
-                            defaultValue={user && user.majors}
+                            defaultValue={user && user.majors.name}
                             editable={false}
                             leftIcon={<AntDesign name='profile' size={24} color={globalColor.dark} />}
                         />
@@ -230,7 +230,9 @@ const AccountDetail = ({ navigation }: any) => {
                         />
                         <Input
                             label='Giới tính'
-                            defaultValue={user && user.gender}
+                            defaultValue={
+                                user?.gender === 'Male' ? 'Nam' : 'Nữ'
+                            }
                             editable={false}
                             leftIcon={<AntDesign name='user' size={24} color={globalColor.dark} />}
                         />

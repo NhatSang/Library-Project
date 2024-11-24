@@ -92,7 +92,7 @@ const AccountScreen = ({ navigation }: any) => {
                                 <Image source={{ uri: user?.image }} resizeMode='contain' className='w-32 h-32 rounded-full' />
                             </View>
                             <AppText size={24} font={fontFamilies.robotoMedium} text={user?.name} />
-                            <AppText text={user?.majors} />
+                            <AppText text={user?.majors.name} />
                         </View>
                     </View>
                     <View
