@@ -18,6 +18,7 @@ import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
 import { useDispatch } from 'react-redux'
 import { iUser } from 'src/types/iUser'
 import { _getProfile, _updateImage, _updateUser } from './apis'
+import { setUserRedux } from '@redux/authReducer'
 
 const AccountDetail = ({ navigation }: any) => {
     const dispatch = useDispatch();
@@ -35,7 +36,7 @@ const AccountDetail = ({ navigation }: any) => {
         }
         );
         return unsubscribe;
-    }, [])
+    }, [navigation]);
 
     const getUser = async () => {
         setLoadingUser(true);
@@ -43,7 +44,6 @@ const AccountDetail = ({ navigation }: any) => {
             const response = await _getProfile();
             if (response.data) {
                 setUser(response.data);
-                console.log('user', response.data);
                 setLoadingUser(false);
             }
         } catch (error) {
@@ -80,6 +80,7 @@ const AccountDetail = ({ navigation }: any) => {
             if (response.data) {
                 console.log('response', response.data);
                 setUser(response.data);
+                dispatch(setUserRedux(response.data));
                 setLoadingImage(false)
             }
         } catch (error) {

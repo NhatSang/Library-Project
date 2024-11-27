@@ -51,17 +51,17 @@ api.interceptors.response.use(
     },
     function (error) {
         if (error.response) {
-            if (error.response.status === 403) {
+            if (error.response.status === 403 || error.response.status === 401) {
                 Alert.alert(
                     'Thông báo',
                     'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại',
                     [
                         {
                             text: 'OK',
-                            onPress: () => {
-                                logout();
+                            onPress: async() => {
+                                await logout();
                                 setTimeout(() => {
-                                   isIOS && RNRestart.restart();
+                                   RNRestart.restart();
                                 }, 1000);
                             },
                         },

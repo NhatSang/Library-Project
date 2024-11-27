@@ -10,7 +10,7 @@ import { Image, Pressable, SafeAreaView, ScrollView, View } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 const SummaryBook = ({ navigation, route }: any) => {
-    const { book, stack } = route.params;
+    const { book, stack,path } = route.params;
 
     useEffect(() => {
         handleSaveShow(`SHOW_${book._id}`);
@@ -48,7 +48,7 @@ const SummaryBook = ({ navigation, route }: any) => {
                 } onPress={() => {
                     navigation.navigate(
                         stack == 'LISTEN' ? ScreenName.ListenText : ScreenName.ReadText
-                        , stack == 'LISTEN' ? { bookId: book._id } : { book })
+                        , stack == 'LISTEN' ? { bookId: book._id } : { book,path,id:book._id })
                 }
                 } />
             </View>

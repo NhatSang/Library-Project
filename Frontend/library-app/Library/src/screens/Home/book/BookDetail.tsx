@@ -133,6 +133,7 @@ const BookDetail = ({ navigation, route }: any) => {
         const { DocumentDir } = fs.dirs;
         const filePath = `${DocumentDir}/book_${book._id}.pdf`;
         const isFileExist = await RNFetchBlob.fs.exists(filePath);
+        console.log('isFileExist: ', isFileExist);
         if (isFileExist) {
             setLoadingBtn(false);
             if (show) {
@@ -144,6 +145,7 @@ const BookDetail = ({ navigation, route }: any) => {
             } else {
                 navigation.navigate(ScreenName.SummaryBook, {
                     book: book,
+                    path: filePath,
                     stack: 'READ'
                 });
             }
@@ -172,14 +174,15 @@ const BookDetail = ({ navigation, route }: any) => {
                 path: filePath,
             }).fetch('GET', url)
                 .then(async (res) => {
+                    console.log('The file saved to ', res.path());
                     setLoadingBtn(false);
-                    Toast.show({
-                        type: 'success',
-                        position: 'bottom',
-                        text1: 'Tải sách thành công',
-                        visibilityTime: 2000,
-                        text1Style: { fontSize: 18 }
-                    });
+                    // Toast.show({
+                    //     type: 'success',
+                    //     position: 'bottom',
+                    //     text1: 'Tải sách thành công',
+                    //     visibilityTime: 2000,
+                    //     text1Style: { fontSize: 18 }
+                    // });
                 })
                 .catch((err) => {
                     setLoadingBtn(false);
@@ -225,7 +228,7 @@ const BookDetail = ({ navigation, route }: any) => {
                     <View className='h-9/10 bg-white px-3 rounded-tl-3xl rounded-tr-3xl'>
                         <View className='h-32 w-full' />
                         <View className='justify-center items-center'>
-                            <AppText font={fontFamilies.robotoBold} size={20} text={item.title} />
+                            <AppText center font={fontFamilies.robotoBold} size={20} text={item.title} />
                             <AppText size={16} text={item.author} />
                         </View>
                         <View className='py-4'>

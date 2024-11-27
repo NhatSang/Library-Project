@@ -26,7 +26,7 @@ const UpdateInfoUser = ({ navigation, route }: any) => {
     const [openPicker, setOpenPicker] = useState<boolean>(false)
     const [code, setCode] = useState<string>(user?.code);
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
+    const [value, setValue] = useState(user?.majors._id);
     const [selectedGender, setSelectedGender] = useState<string>(user?.gender);
     const [loading, setLoading] = useState<boolean>(false);
     const dispatch = useDispatch();
@@ -83,13 +83,12 @@ const UpdateInfoUser = ({ navigation, route }: any) => {
     const handleConfirm = async () => {
         if (!validate()) return;
         try {
-            const _id = majors.find(item => item.name === user.majors)?._id || null;
             const data = {
                 name,
                 code,
                 dob: date,
                 gender: selectedGender,
-                majors: value || _id
+                majors: value
             };
             const res = await _updateUser(data);
             if (res.data) {

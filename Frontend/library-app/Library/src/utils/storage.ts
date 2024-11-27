@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 export const clearToken = async () => {
     try {
         await AsyncStorage.removeItem('token');

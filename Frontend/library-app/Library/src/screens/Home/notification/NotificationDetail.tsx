@@ -42,12 +42,12 @@ const NotificationDetail = ({ navigation, route }: any) => {
                     <AppText size={20} color={globalColor.dark} text='Thông báo chi tiết' font={fontFamilies.robotoBold} />
                     <Space width={30} />
                 </View>
-                <View className='py-4'>
+                <View className='p-4'>
                     {
                         notificationDetail.length > 0 && (
                             <>
                                 <View className='py-2'>
-                                    <AppText size={20} font={fontFamilies.robotoBold} text='Gợi ý dành riêng cho bạn' />
+                                    <AppText size={20} font={fontFamilies.robotoBold} text='Sách hay dành riêng cho bạn' />
                                 </View>
                                 <FlatList
                                     showsHorizontalScrollIndicator={false}

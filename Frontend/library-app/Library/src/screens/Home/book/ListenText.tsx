@@ -86,6 +86,7 @@ const ListentText = ({ navigation, route }: any) => {
 
         Tts.getInitStatus().then(() => {
             Tts.voices().then(availableVoices => {
+                console.log('Voices');
                 const vietnameseVoices = availableVoices.filter(voice => voice.language === 'vi-VN');
                 if (vietnameseVoices.length > 0) {
                     voices.current = vietnameseVoices;
@@ -240,6 +241,7 @@ const ListentText = ({ navigation, route }: any) => {
     };
 
     const changeRate = (rate: number) => {
+        setIsModalVisible(false);
         pauseReading();
         speechRate.current = rate;
         Tts.setDefaultRate(rate);
@@ -247,6 +249,7 @@ const ListentText = ({ navigation, route }: any) => {
     };
 
     const switchVoice = (voiceId: string) => {
+        setIsModalVisible(false);
         pauseReading();
         currentVoice.current = voiceId;
         Tts.setDefaultVoice(voiceId);
@@ -259,8 +262,9 @@ const ListentText = ({ navigation, route }: any) => {
             fontSize: fontSize === 'small' ? 14 : fontSize === 'medium' ? 16 : 18,
             marginTop: 5,
         }, renderIndex.current === index && {
-            backgroundColor: mode == 'light' ? 'yellow' : 'gray',
+            // backgroundColor: mode == 'light' ? 'yellow' : 'gray',
             fontWeight: 'bold',
+            color: mode == 'light' ? globalColor.primary_2 : globalColor.dark,
         }]}>
             {item}
         </Text>

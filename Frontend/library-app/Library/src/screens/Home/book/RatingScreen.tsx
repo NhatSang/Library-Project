@@ -13,10 +13,12 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import { IReview } from 'src/types/iReview'
 import { _createReview, _getReviews } from '../apis'
 import Toast from 'react-native-toast-message'
+import { useSelector } from 'react-redux'
 
 
 const RatingScreen = ({ navigation, route }: any) => {
     const { id, userId } = route?.params;
+    const user = useSelector((state: any) => state.auth.user);
     const [loading, setLoading] = useState<boolean>(false);
     const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
     const [reviews, setReviews] = useState<IReview[]>([]);
@@ -68,7 +70,7 @@ const RatingScreen = ({ navigation, route }: any) => {
                 } else {
                     const newReview: IReview = {
                         _id: new Date().getTime().toString(),
-                        user: { _id: userId },
+                        user: { _id: userId,image: user.image, name: user.name },
                         book: id,
                         content,
                         rating,

@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { iBook } from 'src/types/iBook';
 import { _getBooksMajors, _getBooksTopRated, _getBooksTopViewed, _getNotifications, _getRecommendBooks } from './apis';
+import { useSelector } from 'react-redux';
 
 
 const HomeScreen = ({ navigation }: any) => {
@@ -26,7 +27,7 @@ const HomeScreen = ({ navigation }: any) => {
     const [loadImage, setLoadImage] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [notifications, setNotifications] = useState<any>(null);
-    const [user, setUser] = useState<any>();
+    const user = useSelector((state: any) => state.auth.user);
 
     useEffect(() => {
         messaging().getInitialNotification().then(async (remoteMessage: any) => {
@@ -41,13 +42,11 @@ const HomeScreen = ({ navigation }: any) => {
     }, []);
 
     const navigationToNotification = (notification_id: string) => {
-        console.log("next");
         navigation.navigate(ScreenName.NotificationDetail, { notification_id });
     };
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            getMe();
             getNotification();
             getBookTopRate();
             getBookTopView();
@@ -91,10 +90,6 @@ const HomeScreen = ({ navigation }: any) => {
         return () => backHandler.remove();
     }, []);
 
-    const getMe = async () => {
-        const user = await getUserLocalStorage();
-        setUser(user);
-    }
 
 
     const getNotification = async () => {
@@ -161,7 +156,7 @@ const HomeScreen = ({ navigation }: any) => {
                     <Pressable
                         onPress={() => { navigation.navigate(ScreenName.AccountDetail) }}
                     >
-                        <Image source={{ uri: user?.image }} className='w-10 h-10' />
+                        <Image source={{ uri: user.image }} className='w-10 h-10 rounded-full' />
                     </Pressable>
                     <Pressable
                         onPress={() => { navigation.navigate(ScreenName.Notification) }}

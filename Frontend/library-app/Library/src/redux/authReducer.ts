@@ -12,7 +12,7 @@ const authReducer = createSlice({
         setUserId: (state, action) => {
             state.userId = action.payload;
         },
-        setUser: (state, action) => {
+        setUserRedux: (state, action) => {
             state.user = action.payload;
         },
         setMajorId: (state, action) => {
@@ -34,7 +34,7 @@ const authReducer = createSlice({
 });
 
 export const {
-    setUser,
+    setUserRedux,
     setAuth,
     clearAuth,
     clearUser,
