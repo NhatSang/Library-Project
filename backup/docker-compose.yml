@@ -1,7 +1,8 @@
 version: '3'
 services:
   nodejs:
-    image: nhatsang25/backup-nodejs:latest
+    # image: nhatsang25/backup-nodejs:latest
+    build: ./library_server
     ports:
       - "3000:3000"
     environment:
@@ -11,16 +12,17 @@ services:
       - redis
       - flask
     networks:
-      - web  # Kết nối với mạng 'web'
+      - web  
 
   flask:
-    image: nhatsang25/backup-flask:v2
+    # image: nhatsang25/backup-flask:v2
+    build: ./library_recommendation
     ports:
-      - "5000:5000"
+      - "3001:3001"
     environment:
       - FLASK_APP=run.py
     networks:
-      - web  # Kết nối với mạng 'web'
+      - web 
 
   redis:
     image: "redis:alpine"
@@ -33,22 +35,22 @@ services:
       start_period: 10s
       timeout: 5s
     networks:
-      - web  # Kết nối với mạng 'web'
+      - web  
 
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./certs:/etc/nginx/certs:ro
-    depends_on:
-      - flask
-      - nodejs
-    networks:
-      - web  # Kết nối với mạng 'web'
+  # nginx:
+  #   image: nginx:alpine
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./certs:/etc/nginx/certs:ro
+  #   depends_on:
+  #     - flask
+  #     - nodejs
+  #   networks:
+  #     - web  
 
 networks:
   web:
-    external: false  # Định nghĩa mạng 'web' nếu chưa có mạng bên ngoài.
+    external: false  

@@ -69,7 +69,7 @@ bookRouter.post(
 bookRouter.post(
   "/books/update-book",
   authMiddleware.authenticateAccessToken([Role.Admin]),
-  upload.fields([{ name: "image" }, { name: "pdf" }]),
+  upload.single("image"),
   bookMiddleware.validate(BookUpdateReqDTO),
   bookController.updateBook
 );

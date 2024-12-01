@@ -34,7 +34,7 @@ def load_model(user_id,collection):
 
 def get_history_for_user(userId,books_df):
     # Lấy lịch sử sách đã đọc của người dùng
-    histories_df = pd.DataFrame(list(db['histories'].find({'user': ObjectId(userId)})))
+    histories_df = pd.DataFrame(list(db['histories'].find({'user': ObjectId(userId),'status':1})))
     review_df = pd.DataFrame(list(db['reviews'].find({'user': ObjectId(userId)})))
     user_book_df = pd.merge(histories_df, books_df, left_on='book', right_on='_id')
 
