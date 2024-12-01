@@ -20,7 +20,7 @@ COPY . /app/
 ENV FLASK_ENV=production
 
 # Mở cổng 5000
-EXPOSE 5000
+EXPOSE 3001
 
 # Chạy ứng dụng Flask
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=3001"]

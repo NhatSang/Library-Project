@@ -24,7 +24,13 @@ target 'Library' do
       Pod::UI.warn e
     end
   end
+
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+
   config = use_native_modules!
+
+
 
   use_react_native!(
     :path => config[:reactNativePath],

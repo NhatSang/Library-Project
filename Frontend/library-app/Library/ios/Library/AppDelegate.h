@@ -3,6 +3,8 @@
 #import <Expo/Expo.h>
 #import <React/RCTLinkingManager.h>
 #import "RNAppAuthAuthorizationFlowManager.h"
+#import <Firebase.h>
+
 
 @interface AppDelegate : EXAppDelegateWrapper <RNAppAuthAuthorizationFlowManager>
 
