@@ -35,7 +35,7 @@ export const Errors = {
     "tooManyRequest",
     429
   ),
-  wrongPassword: new ErrorCustom("Sai mật khẩu", "wrongPassword", 401),
+  wrongPassword: new ErrorCustom("Sai mật khẩu", "wrongPassword", 400),
   isNotEmpty: new ErrorCustom("Values should not be empty", "isNotEmpty", 400),
   invalidRepassword: new ErrorCustom(
     "Invalid Repassword",

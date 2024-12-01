@@ -165,19 +165,12 @@ export class BookController {
 
   updateBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const imageFile = req.files["image"][0];
-      const pdfFile = req.files["pdf"][0];
+      const imageFile = req.file;
       console.log(imageFile);
-      console.log(pdfFile);
       if (imageFile) {
         const imageLink = await saveFile(imageFile);
         req.body.image = imageLink;
       }
-      if (pdfFile) {
-        const pdfLink = await saveFile(pdfFile);
-        req.body.pdfLink = pdfLink;
-      }
-
       const result = await this.bookservice.updateBook(req.body);
       res.send(new ResponseCustom(result));
     } catch (error) {

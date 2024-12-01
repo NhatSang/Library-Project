@@ -168,9 +168,6 @@ export class BookUpdateReqDTO {
   author: string;
   @IsString()
   @IsOptional()
-  pdfLink: string;
-  @IsString()
-  @IsOptional()
   image: string;
   @IsString()
   @IsOptional()

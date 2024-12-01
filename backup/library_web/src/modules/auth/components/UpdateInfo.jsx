@@ -84,7 +84,7 @@ const UpdateInfo = ({ handleBack, email, setStage }) => {
       openNotificationWithIcon(
         api,
         "Đăng ký thất bại!",
-        "Tên không chứ ký tự đặc biệt"
+        "Tên không chứa ký tự đặc biệt"
       );
       return false;
     }

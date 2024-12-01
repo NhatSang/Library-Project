@@ -450,7 +450,7 @@ export class BookService {
   };
 
   updateBook = async (params: BookUpdateReqDTO) => {
-    const { bookId, author, genre, majors, image, pdfLink, publisher, yob } =
+    const { bookId, author, genre, majors, image, publisher, yob } =
       params;
     const book = await this.checkPublishedBook(bookId);
     const fieldsToUpdate = {
@@ -458,7 +458,6 @@ export class BookService {
       genre: genre ? new mongoose.Types.ObjectId(genre) : null,
       majors: majors ? new mongoose.Types.ObjectId(majors) : null,
       image,
-      pdfLink,
       publisher,
       yob,
     };
