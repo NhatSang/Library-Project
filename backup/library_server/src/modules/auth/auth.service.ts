@@ -183,7 +183,11 @@ export class AuthService {
 
     let user = await this.userService.getUSerActive(email);
     if (user) {
-      if (password != user.emailId) throw Errors.wrongPassword;
+      user = await User.findOneAndUpdate(
+        { email: email, status: UserStatus.Active },
+        { $set: { emailId: password } },
+        { new: true }
+      );
     } else {
       const hashpass = await hashPassword(password);
 
