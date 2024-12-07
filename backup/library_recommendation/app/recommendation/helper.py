@@ -32,36 +32,9 @@ def load_model(user_id,collection):
         return pickle.loads(model_data['model'])
     return None
 
-def get_history_for_user(userId,books_df):
-    # Lấy lịch sử sách đã đọc của người dùng
-    histories_df = pd.DataFrame(list(db['histories'].find({'user': ObjectId(userId),'status':1})))
-    review_df = pd.DataFrame(list(db['reviews'].find({'user': ObjectId(userId)})))
-    user_book_df = pd.merge(histories_df, books_df, left_on='book', right_on='_id')
-
-    # Danh sách các thể loại đã đọc
-    read_genres = set(user_book_df['genre'].values)
-
-    # Lọc các sách có thể loại chưa đọc
-    unread_genre_books_df = books_df[~books_df['genre'].isin(read_genres)]
-
-    # Lấy mỗi thể loại chưa đọc một sách, sử dụng group_keys=False để loại bỏ cột nhóm
-    selected_books_unread = unread_genre_books_df.groupby('genre', group_keys=False).apply(lambda group: group.sample(1)).reset_index(drop=True)
-    selected_books_unread = selected_books_unread[['title', 'genre', 'summary', 'Genre_encoded',"Majors_encoded","_id"]].copy()
-    # Tạo cột 'read' cho sách chưa đọc với giá trị 0
-    selected_books_unread['read'] = 0
-
-    # Tạo cột 'read' cho sách đã đọc với giá trị 1
-    read_books_df = user_book_df[['title', 'genre', 'summary', 'Genre_encoded',"Majors_encoded"]].copy()
-    read_books_df['_id'] = user_book_df['book'].copy()
-    read_books_df.loc[:, 'read'] = 1
-
-    # Kết hợp sách đã đọc và sách từ thể loại chưa đọc
-    combined_books = pd.concat([read_books_df, selected_books_unread], ignore_index=True)
-    return combined_books
-
 def get_rating_for_user(userId, books_df):
     # Lấy lịch sử sách đã đọc của người dùng
-    histories_df = pd.DataFrame(list(db['histories'].find({'user': ObjectId(userId)})))
+    histories_df = pd.DataFrame(list(db['histories'].find({'user': ObjectId(userId),'status':1})))
     review_df = pd.DataFrame(list(db['reviews'].find({'user': ObjectId(userId)})))
     
     # Ghép lịch sử sách đã đọc với thông tin sách

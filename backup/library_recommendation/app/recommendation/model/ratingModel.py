@@ -10,7 +10,7 @@ from ...extensions import db
 def create_rating_model(userId):
     genres_df = pd.DataFrame(list(db['genres'].find({},{'_id':1})))
     majors_df = pd.DataFrame(list(db['majors'].find({},{'_id':1})))
-    books_df = pd.DataFrame(list(db['books'].find()))
+    books_df = pd.DataFrame(list(db['books'].find({'status':1})))
     tfidf_vectorizer = TfidfVectorizer(max_features=500)
     label_encoder_genre = LabelEncoder()
     label_encoder_majors = LabelEncoder()
