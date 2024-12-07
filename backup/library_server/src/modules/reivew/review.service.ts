@@ -13,7 +13,6 @@ export class ReviewService {
   constructor(@Inject() private historyService: HistoryService) {}
   async createReview(params: ReviewCreateReqDTO) {
     const { bookId, userId, content, rating } = params;
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     
     let history = await this.historyService.getHistory(userId, bookId);
     console.log(history);
