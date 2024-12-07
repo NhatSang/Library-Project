@@ -1,6 +1,6 @@
 from bson import ObjectId
 import pandas as pd
-from app.recommendation.helper import load_model, load_model2, load_scaler, load_svd, load_vector_label
+from app.recommendation.helper import load_model,  load_scaler, load_svd, load_vector_label
 from ..extensions import db 
 
 def recommend_books_rating(userId):
