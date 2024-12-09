@@ -82,10 +82,7 @@ export class UserService {
       ];
     }
     const [users, total] = await Promise.all([
-      User.find(matchStage)
-      .populate("majors")
-      .skip(getOffset())
-      .limit(limit),
+      User.find(matchStage).populate("majors").skip(getOffset()).limit(limit),
       User.countDocuments(matchStage),
     ]);
     pagination.total = total;
@@ -143,6 +140,7 @@ export class UserService {
 
   updateUser = async (params: UserUpdateDTO) => {
     const { userId, name, code, dob, gender, majors } = params;
+
     const user = await User.findOneAndUpdate(
       { _id: new mongoose.Types.ObjectId(userId) },
       {
@@ -172,8 +170,11 @@ export class UserService {
 
   updateAvatar = async (params: any) => {
     const { userId, image } = params;
-    const user = await User.findOneAndUpdate({ _id: userId }, { image: image },{new:true})
-    .populate("majors", "name");
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      { image: image },
+      { new: true }
+    ).populate("majors", "name");
     const userTransformed = UserResponseDTO.transformUser(user);
     return userTransformed;
   };

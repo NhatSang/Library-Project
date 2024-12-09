@@ -51,7 +51,7 @@ const UpdateInfoMs = () => {
       };
       axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
       const response = await updateUser(userUpdate);
-      console.log(accessToken);
+
       localStorage.setItem("user", JSON.stringify(response.data));
       localStorage.setItem("accessToken",accessToken);
       navigate("/home")
