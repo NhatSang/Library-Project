@@ -375,7 +375,7 @@ export class BookService {
       return { book: newBook, chapter: false };
     }
     console.log("Thêm thành công", newBook.title);
-    return true;
+    return {book: newBook, chapter: true};
   };
 
   createSummary = async (params: any) => {

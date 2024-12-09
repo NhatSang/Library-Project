@@ -16,7 +16,7 @@ export const _getBooksTopRated = async (page?: number, limit?: number) => {
     const url = '/book/get-top-rated';
     return api.get(url, {
         params: {
-            limit: limit || 5,
+            limit: limit || 8,
             page: page || 1,
         },
     });
@@ -26,7 +26,7 @@ export const _getBooksTopViewed = async (page?: number, limit?: number) => {
     const url = '/book/get-top-viewed';
     return api.get(url, {
         params: {
-            limit: limit || 5,
+            limit: limit || 8,
             page: page || 1,
         },
     });
@@ -36,7 +36,7 @@ export const _getRecommendBooks = async (page?: number, limit?: number) => {
     const url = '/book/recommend-books';
     return api.get(url, {
         params: {
-            limit: limit || 5,
+            limit: limit || 8,
             page: page || 1,
         },
     });
