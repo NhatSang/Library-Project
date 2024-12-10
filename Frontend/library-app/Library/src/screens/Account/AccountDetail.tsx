@@ -218,7 +218,7 @@ const AccountDetail = ({ navigation }: any) => {
                             leftIcon={<AntDesign name='idcard' size={24} color={globalColor.dark} />}
                         />
                         <Input
-                            label='Chuyên ngành'
+                            label='Khoa'
                             defaultValue={user && user.majors.name}
                             editable={false}
                             leftIcon={<AntDesign name='profile' size={24} color={globalColor.dark} />}
