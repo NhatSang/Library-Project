@@ -12,20 +12,7 @@ def save_model(user_id, model, collection):
         {"$set": {"model": model_bytes}},
         upsert=True
     )
-def save_model2(model):
-    model_bytes = pickle.dumps(model)
-    db['model_neighbors'].update_one(
-        {"name":"model_neighbors"},
-        {"$set": {"model": model_bytes}},
-        upsert=True
-    )
     
-def load_model2():
-    model_data = db['model_neighbors'].find_one({"name": "model_neighbors"})
-    if model_data:
-        return pickle.loads(model_data['model'])
-    return None
-
 def load_model(user_id,collection):
     model_data = collection.find_one({"user_id": ObjectId(user_id)})
     if model_data:
