@@ -170,12 +170,12 @@ const HomeScreen = ({ navigation }: any) => {
                         onPress={() => { navigation.navigate(ScreenName.SearchScreen) }}
                         className='w-4/6 bg-white items-center flex-row rounded-xl px-4 border border-gray-200'>
                         <Ionicons name='search' size={32} />
-                        <AppText size={16} color={globalColor.text_dark} text='Tên sách, tên ngành ....' />
+                        <AppText size={16} color={globalColor.text_dark} text='Tên sách, tên khoa ....' />
                     </Pressable>
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View className='absolute'>
-                        <AppText size={20} font={fontFamilies.robotoBold} text='Sách theo chuyên ngành của bạn' />
+                        <AppText size={20} font={fontFamilies.robotoBold} text='Sách theo khoa của bạn' />
                     </View>
                     <View className='h-72 justify-center items-center'>
                         <Carousel

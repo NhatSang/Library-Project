@@ -285,9 +285,9 @@ const UserFormScreen = ({ navigation, route }: any) => {
                                 setOpen={setOpen}
                                 setValue={setValue}
                                 setItems={setMajors}
-                                placeholder={'Chuyên ngành'}
+                                placeholder={'Khoa'}
                                 modalAnimationType='slide'
-                                modalTitle='Chọn chuyên ngành'
+                                modalTitle='Chọn khoa'
                                 modalTitleStyle={{ color: globalColor.primary_2, fontFamily: fontFamilies.robotoBold }}
                                 modalContentContainerStyle={{ padding: 10 }}
                                 modalProps={{ animationType: 'slide' }}
