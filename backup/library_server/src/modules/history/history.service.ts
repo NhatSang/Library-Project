@@ -63,6 +63,7 @@ export class HistoryService {
       { _id: new mongoose.Types.ObjectId(historyId) },
       { $set: { status: HistoryStatus.Deleted } }
     );
+    
     return true;
   }
 }

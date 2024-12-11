@@ -10,11 +10,12 @@ from ...extensions import db
 def create_rating_model(userId):
     genres_df = pd.DataFrame(list(db['genres'].find({},{'_id':1})))
     majors_df = pd.DataFrame(list(db['majors'].find({},{'_id':1})))
+    majors_df['_id'] = majors_df['_id'].apply(str)
     # Thêm giá trị đặc biệt "Unknown" vào majors_df
-    majors_df = majors_df.append({'_id': 'Unknown'}, ignore_index=True)
+    majors_df = pd.concat([majors_df, pd.DataFrame({'_id': ['Unknown']})], ignore_index=True)
     books_df = pd.DataFrame(list(db['books'].find({'status':1})))
     # Thay thế giá trị rỗng trong books_df bằng "Unknown"
-    books_df['majors'] = books_df['majors'].fillna('Unknown')
+    books_df['majors'] = books_df['majors'].fillna('Unknown').apply(str)
     tfidf_vectorizer = TfidfVectorizer(max_features=500)
     label_encoder_genre = LabelEncoder()
     label_encoder_majors = LabelEncoder()
