@@ -13,7 +13,7 @@ def recommend_books_rating(userId):
     histories_df = pd.DataFrame(list(db['histories'].find({'user': ObjectId(userId),'status':1})))
     read_books = set(histories_df['book'].values) 
     books_df = pd.DataFrame(list(db['books'].find({'status':1})))
-    books_df['majors'] = books_df['majors'].fillna('Unknown')
+    books_df['majors'] = books_df['majors'].fillna('Unknown').astype(str)
     # Lấy các sách chưa đọc
     unread_books_df = books_df[~books_df['_id'].isin(read_books)].copy()
 
